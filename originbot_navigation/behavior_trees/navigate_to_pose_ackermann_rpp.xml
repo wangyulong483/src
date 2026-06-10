@@ -1,0 +1,89 @@
+<root main_tree_to_execute="MainTree">
+  <!--
+  ============================================================================
+  Behavior Tree: 阿克曼 + RPP 专用 (Humble 兼容版)
+  - ReactiveFallback 已替换为 Fallback+GoalUpdated (Humble 无 ReactiveFallback 库)
+  - 彻底移除 Spin 恢复节点（阿克曼不可原地旋转）
+  - FollowPath 失败 → 清除局部代价地图 + 0.5s 传感器更新 → 重规划
+  - ★ SmoothPath 已移除: Humble ConstrainedSmoother 已知 NaN 崩溃 (nav2#4755)
+  - SmacPlanner 自带 smooth_path:true，路径质量足够
+  - 系统级恢复: ClearCostmap → BackUp 0.8m → Wait 3s → BackUp 1.5m
+  ============================================================================
+  -->
+  <BehaviorTree ID="MainTree">
+
+    <!-- 全局恢复：无限重试（-1），动态障碍物移走后自动恢复 -->
+    <RecoveryNode number_of_retries="-1" name="NavigateRecovery">
+
+      <!-- 正常导航流水线：高频重规划 → 路径跟踪 -->
+      <PipelineSequence name="NavigateWithReplanning">
+
+        <!--
+        第1级：全局重规划 @ 0.5Hz（SmoothPath 已移除 — Humble ConstrainedSmoother NaN bug）
+        -->
+        <RateController hz="0.5">
+          <RecoveryNode number_of_retries="1" name="ComputePathToPose">
+            <ComputePathToPose goal="{goal}" path="{path}" planner_id="GridBased"/>
+            <!-- recovery: 若目标已更新→立即返回SUCCESS重规划; 否则清除全局代价地图 -->
+            <Fallback name="ComputePathToPoseRecoveryFallback">
+              <GoalUpdated/>
+              <ClearEntireCostmap name="ClearGlobalCostmap-Context"
+                                  service_name="global_costmap/clear_entirely_global_costmap"/>
+            </Fallback>
+          </RecoveryNode>
+        </RateController>
+
+        <!--
+        第2级：路径跟随 + RPP 碰撞兜底
+        -->
+        <RecoveryNode number_of_retries="1" name="FollowPath">
+          <FollowPath path="{path}" controller_id="FollowPath"/>
+          <!-- recovery: 若目标已更新→立即重规划; 否则清局部代价地图+等传感器刷新 -->
+          <Fallback name="FollowPathRecoveryFallback">
+            <GoalUpdated/>
+            <Sequence name="ClearCostmapAndWait">
+              <ClearEntireCostmap name="ClearLocalCostmap-Context"
+                                  service_name="local_costmap/clear_entirely_local_costmap"/>
+              <Wait wait_duration="0.5"/>
+            </Sequence>
+          </Fallback>
+        </RecoveryNode>
+
+      </PipelineSequence>
+
+      <!--
+      系统级恢复行为 (RoundRobin 依次尝试)
+      1. 清理代价地图 + BackUp 0.8m (窄通道锥桶脱困)
+      2. Wait 3s (给动态障碍物移走的时间)
+      3. 清理代价地图 + BackUp 1.5m (二次大后退脱困)
+      NOTE: Spin 已永久移除 — 阿克曼不能原地旋转
+      -->
+      <Fallback name="RecoveryFallback">
+        <GoalUpdated/>
+        <RoundRobin name="RecoveryActions">
+          <Sequence name="ClearAndBackup">
+            <ClearEntireCostmap name="ClearLocalCostmap-Subtree"
+                                service_name="local_costmap/clear_entirely_local_costmap"/>
+            <ClearEntireCostmap name="ClearGlobalCostmap-Subtree"
+                                service_name="global_costmap/clear_entirely_global_costmap"/>
+            <BackUp name="BackUpRecovery"
+                    backup_dist="0.8"
+                    backup_speed="0.12"/>
+          </Sequence>
+          <Wait wait_duration="3.0"/>
+          <Sequence name="ClearAndBackupMore">
+            <ClearEntireCostmap name="ClearLocalCostmap-Subtree2"
+                                service_name="local_costmap/clear_entirely_local_costmap"/>
+            <ClearEntireCostmap name="ClearGlobalCostmap-Subtree2"
+                                service_name="global_costmap/clear_entirely_global_costmap"/>
+            <BackUp name="BackUpRecovery2"
+                    backup_dist="1.5"
+                    backup_speed="0.12"/>
+          </Sequence>
+        </RoundRobin>
+      </Fallback>
+
+    </RecoveryNode>
+
+  </BehaviorTree>
+</root>

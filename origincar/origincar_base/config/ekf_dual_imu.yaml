@@ -1,0 +1,135 @@
+### ekf_dual_imu.yaml — 双 IMU EKF 融合配置 ###
+# @brief 融合轮式里程计 + 两个 IMU:
+#   imu0: MPU6050 → STM32 Mahony(Ki=0) → Madgwick 二次滤波 → /imu/data/madgwick
+#   imu1: BMI088 → hobot_imu_sensor → /imu_data (原始角速度+加速度, 无姿态)
+#
+# 融合策略:
+#   - imu0 (MPU6050): 提供 yaw 姿态 + yaw 角速度 (Madgwick 已补偿陀螺零偏)
+#   - imu1 (BMI088):  提供 yaw 角速度 (汽车级陀螺, 低噪声, 低漂移)
+#   - odom0:          提供 X 位移 + X/Y 线速度 + Z 角速度 (编码器)
+#
+# BMI088 陀螺噪声 ~1/10 MPU6050, 零偏 <2°/h. 双 IMU 冗余:
+#   一个传感器丢失时 EKF 仍可维持姿态 (sensor_timeout=2s)
+
+ekf_filter_node:
+    ros__parameters:
+        # ============ 基本参数 ============
+        # 20→15Hz: RDK X5 Cortex-A55 无法在 50ms 内完成 15x15 EKF + 双IMU预测
+        # 117-134ms实测 > 50ms预算, 降频后 66.7ms预算留有安全余量
+        frequency: 15.0
+        # 2.0→0.1s: 限制每周期缓冲消息量, 防止高负载时消息堆积
+        sensor_timeout: 0.1
+        two_d_mode: true
+        transform_time_offset: 0.0
+        transform_timeout: 0.2
+        print_diagnostics: false
+
+        # ============ 调试参数 ============
+        debug: false
+        debug_out_file: /path/to/debug/file.txt
+
+        # ============ 发布设置 ============
+        publish_tf: true
+        publish_acceleration: false
+
+        # ============ 坐标系定义 ============
+        map_frame: map
+        odom_frame: odom
+        base_link_frame: base_footprint
+        world_frame: odom
+
+        # ============ 传感器输入配置 ============
+
+        # --- 输入 0: 轮式里程计 ---
+        odom0: odom
+        odom0_config: [true,  false, false,   # 位置: 仅 X
+                       false, false, false,   # 姿态: 无
+                       true,  true,  false,   # 速度: X, Y 线速度
+                       false, false, true,    # 角速度: Z (yaw)
+                       false, false, false]   # 加速度: 无
+        odom0_queue_size: 10
+        odom0_nodelay: false
+        odom0_differential: true
+        odom0_relative: false
+
+        # --- 输入 1: MPU6050 + Madgwick 二次滤波 ---
+        # 提供 yaw 姿态 (Madgwick 已解算) + yaw 角速度
+        imu0: /imu/data/madgwick
+        imu0_config: [false, false, false,   # 位置: 无
+                      false, false, true,    # 姿态: 仅 yaw (Madgwick 解算)
+                      false, false, false,   # 速度: 无
+                      false, false, true,    # 角速度: Z (yaw)
+                      false, false, false]   # 加速度: 无
+        imu0_nodelay: false
+        imu0_differential: false
+        imu0_relative: true
+        imu0_queue_size: 20         # 限制缓冲区, 防止高负载消息堆积
+        imu0_pose_rejection_threshold: 20.0
+        imu0_twist_rejection_threshold: 1.542
+        imu0_linear_acceleration_rejection_threshold: 10.0
+        imu0_remove_gravitational_acceleration: true
+
+        # --- 输入 2: BMI088 原始数据 ---
+        # 仅提供 yaw 角速度 (陀螺仪汽车级, 低噪声, 不提供姿态)
+        # 配置与 imu0 互补: 陀螺仪质量更高, 但不含姿态解算
+        imu1: /imu_data
+        imu1_config: [false, false, false,   # 位置: 无
+                      false, false, false,   # 姿态: 无 (BMI088 原始数据无姿态解算)
+                      false, false, false,   # 速度: 无
+                      false, false, true,    # 角速度: Z (yaw, 汽车级陀螺)
+                      false, false, false]   # 加速度: 暂不融合 (保持与 imu0 一致)
+        imu1_nodelay: false
+        imu1_differential: false
+        imu1_relative: true
+        imu1_queue_size: 20         # 限制缓冲区, 防止高负载消息堆积
+        # BMI088 噪声更低 → 放宽剔除阈值 (避免误剔除有效数据)
+        imu1_pose_rejection_threshold: 20.0
+        imu1_twist_rejection_threshold: 2.0          # 比 imu0 稍宽
+        imu1_linear_acceleration_rejection_threshold: 10.0
+        imu1_remove_gravitational_acceleration: true
+
+        # ============ 控制输入参数 ============
+        use_control: false
+        stamped_control: false
+        control_timeout: 0.2
+        control_config: [true, false, false, false, false, true]
+        acceleration_limits: [1.3, 0.0, 0.0, 0.0, 0.0, 3.4]
+        deceleration_limits: [1.3, 0.0, 0.0, 0.0, 0.0, 4.5]
+        acceleration_gains: [0.8, 0.0, 0.0, 0.0, 0.0, 0.9]
+        deceleration_gains: [1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
+
+        # ============ 过程噪声协方差 (15x15) ============
+        # 双 IMU 降低 yaw 角速度不确定性 → yaw process noise 0.005→0.003
+        # 其余与单 IMU 配置一致
+        process_noise_covariance: [0.05,  0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+                                   0.0,    0.05,  0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+                                   0.0,    0.0,    0.06,  0.0,    0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+                                   0.0,    0.0,    0.0,    0.03,  0.0,    0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+                                   0.0,    0.0,    0.0,    0.0,    0.03,  0.0,    0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.003,  0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.025,  0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.025,  0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     0.04,  0.0,    0.0,    0.0,    0.0,    0.0,    0.0,
+                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     0.0,    0.01,  0.0,    0.0,    0.0,    0.0,    0.0,
+                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     0.0,    0.0,    0.01,  0.0,    0.0,    0.0,    0.0,
+                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     0.0,    0.0,    0.0,    0.02,  0.0,    0.0,    0.0,
+                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.01,  0.0,    0.0,
+                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.01,  0.0,
+                                   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.015]
+
+        # ============ 初始状态协方差 ============
+        initial_estimate_covariance: [1e-9,  0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     0.0,    0.0,    0.0,
+                                      0.0,    1e-9,  0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     0.0,    0.0,    0.0,
+                                      0.0,    0.0,    1e-9,  0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     0.0,    0.0,    0.0,
+                                      0.0,    0.0,    0.0,    1e-9,  0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     0.0,    0.0,    0.0,
+                                      0.0,    0.0,    0.0,    0.0,    1e-9,  0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     0.0,    0.0,    0.0,
+                                      0.0,    0.0,    0.0,    0.0,    0.0,    1e-9,  0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     0.0,    0.0,    0.0,
+                                      0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    1e-9,  0.0,    0.0,    0.0,     0.0,     0.0,     0.0,    0.0,    0.0,
+                                      0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    1e-9,  0.0,    0.0,     0.0,     0.0,     0.0,    0.0,    0.0,
+                                      0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    1e-9,  0.0,     0.0,     0.0,     0.0,    0.0,    0.0,
+                                      0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    1e-9,   0.0,     0.0,     0.0,    0.0,    0.0,
+                                      0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     1e-9,   0.0,     0.0,    0.0,    0.0,
+                                      0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     1e-9,   0.0,    0.0,    0.0,
+                                      0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     1e-9,  0.0,    0.0,
+                                      0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     0.0,    1e-9,  0.0,
+                                      0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     0.0,    0.0,    1e-9]

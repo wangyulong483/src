@@ -1,0 +1,27 @@
+# imu.yaml - IMU Madgwick 滤波器配置文件
+# @brief imu_filter_madgwick 包的配置参数
+# @details 该文件配置 Madgwick 滤波算法，用于从原始 IMU 数据解算姿态
+
+imu_filter_madgwick:
+    ros__parameters:
+        # ============ 基本参数 ============
+        
+        # 固定坐标系（IMU 安装的参考坐标系）
+        fixed_frame: "base_footprint"
+        
+        # 是否使用磁力计数据
+        # false: 仅使用加速度计和陀螺仪（适用于室内无磁场环境）
+        use_mag: false
+        
+        # 是否发布 TF 坐标变换
+        # false: 不发布，由其他节点统一发布
+        publish_tf: false
+        
+        # 世界坐标系类型
+        # "enu": East-North-Up（东北天坐标系，REP-103 标准）
+        # "ned": North-East-Down（北东地坐标系）
+        world_frame: "enu"
+        
+        # 姿态估计的标准差（弧度）
+        # 值越小表示对姿态估计越有信心
+        orientation_stddev: 0.05

@@ -1,0 +1,560 @@
+# =============================================================================
+# Nav2 全栈配置 — origincarPro 平台 (RPP 版)
+# 全局规划器: SmacPlannerHybrid (REEDS_SHEPP — 前进+后退，狭窄空间可倒车绕障)
+# 局部控制器: Regulated Pure Pursuit (RPP)
+# 目标: 轻量稳定的 RPP + 代价调控主动避障（阿克曼专用）
+# 硬件: RDK X5 (ARM), wheelbase=0.143m, min_turning_radius≈0.30m
+# 场地: 室内 5m×5m，有随机动态障碍物，最终定点结构扫描
+# =============================================================================
+
+amcl:
+  ros__parameters:
+    use_sim_time: False
+    # P 点精确坐标 (Cartographer 纯定位 1193 帧, σ_xy=2-3mm)
+    set_initial_pose: true
+    initial_pose:
+      x: -1.985
+      y: -0.014
+      z: 0.0
+      yaw: 0.262
+    # alpha 放大至 0.45，注入更多噪声补偿阿克曼-差分运动模型差异
+    # 碰撞锥桶后轮子打滑导致里程计虚报位移，增大alpha降低AMCL对虚假里程计的信任
+    alpha1: 0.45
+    alpha2: 0.45
+    alpha3: 0.45
+    alpha4: 0.45
+    alpha5: 0.45
+    base_frame_id: "base_footprint"
+    beam_skip_distance: 0.5
+    beam_skip_error_threshold: 0.9
+    beam_skip_threshold: 0.3
+    do_beamskip: true                 # 启用beamskip：被推开的锥桶不再强烈误导粒子权重
+    global_frame_id: "map"
+    lambda_short: 0.1
+    laser_likelihood_max_dist: 2.0
+    laser_max_range: 100.0
+    laser_min_range: -1.0
+    laser_model_type: "likelihood_field_prob"  # 概率似然场模型，支持beamskip特性
+    max_beams: 60
+    max_particles: 1500
+    min_particles: 300
+    odom_frame_id: "odom"
+    pf_err: 0.05
+    pf_z: 0.99
+    # ★ 关键修复：原值0.0完全禁用了AMCL自动恢复机制！
+    # 撞锥桶后粒子发散无法自行修复→定位彻底丢失→"分不清东南西北"
+    # fast=0.1: 短周期平均权重快速衰减，检测到定位质量下降时注入随机粒子
+    # slow=0.001: 长周期基准，当short_term << long_term时触发全局重定位
+    recovery_alpha_fast: 0.1
+    recovery_alpha_slow: 0.001
+    resample_interval: 2
+    robot_model_type: "nav2_amcl::DifferentialMotionModel"
+    save_pose_rate: 0.5
+    sigma_hit: 0.2
+    tf_broadcast: true
+    transform_tolerance: 1.0
+    update_min_a: 0.10
+    update_min_d: 0.10
+    z_hit: 0.5
+    z_max: 0.05
+    z_rand: 0.5
+    z_short: 0.05
+
+amcl_map_client:
+  ros__parameters:
+    use_sim_time: False
+
+amcl_rclcpp_node:
+  ros__parameters:
+    use_sim_time: False
+
+# =============================================================================
+# Behavior Tree — RPP 专属：含碰撞检测联动
+# Humble 使用 default_nav_to_pose_bt_xml / default_nav_through_poses_bt_xml
+# (废弃的 default_bt_xml_filename 会被 navigation_launch.py 忽略)
+# 注意: 最终路径由 nav_bringup.launch.py 的 launch argument 提供绝对路径覆盖
+# =============================================================================
+bt_navigator:
+  ros__parameters:
+    use_sim_time: False
+    global_frame: map
+    robot_base_frame: base_footprint
+    odom_topic: /odom
+    bt_loop_duration: 100                  # 10Hz BT tick（ARM 默认 100Hz 跑不动）
+    default_server_timeout: 500            # halt/cancel 超时 (ms), 100→500 防止controller_server mid-computation时 cancel 超时导致 BT abort
+    default_nav_to_pose_bt_xml: "navigate_to_pose_ackermann_rpp.xml"
+    default_nav_through_poses_bt_xml: "navigate_through_poses_ackermann_rpp.xml"
+    plugin_lib_names:
+    - nav2_compute_path_to_pose_action_bt_node
+    - nav2_compute_path_through_poses_action_bt_node
+    - nav2_follow_path_action_bt_node
+    - nav2_smooth_path_action_bt_node
+    - nav2_back_up_action_bt_node
+    - nav2_wait_action_bt_node
+    - nav2_clear_costmap_service_bt_node
+    - nav2_is_stuck_condition_bt_node
+    - nav2_goal_reached_condition_bt_node
+    - nav2_goal_updated_condition_bt_node
+    - nav2_initial_pose_received_condition_bt_node
+    - nav2_reinitialize_global_localization_service_bt_node
+    - nav2_rate_controller_bt_node
+    - nav2_distance_controller_bt_node
+    - nav2_speed_controller_bt_node
+    - nav2_recovery_node_bt_node
+    - nav2_pipeline_sequence_bt_node
+    - nav2_round_robin_node_bt_node
+    # nav2_reactive_fallback_bt_node — 不可用 (Iron+), 已改用 Fallback+GoalUpdated
+    # nav2_sequence_controller_bt_node — 不可用 (Iron+), 已改用 Sequence
+    - nav2_remove_passed_goals_action_bt_node
+    - nav2_transform_available_condition_bt_node
+    - nav2_time_expired_condition_bt_node
+    - nav2_distance_traveled_condition_bt_node
+
+bt_navigator_rclcpp_node:
+  ros__parameters:
+    use_sim_time: False
+
+# =============================================================================
+# Controller Server — Regulated Pure Pursuit (RPP)
+# 核心机制:
+#   Layer 1: cost_regulated_linear_velocity_scaling → 近障主动减速
+#   Layer 2: collision_detection → 碰撞预测停车 + 报错
+#   Layer 3: Behavior Tree 高频重规划 → 绕开障碍物
+# =============================================================================
+controller_server:
+  ros__parameters:
+    use_sim_time: False
+    # 控制频率：ARM 板 10Hz（RPP 最低推荐值）
+    controller_frequency: 10.0
+    # 等待 costmap 更新的超时时间（s），避免用过期 costmap 计算
+    costmap_update_timeout: 0.30
+    # 连续控制失败容忍次数，避免单次异常触发恢复行为
+    failure_tolerance: 10.0
+    min_x_velocity_threshold: 0.001
+    min_y_velocity_threshold: 0.5
+    min_theta_velocity_threshold: 0.001
+
+    # 插件声明
+    controller_plugins: ["FollowPath"]
+    goal_checker_plugins: ["goal_checker"]
+    progress_checker_plugins: ["progress_checker"]
+
+    # ---- Goal Checker: 适度放宽，减少原地旋转耗时 ----
+    goal_checker:
+      plugin: "nav2_controller::SimpleGoalChecker"
+      xy_goal_tolerance: 0.20          # 从0.15放宽到0.20，避免到达后因微小误差触发重规划绕圈
+      yaw_goal_tolerance: 0.40         # 从0.30放宽到0.40，减少到达目标后的额外旋转
+      stateful: true                   # 先锁定 XY，再检查 Yaw，防止来回振荡
+      symmetric_yaw_tolerance: false
+
+    # ---- Progress Checker: 通道微小位移不误判停滞 ----
+    progress_checker:
+      plugin: "nav2_controller::SimpleProgressChecker"
+      required_movement_radius: 0.08           # 通道内位移微小，Dock阶段几乎原地调整
+      movement_time_allowance: 12.0            # ARM板宽容度；超12s无进展大概率是真卡死
+
+    # ---- Regulated Pure Pursuit Controller ----
+    FollowPath:
+      plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
+
+      # ==================== DWPP：速度与加速度约束 ====================
+      # Dynamic Window Pure Pursuit (IAS-19, 2025):
+      # 在纯追踪基础上增加速度/加速度约束的动态窗口优化
+      # 自动计算满足运动学约束的最优速度指令，弯道减速更平滑
+      # 阿克曼角速度上限: ω_max = v × tan(δ_max) / L = 0.7 × tan(28°) / 0.143 ≈ 2.60 rad/s
+      # 实际取 2.50 rad/s 给足余量，弯道减速会自动降低实际角速度
+      use_dynamic_window: true
+      max_linear_vel: 0.55              # 0.80→0.55: 配 desired 0.45, 弯道不冲
+      min_linear_vel: -0.25
+      max_angular_vel: 1.50             # ★ 降至 1.50 rad/s (原 2.50): 抑制窄空间剧烈甩尾振荡
+      min_angular_vel: -1.50            # ★ 同步降至 -1.50, 窄空间倒车转弯不甩尾
+      max_linear_accel: 1.2             # 最大线加速度 m/s²（配合 0.7m/s 巡航提速）
+      max_linear_decel: -1.5            # 最大线减速度 m/s²（更强制动匹配更高速度）
+      max_angular_accel: 2.0            # 最大角加速度 rad/s²（阿克曼转向需更快响应）
+      max_angular_decel: -2.0           # 最大角减速度 rad/s²
+
+      # ==================== 速度与前视距离 ====================
+      desired_linear_vel: 0.45        # 弯道勿太快, 0.70→0.45 阿克曼拐得过
+
+      # ==================== 前视距离：防画龙的核心 ====================
+      # 前视距离越大 → 轨迹越平滑但循迹精度越低
+      # 前视距离越小 → 循迹越精确但容易振荡（画龙）
+      # 阿克曼前视 ≥ 2×min_turning_radius=0.6m, 否则弯道拐不过来冲禁区
+      # 减速后 lookahead_time 缩放也更温和
+      lookahead_dist: 0.65            # 0.55→0.65: 满足2×0.30=0.60阿克曼约束
+      min_lookahead_dist: 0.40        # 低速时不能太近
+      max_lookahead_dist: 1.0         # 1.2→1.0: 配0.45m/s×1.0s
+      lookahead_time: 1.0             # 1.5→1.0: 弯道反应更快
+
+      # 速度缩放前视距离：高速时自动拉远，低速时自动收近
+      use_velocity_scaled_lookahead_dist: true
+
+      # 曲率固定前视：关闭，使用速度自适应
+      use_fixed_curvature_lookahead: false
+      curvature_lookahead_dist: 0.5
+
+      # ==================== 弯道减速（防画龙 + 防侧翻） ====================
+      use_regulated_linear_velocity_scaling: true
+      # 最小转弯半径 0.30m（匹配物理极限，让弯道减速在真正需要时触发）
+      # RPP 检测路径曲率，当转弯半径 < 此值时开始减速
+      regulated_linear_scaling_min_radius: 0.30
+      # 弯道最低速度：0.18m/s 确保弯道不抖，同时不会因减速过多而停滞
+      regulated_linear_scaling_min_speed: 0.18
+
+      # ==================== 代价调控主动减速 — 替代碰撞检测 ====================
+      # 在窄通道+锥桶场景，碰撞检测频繁误触发→停车→规划失败→恢复→再撞的恶性循环
+      # 改用障碍物距离线性减速：越靠近越慢，比碰撞检测更平滑，不会突然停车
+      # 代价调控公式: speed_factor = 1 - gain × max(0, dist - cost_scaling_dist) / cost_scaling_dist
+      use_cost_regulated_linear_velocity_scaling: true
+      cost_scaling_dist: 0.12            # 必须 ≤ inflation_radius(0.12), 环道窄, 缩小膨胀
+      cost_scaling_gain: 2.0
+      inflation_cost_scaling_factor: 5.0
+
+      # ==================== 碰撞检测：关闭 ====================
+      # ★ 在窄通道(0.5m)+PVC锥桶(30cm)的场景下，碰撞检测频繁误触发
+      # 代价调控减速（上方）已提供更平滑的障碍物响应，不需要碰撞检测的"急停"机制
+      # 若比赛场地有高速碰撞风险，可在比赛当天通过动态参数重新启用
+      use_collision_detection: true
+
+      # ==================== 接近目标减速 ====================
+      # 0.7m/s → 0.10m/s 平滑过渡，0.8m 开始减速（比原 0.6m 更早，匹配更高巡航速度）
+      min_approach_linear_velocity: 0.10
+      approach_velocity_scaling_dist: 0.8
+
+      # ==================== 阿克曼原地旋转：关闭（必须！） ====================
+      # 阿克曼车无法原地旋转，此参数必须为 false
+      use_rotate_to_heading: false
+      rotate_to_heading_angular_vel: 0.5
+      rotate_to_heading_min_angle: 0.785   # 45°
+
+      # ==================== 倒车支持 ====================
+      # 配合 SmacPlanner REEDS_SHEPP，允许在路径包含倒车段时执行
+      # 阿克曼车在窄空间被堵时必须能倒车绕行
+      allow_reversing: true
+
+      # ==================== 路径插值与 TF 容差 ====================
+      use_interpolation: true
+      # ★ 关键修复：从 10.0 降至 1.0，防止路径自交/重叠时 RPP 在路径上找到错误的最远点导致绕圈
+      max_robot_pose_search_dist: 1.0
+      transform_tolerance: 0.2
+
+controller_server_rclcpp_node:
+  ros__parameters:
+    use_sim_time: False
+
+# =============================================================================
+# Local Costmap — 配合 RPP 代价调控的参数
+# =============================================================================
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      update_frequency: 5.0
+      publish_frequency: 2.0
+      global_frame: odom
+      robot_base_frame: base_footprint
+      use_sim_time: False
+      rolling_window: true
+      width: 3
+      height: 3
+      resolution: 0.05
+      # 多边形footprint: 车体276×189mm + 前方相机14cm
+      # 前方+0.15m≈相机位置, 后方-0.12m, 左右±0.10m≈车宽
+      robot_footprint: "[ [0.15, -0.10], [0.15, 0.10], [-0.12, 0.10], [-0.12, -0.10] ]"
+      plugins: ["obstacle_layer", "keepout_filter", "inflation_layer"]
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        # 0.12m膨胀半径, 环道窄缩小膨胀给车更大活动空间
+        inflation_radius: 0.12
+        # 5.0陡衰减：代价从障碍物快速衰减
+        cost_scaling_factor: 5.0
+      keepout_filter:
+        plugin: "nav2_costmap_2d::KeepoutFilter"
+        enabled: True
+        filter_info_topic: "/costmap_filter_info"
+        override_lethal_cost: True          # PR #5187: 误入禁区时降为高代价可通行
+        lethal_override_cost: 252           # MAX_NON_OBSTACLE, 最优先逃离但可通行
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: True
+        observation_sources: scan aurora_points
+        scan:
+          topic: /scan
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "LaserScan"
+        aurora_points:
+          topic: /aurora/points2
+          sensor_frame: depth_camera_link
+          data_type: "PointCloud2"
+          marking: True
+          clearing: False
+          obstacle_range: 2.5
+          raytrace_range: 3.0
+          max_obstacle_height: 0.35
+          min_obstacle_height: 0.05
+          # 提高持久化到 0.5s：过滤深度相机单帧噪点，减少误标记导致的不必要避障减速
+          # 代价是移动障碍物标记略有延迟，但竞赛场景下锥桶/动态障碍物速度不高
+          observation_persistence: 0.5
+          # 点云更新率由相机帧率决定(15fps≈0.067s), 无需严格频率检查
+          # 设置0.0禁用: observation_persistence=0.5s 已处理数据过期
+          expected_update_rate: 0.0
+      always_send_full_costmap: True
+  local_costmap_client:
+    ros__parameters:
+      use_sim_time: False
+  local_costmap_rclcpp_node:
+    ros__parameters:
+      use_sim_time: False
+
+# =============================================================================
+# Global Costmap
+# =============================================================================
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      update_frequency: 1.0
+      publish_frequency: 1.0
+      global_frame: map
+      robot_base_frame: base_footprint
+      use_sim_time: False
+      # 与local costmap一致, 多边形footprint含深度相机
+      robot_footprint: "[ [0.15, -0.10], [0.15, 0.10], [-0.12, 0.10], [-0.12, -0.10] ]"
+      resolution: 0.05
+      track_unknown_space: true          # 允许规划器穿越静态地图中的未知区域
+      transform_tolerance: 0.5           # TF 容差，避免因TF延迟跳过costmap更新
+      plugins: ["static_layer", "obstacle_layer", "keepout_filter", "inflation_layer"]
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: True
+        observation_sources: scan aurora_points
+        scan:
+          topic: /scan
+          max_obstacle_height: 2.0
+          clearing: True
+          marking: True
+          data_type: "LaserScan"
+        aurora_points:
+          topic: /aurora/points2
+          sensor_frame: depth_camera_link
+          data_type: "PointCloud2"
+          marking: True
+          clearing: False
+          obstacle_range: 2.5
+          raytrace_range: 3.0
+          max_obstacle_height: 0.35
+          min_obstacle_height: 0.05
+          observation_persistence: 0.5
+          expected_update_rate: 0.0
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_subscribe_transient_local: True
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        inflation_radius: 0.12          # 0.15→0.12, 环道窄, 缩小膨胀给车更多空间
+        cost_scaling_factor: 5.0
+      keepout_filter:
+        plugin: "nav2_costmap_2d::KeepoutFilter"
+        enabled: True
+        filter_info_topic: "/costmap_filter_info"
+        override_lethal_cost: True
+        lethal_override_cost: 252
+      always_send_full_costmap: True
+  global_costmap_client:
+    ros__parameters:
+      use_sim_time: False
+  global_costmap_rclcpp_node:
+    ros__parameters:
+      use_sim_time: False
+
+# =============================================================================
+# Planner Server — SmacPlannerHybrid (阿克曼运动学全局规划)
+# 终点进场: analytic_expansion_max_length 给小车预留 1.5m 缓冲
+# Reeds-Shepp 曲线确保到达终点时朝向与目标姿态一致
+# =============================================================================
+planner_server:
+  ros__parameters:
+    expected_planner_frequency: 10.0
+    use_sim_time: False
+    planner_plugins: ["GridBased"]
+    GridBased:
+      plugin: "nav2_smac_planner/SmacPlannerHybrid"
+
+      # ---- 运动模型：REEDS_SHEPP 前进+后退（阿克曼窄空间被锥桶堵住时必须能倒车绕行） ----
+      motion_model_for_search: "REEDS_SHEPP"
+
+      # ---- 阿克曼关键约束 ----
+      # 最小转弯半径：0.30m（origincarPro: wheelbase=0.143, max_steer≈28°）
+      minimum_turning_radius: 0.30
+
+      # ---- 目标容差 ----
+      # 从0.15放宽到0.5，减少规划器为精确匹配目标位姿而产生绕圈路径
+      tolerance: 0.5
+
+      # ---- 角度离散化：ARM 板 48 bins，降低搜索分支以加速 ----
+      angle_quantization_bins: 48
+
+      # ---- 搜索限制（ARM Cortex-A55 严格限制，确保规定时间内返回） ----
+      max_iterations: 2000               # 上限 2000 次迭代, 防止 Cortex-A55 过长时间搜索
+      max_on_approach_iterations: 300    # 接近目标时减少迭代
+      max_planning_time: 3.0             # 3秒超时, 竞赛场景需快速失败重试
+      terminal_checking_interval: 500    # 默认值，频繁检查是否到达目标
+
+      # ---- 启发式查找表（ARM 优化） ----
+      # 小场地：查找表 10m 足够覆盖 5m×5m 场地（对角线 ~7m）
+      lookup_table_size: 10.0
+
+      # ---- 解析扩展：终点进场对齐的核心 ----
+      analytic_expansion_ratio: 2.0       # 更频繁尝试解析扩展（ARM 快速终止搜索）
+      # 解析扩展最大长度 = 5 × min_turning_radius = 1.5m
+      analytic_expansion_max_length: 1.5
+      analytic_expansion_max_cost: 150.0
+      analytic_expansion_max_cost_override: false
+
+      # ---- 阿克曼专属惩罚 ----
+      reverse_penalty: 15.0             # 倒车惩罚：大幅提高以抑制路点处 Reeds-Shepp cusp 倒车
+      change_penalty: 2.0               # 方向切换惩罚：提高以惩罚频繁前进↔后退方向切换
+      non_straight_penalty: 3.0         # 弧线惩罚：折中值，允许适度弯道但不蜿蜒
+      cost_penalty: 1.8                 # 代价区域惩罚
+
+      # ---- 启发性缓存（竞赛场景目标不固定，建议关闭以加速启动） ----
+      # 关闭后 configure() 无需预计算全状态空间，启动从 72s 降至 ~5s
+      # 若竞赛目标固定不变，可重新启用以获得 40x 重规划加速
+      cache_obstacle_heuristic: false
+
+      # ---- 路径平滑 ----
+      smooth_path: true
+      smoother:
+        max_iterations: 500
+        w_smooth: 0.3
+        w_data: 0.2
+        tolerance: 1.0e-10
+        do_refinement: true
+
+      # ---- 其他 ----
+      downsample_costmap: true             # 2x降采样: 100×100→50×50 格, 搜索空间↓75%, ARM大幅加速
+      downsampling_factor: 2               # 5cm→10cm分辨率, 5m×5m小场地精度足够
+      allow_unknown: true
+      debug_visualizations: false
+
+planner_server_rclcpp_node:
+  ros__parameters:
+    use_sim_time: False
+
+# =============================================================================
+# Recovery Server — 阿克曼专用（无 Spin！）
+# =============================================================================
+recoveries_server:
+  ros__parameters:
+    costmap_topic: local_costmap/costmap_raw
+    footprint_topic: local_costmap/published_footprint
+    cycle_frequency: 10.0
+    recovery_plugins: ["backup", "wait"]
+    backup:
+      plugin: "nav2_recoveries/BackUp"
+      backup_dist: 0.3
+      backup_speed: 0.12
+    wait:
+      plugin: "nav2_recoveries/Wait"
+      wait_duration: 3.0
+    global_frame: odom
+    robot_base_frame: base_footprint
+    transform_timeout: 0.1
+    use_sim_time: False
+    simulate_ahead_time: 2.0
+
+# =============================================================================
+# Smoother Server — Constrained Smoother (DUBIN 路径优化)
+# 专为阿克曼运动学设计，同时优化平滑度、障碍物距离、最小转弯半径
+# ARM 板精简配置: 降低采样因子、减少迭代次数
+# =============================================================================
+smoother_server:
+  ros__parameters:
+    use_sim_time: False
+    smoother_plugins: ["SmoothPath"]
+
+    SmoothPath:
+      plugin: "nav2_constrained_smoother/ConstrainedSmoother"
+
+      # ---- 阿克曼运动学 ----
+      reversing_enabled: true              # REEDS_SHEPP模式支持倒车段，平滑器也优化倒车路径
+      minimum_turning_radius: 0.30         # 与 SmacPlanner 一致
+
+      # ---- 起点/终点保护 ----
+      keep_start_orientation: true         # 起点朝向不参与优化
+      keep_goal_orientation: true          # 终点朝向不参与优化（结构扫描精度）
+
+      # ---- 降采样（ARM 性能优化） ----
+      path_downsampling_factor: 2          # 从3降至2：避免过度降采样导致路径点退化→Ceres NaN
+      path_upsampling_factor: 1            # 用三次贝塞尔曲线恢复到原始粒度
+
+      # ---- 优化权重（经 PR #3341 验证的最优值） ----
+      w_smooth: 2000000.0                  # 平滑度权重（最大值优先路径平滑）
+      w_cost: 0.015                        # 代价地图排斥权重（避开障碍物）
+      w_curve: 20.0                        # 从30.0放宽到20.0，减少过度约束转弯半径，避免平滑器产生额外弧线
+      w_dist: 0.0                          # 不绑定原始路径（允许偏离以避开障碍物）
+
+      # ---- 倒车点附近加强避障 ----
+      w_cost_cusp_multiplier: 3.0          # 前进↔后退切换点附近，代价权重×3
+      cusp_zone_length: 2.5                # cusp 区域长度 (m)
+
+      # ---- 优化器（ARM 板适度优化） ----
+      optimizer:
+        max_iterations: 70                 # 恢复默认值，配合path_downsampling=2有足够迭代收敛
+        debug_optimizer: false
+        gradient_tol: 5000.0               # 不用科学记数法(5.0e3)，避免 rcl_yaml 解析为 string
+        fn_tol: 1.0e-15
+        param_tol: 1.0e-20
+
+smoother_server_rclcpp_node:
+  ros__parameters:
+    use_sim_time: False
+
+# =============================================================================
+# 其余节点
+# =============================================================================
+map_server:
+  ros__parameters:
+    use_sim_time: False
+    yaml_filename: "my_map.yaml"
+
+map_saver:
+  ros__parameters:
+    use_sim_time: False
+    save_map_timeout: 5000
+    free_thresh_default: 0.25
+    occupied_thresh_default: 0.65
+
+waypoint_follower:
+  ros__parameters:
+    use_sim_time: False
+    loop_rate: 20
+    stop_on_failure: false
+    waypoint_task_executor_plugin: "wait_at_waypoint"
+    wait_at_waypoint:
+      plugin: "nav2_waypoint_follower::WaitAtWaypoint"
+      enabled: True
+      waypoint_pause_duration: 200
+
+# =============================================================================
+# Velocity Smoother — 必须与 RPP 的 max_linear_vel 一致或更大
+# 默认 max_velocity=[0.5,0.0,2.0] 会限制 0.60 m/s，故显式配置
+# =============================================================================
+velocity_smoother:
+  ros__parameters:
+    use_sim_time: False
+    smoothing_frequency: 20.0
+    scale_velocities: false
+    feedback: "OPEN_LOOP"
+    max_velocity: [0.85, 0.0, 2.8]
+    min_velocity: [-0.30, 0.0, -2.8]
+    max_accel: [1.5, 0.0, 2.5]
+    max_decel: [-1.8, 0.0, -2.5]
+    odom_topic: "odom"
+    odom_duration: 0.1
+    deadband_velocity: [0.0, 0.0, 0.0]
+    velocity_timeout: 1.0
+
+robot_state_publisher:
+  ros__parameters:
+    use_sim_time: False

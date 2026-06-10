@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+
+<!--
+  @package origincar_base
+  @brief OriginCar 机器人底层驱动 ROS2 功能包配置文件
+  @details 该文件定义了 origincar_base 功能包的元数据、依赖关系和构建规则
+  
+  功能包说明:
+    - 提供与 STM32 下位机的串口通信
+    - IMU 数据采集与处理
+    - 里程计解算与发布
+    - 速度控制指令接收与执行
+-->
+<package format="3">
+  <!-- 功能包名称 -->
+  <name>origincar_base</name>
+  
+  <!-- 版本号 -->
+  <version>0.0.0</version>
+  
+  <!-- 功能包描述 -->
+  <description>ROS2 origincar_base for origincar_base</description>
+  
+  <!-- 维护者信息 -->
+  <maintainer email="ps-micro@todo.todo">ps-micro</maintainer>
+  
+  <!-- 许可证（待声明） -->
+  <license>TODO: License declaration</license>
+
+  <!-- ============ 构建工具依赖 ============ -->
+  <!-- 使用 ament_cmake 作为构建系统 -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- ============ 测试依赖 ============ -->
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+  
+  <!-- ============ TF2 几何变换依赖 ============ -->
+  <!-- 构建导出依赖：用于坐标变换的几何消息类型 -->
+  <build_export_depend>tf2_geometry_msgs</build_export_depend>
+
+  <!-- ============ ROS IDL 接口生成器 ============ -->
+  <!-- 用于生成自定义消息和服务的接口代码 -->
+  <buildtool_depend>rosidl_default_generators</buildtool_depend>
+  <!-- 声明为 ROS IDL 接口功能包 -->
+  <member_of_group>rosidl_interface_packages</member_of_group>
+  <!-- 构建时依赖 tf2 几何消息 -->
+  <build_depend>tf2_geometry_msgs</build_depend>
+
+  <!-- ============ 运行时依赖 ============ -->
+  <!-- ROS IDL 默认运行时 -->
+  <exec_depend>rosidl_default_runtime</exec_depend>
+  
+  <!-- ============ 核心 ROS2 依赖 ============ -->
+  <!-- Ament C++ 索引（用于查找功能包） -->
+  <depend>ament_index_cpp</depend>
+  <!-- 几何消息（Twist, Pose 等） -->
+  <depend>geometry_msgs</depend>
+  <!-- ROS2 C++ 客户端库 -->
+  <depend>rclcpp</depend>
+  <!-- ROS2 Action 支持 -->
+  <depend>rclcpp_action</depend>
+  <!-- 传感器消息（IMU, JointState 等） -->
+  <depend>sensor_msgs</depend>
+  <!-- 标准消息类型（Int32, Float32 等） -->
+  <depend>std_msgs</depend>
+  <!-- 标准服务类型 -->
+  <depend>std_srvs</depend>
+  
+  <!-- ============ TF2 坐标变换依赖 ============ -->
+  <!-- TF2 核心库 -->
+  <depend>tf2</depend>
+  <!-- TF2 ROS 接口（静态变换发布器等） -->
+  <depend>tf2_ros</depend>
+  <!-- TF2 消息类型（TFMessage 等） -->
+  <depend>tf2_msgs</depend>
+  
+  <!-- ============ Python 支持 ============ -->
+  <!-- ROS2 Python 客户端库（用于 Python 脚本） -->
+  <depend>rclpy</depend>
+  
+  <!-- ============ 串口通信依赖 ============ -->
+  <!-- 串口通信库（与 STM32 通信） -->
+  <depend>serial</depend>
+  
+  <!-- ============ 导航相关依赖 ============ -->
+  <!-- Nav2 导航消息 -->
+  <depend>nav2_msgs</depend>
+  <!-- 里程计消息 -->
+  <depend>nav_msgs</depend>
+  <!-- Ackermann 转向模型消息 -->
+  <depend>ackermann_msgs</depend>
+  
+  <!-- ============ 内部功能包依赖 ============ -->
+  <!-- OriginCar 自定义消息包 -->
+  <depend>origincar_msg</depend>
+  <!-- OriginCar 机器人描述包（URDF 模型） -->
+  <depend>origincar_description</depend>
+  <!-- 机器人定位包（EKF 里程计融合） -->
+  <depend>robot_localization</depend>
+  
+  <!-- ============ 测试依赖 ============ -->
+  <!-- Boost 测试库 -->
+  <test_depend>boost</test_depend>
+  
+  <!-- ============ 导出配置 ============ -->
+  <export>
+    <!-- 指定构建类型为 ament_cmake -->
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

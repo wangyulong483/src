@@ -1,0 +1,79 @@
+<root main_tree_to_execute="MainTree">
+  <!--
+  ============================================================================
+  Behavior Tree: DWA + 阿克曼 专用 (Humble 兼容版)
+  - 无 Spin 恢复（阿克曼不可原地旋转）
+  - 无 SmoothPath（DWA 使用 SimpleSmoother, 路径平滑由全局规划器负责）
+  - 恢复优先级：ClearCostmap → BackUp → Wait → 无碰撞检测强制后退 → BackUp
+  - 最多重试 6 次
+  - simulate_ahead_time 已从 2.0s 降至 0.5s（减少碰撞投影误报）
+  - footprint_clearing_enabled 已启用（清除自标记障碍物）
+  ============================================================================
+  -->
+  <BehaviorTree ID="MainTree">
+
+    <RecoveryNode number_of_retries="6" name="NavigateRecovery">
+
+      <PipelineSequence name="NavigateWithReplanning">
+
+        <RateController hz="0.5">
+          <RecoveryNode number_of_retries="1" name="ComputePathToPose">
+            <ComputePathToPose goal="{goal}" path="{path}" planner_id="GridBased"/>
+            <Fallback name="ComputePathToPoseRecoveryFallback">
+              <GoalUpdated/>
+              <ClearEntireCostmap name="ClearGlobalCostmap-Context"
+                                  service_name="global_costmap/clear_entirely_global_costmap"/>
+            </Fallback>
+          </RecoveryNode>
+        </RateController>
+
+        <RecoveryNode number_of_retries="1" name="FollowPath">
+          <FollowPath path="{path}" controller_id="FollowPath"/>
+          <Fallback name="FollowPathRecoveryFallback">
+            <GoalUpdated/>
+            <ClearEntireCostmap name="ClearLocalCostmap-Context"
+                                service_name="local_costmap/clear_entirely_local_costmap"/>
+          </Fallback>
+        </RecoveryNode>
+
+      </PipelineSequence>
+
+      <!--
+      系统级恢复 (RoundRobin):
+      1. 清理代价地图（去除自标记 + 膨胀误报）
+      2. 保守后退 0.15m（碰撞检测开启，simulate_ahead_time=0.5s 减少误报）
+      3. 等待 3s（动态障碍物移走）
+      4. 清图 + 无碰撞检测强制后退 0.10m（最后兜底，绕开假阳性碰撞）
+      5. 标准后退 0.25m（二次尝试）
+      -->
+      <Fallback name="RecoveryFallback">
+        <GoalUpdated/>
+        <RoundRobin name="RecoveryActions">
+          <Sequence name="ClearingActions">
+            <ClearEntireCostmap name="ClearLocalCostmap-Subtree"
+                                service_name="local_costmap/clear_entirely_local_costmap"/>
+            <ClearEntireCostmap name="ClearGlobalCostmap-Subtree"
+                                service_name="global_costmap/clear_entirely_global_costmap"/>
+          </Sequence>
+          <BackUp name="BackUpRecovery"
+                  backup_dist="0.15"
+                  backup_speed="0.08"/>
+          <Wait wait_duration="3.0"/>
+          <Sequence name="ForceBackupEscape">
+            <ClearEntireCostmap name="ClearLocal-Force"
+                                service_name="local_costmap/clear_entirely_local_costmap"/>
+            <DriveOnHeading name="ForceBackup"
+                            dist_to_travel="-0.10"
+                            speed="0.05"
+                            disable_collision_checks="true"/>
+          </Sequence>
+          <BackUp name="BackUpRetry"
+                  backup_dist="0.25"
+                  backup_speed="0.08"/>
+        </RoundRobin>
+      </Fallback>
+
+    </RecoveryNode>
+
+  </BehaviorTree>
+</root>

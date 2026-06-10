@@ -1,0 +1,29 @@
+.claude
+.learnings
+.mcp.json
+CLAUDE.md
+errors.log
+
+# 过滤 Python 编译缓存
+**/__pycache__/
+*.pyc
+
+# 过滤 ROS2 编译出来的本地日志
+deployments.log
+
+# 如果你在本地编译过，过滤这些（虽然目前看你的目录很干净）
+build/
+install/
+log/
+
+# 关键：过滤超过 100MB 无法直接上传 GitHub 的大文件
+# 你的 yolov5s_4_13.bin 如果超过限制，Git 会在推送时报错
+*.bin
+
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+build/
+install/
+log/

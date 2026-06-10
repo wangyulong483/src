@@ -1,0 +1,41 @@
+# control_params.yaml — 共享控制参数
+# 被 base_minimal.launch.py 和 bringup.launch.py 引用, 消除重复硬编码
+#
+# cmd_vel_mux: /cmd_vel 优先级多路复用器
+# velocity_pid: 速度环 PID 校正节点
+
+cmd_vel_mux:
+  ros__parameters:
+    # 输入优先级 (0~255, 越大越优先)
+    nav_priority: 10
+    nav_timeout: 0.5
+    pid_priority: 20
+    pid_timeout: 0.3
+    stop_priority: 255
+    stop_timeout: 0.5
+
+velocity_pid:
+  ros__parameters:
+    # 线速度 PID 增益 (2026-06-10 retune: Ki×4 补偿积分双计 bug 修复)
+    # 旧 bug：增量式维护独立积分累加器同时加 Ki*error, 有效积分增益 ~5x
+    # 新算法：纯增量式 Δu=Kp*Δe+Ki*e*dt+Kd*Δ²e/dt, Ki 即标称值
+    kp_vx: 0.8
+    ki_vx: 0.6       # 曾为 0.15 (有效 ~0.75, bug→×5)
+    kd_vx: 0.05
+
+    # 角速度 PID 增益
+    kp_wz: 1.0
+    ki_wz: 0.4       # 曾为 0.1  (有效 ~0.5,  bug→×5)
+    kd_wz: 0.02
+
+    # 输出限幅
+    max_vx: 0.85
+    max_wz: 2.8
+
+    # 积分限幅系数: max_i = max_out × max_i_fraction
+    # 独立限幅防止机器人被卡住时积分饱和 (integral windup)
+    max_i_fraction: 0.8
+
+    # 其它
+    feedback_timeout: 0.5
+    enable_pid: true

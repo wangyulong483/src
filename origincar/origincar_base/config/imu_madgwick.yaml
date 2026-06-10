@@ -1,0 +1,24 @@
+# imu_madgwick.yaml — Madgwick AHRS 滤波器参数
+# 配合 imu_madgwick_filter.py (origincar_bringup) 使用
+# 输入: /imu/data_raw (STM32 MPU6050 + Mahony)
+# 输出: /imu/data/madgwick (Madgwick 二次滤波)
+
+imu_madgwick_filter:
+    ros__parameters:
+        # Madgwick 滤波器增益 (beta)
+        # 0.01 = 强信任加速度计, 适合静态/低速
+        # 0.033 = 默认值, MPU6050@100Hz 最优 (Madgwick 原始论文推荐)
+        # 0.1 = 强信任陀螺仪, 适合动态/高速
+        # 0.5 = 几乎纯陀螺仪积分 (≈ Mahony Ki=0, 不推荐)
+        gain: 0.033
+
+        # 滤波器设计频率 (Hz), 仅用于协方差缩放, 不影响实际更新率
+        frequency: 100.0
+
+        # 陀螺仪测量噪声标准差 (rad/s)
+        # MPU6050: 0.05 deg/s RMS ≈ 0.00087 rad/s, 取 0.001
+        gyro_noise: 0.001
+
+        # 加速度计测量噪声标准差 (m/s^2)
+        # MPU6050: ~300 ug/√Hz, 取 0.05 含振动余量
+        accel_noise: 0.05

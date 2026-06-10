@@ -1,0 +1,44 @@
+# bmi088_imu.yaml — RDK X5 板载 BMI088 IMU 配置
+# 配合 hobot_imu_sensor 包使用
+# 输入: BMI088 硬件 (I2C bus1)
+# 输出: /imu_data (sensor_msgs/Imu, 含角速度 + 加速度, 无姿态)
+#
+# BMI088 vs MPU6050:
+#   - 陀螺噪声: <0.005°/s/√Hz (MPU6050 的 ~1/10)
+#   - 陀螺零偏: <2°/h (汽车级)
+#   - 加速度计噪声: 230µg/√Hz
+#   - 温漂: 0.015°/s/K (陀螺), 0.2mg/K (加计)
+
+imu_sensor:
+  ros__parameters:
+    # 传感器型号
+    name: "bmi088"
+
+    # I2C 总线编号 (RDK X5 40pin: SDA=pin3, SCL=pin5 → I2C-1)
+    i2c_bus: 1
+
+    # 加速度计量程 (g): 3, 6, 12, 24
+    # 12g 适合地面机器人 (兼顾精度和量程)
+    acc_range: 12
+
+    # 陀螺仪量程 (deg/s): 125, 250, 500, 1000, 2000
+    # 1000 deg/s 适合阿克曼转向 (最大角速度 ~160 deg/s 已有足够余量)
+    gyro_range: 1000
+
+    # 加速度计低通滤波带宽 (Hz)
+    # 40Hz: 机器人运动频率通常 <20Hz, 2x 余量过滤振动
+    acc_bandwidth: 40
+
+    # 陀螺仪低通滤波带宽 (Hz)
+    # 40Hz: 匹配加速度计, 抑制电机高频振动
+    gyro_bandwidth: 40
+
+    # IMU 数据就绪延迟 (ms)
+    # Bosch datasheet 典型值: 7ms @ 40Hz bandwidth
+    group_delay: 7
+
+    # 数据读取路径 (内核 IIO 驱动暴露)
+    imu_data_path: "/dev/input/event2"
+
+    # 虚拟设备路径 (初始化用)
+    imu_virtual_path: "/sys/devices/virtual/input/input0/"

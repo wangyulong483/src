@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<robot name="mycar_laser">
+
+  <!-- 地面投影：通常作为里程计发布的目标 frame，方便导航 -->
+  <link name="base_footprint">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.01"/>
+      </geometry>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <!-- 车体主体 -->
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="0.276 0.164 0.08"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0.07"/>
+      <material name="dark_red">
+        <color rgba="0.4 0.039 0.039 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <!-- IMU 惯性测量单元（与 base_footprint 同原点） -->
+  <link name="gyro_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.02 0.02 0.02"/>
+      </geometry>
+      <material name="blue">
+        <color rgba="0 0 0.8 0.5"/>
+      </material>
+    </visual>
+  </link>
+
+  <!-- 激光雷达 -->
+  <link name="laser_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="0.02" radius="0.02"/>
+      </geometry>
+      <material name="black">
+        <color rgba="0 0 0 0.5"/>
+      </material>
+    </visual>
+  </link>
+
+  <!-- 固定关节：base_footprint → gyro_link（IMU 与 base_footprint 重合） -->
+  <joint name="gyro_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="gyro_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- 固定关节：base_footprint → base_link（向上偏移 7cm） -->
+  <joint name="footprint_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0.07" rpy="0 0 0"/>
+  </joint>
+
+  <!-- 固定关节：base_link → laser_link（雷达在车体上方） -->
+  <joint name="laser_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="laser_link"/>
+    <origin xyz="0 0 0.075" rpy="0 0 0"/>
+  </joint>
+
+</robot>
