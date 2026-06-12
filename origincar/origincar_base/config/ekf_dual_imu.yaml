@@ -18,11 +18,11 @@ ekf_filter_node:
         # 117-134ms实测 > 50ms预算, 降频后 66.7ms预算留有安全余量
         frequency: 15.0
         # 2.0→0.1s: 限制每周期缓冲消息量, 防止高负载时消息堆积
-        sensor_timeout: 0.1
+        sensor_timeout: 0.5          # 0.1→0.5: 15Hz下给5周期容错, 防止CPU高载时丢传感器
         two_d_mode: true
         transform_time_offset: 0.0
-        transform_timeout: 0.2
-        print_diagnostics: false
+        transform_timeout: 0.5
+        print_diagnostics: true       # 启用诊断, 可见imu0/imu1/odom0丢帧情况
 
         # ============ 调试参数 ============
         debug: false

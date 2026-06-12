@@ -143,7 +143,7 @@ controller_server:
     goal_checker:
       plugin: "nav2_controller::SimpleGoalChecker"
       xy_goal_tolerance: 0.20          # 从0.15放宽到0.20，避免到达后因微小误差触发重规划绕圈
-      yaw_goal_tolerance: 0.40         # 从0.30放宽到0.40，减少到达目标后的额外旋转
+      yaw_goal_tolerance: 3.14         # 从0.30放宽到0.40，减少到达目标后的额外旋转
       stateful: true                   # 先锁定 XY，再检查 Yaw，防止来回振荡
       symmetric_yaw_tolerance: false
 
@@ -182,9 +182,9 @@ controller_server:
       # 阿克曼前视 ≥ 2×min_turning_radius=0.6m, 否则弯道拐不过来冲禁区
       # 减速后 lookahead_time 缩放也更温和
       lookahead_dist: 0.65            # 0.55→0.65: 满足2×0.30=0.60阿克曼约束
-      min_lookahead_dist: 0.40        # 低速时不能太近
-      max_lookahead_dist: 1.0         # 1.2→1.0: 配0.45m/s×1.0s
-      lookahead_time: 1.0             # 1.5→1.0: 弯道反应更快
+      min_lookahead_dist: 0.55        # 0.40→0.55: 低速高前视
+      max_lookahead_dist: 1.5         # 1.0→1.5: 配合1.8s预览
+      lookahead_time: 1.8             # 1.0→1.8: 预览1.8s, 防振荡
 
       # 速度缩放前视距离：高速时自动拉远，低速时自动收近
       use_velocity_scaled_lookahead_dist: true
@@ -197,7 +197,7 @@ controller_server:
       use_regulated_linear_velocity_scaling: true
       # 最小转弯半径 0.30m（匹配物理极限，让弯道减速在真正需要时触发）
       # RPP 检测路径曲率，当转弯半径 < 此值时开始减速
-      regulated_linear_scaling_min_radius: 0.30
+      regulated_linear_scaling_min_radius: 0.20
       # 弯道最低速度：0.18m/s 确保弯道不抖，同时不会因减速过多而停滞
       regulated_linear_scaling_min_speed: 0.18
 
@@ -214,7 +214,7 @@ controller_server:
       # ★ 在窄通道(0.5m)+PVC锥桶(30cm)的场景下，碰撞检测频繁误触发
       # 代价调控减速（上方）已提供更平滑的障碍物响应，不需要碰撞检测的"急停"机制
       # 若比赛场地有高速碰撞风险，可在比赛当天通过动态参数重新启用
-      use_collision_detection: true
+      use_collision_detection: false
 
       # ==================== 接近目标减速 ====================
       # 0.7m/s → 0.10m/s 平滑过渡，0.8m 开始减速（比原 0.6m 更早，匹配更高巡航速度）
@@ -234,8 +234,7 @@ controller_server:
 
       # ==================== 路径插值与 TF 容差 ====================
       use_interpolation: true
-      # ★ 关键修复：从 10.0 降至 1.0，防止路径自交/重叠时 RPP 在路径上找到错误的最远点导致绕圈
-      max_robot_pose_search_dist: 1.0
+      max_robot_pose_search_dist: -1.0
       transform_tolerance: 0.2
 
 controller_server_rclcpp_node:
@@ -412,10 +411,10 @@ planner_server:
       analytic_expansion_max_cost_override: false
 
       # ---- 阿克曼专属惩罚 ----
-      reverse_penalty: 15.0             # 倒车惩罚：大幅提高以抑制路点处 Reeds-Shepp cusp 倒车
-      change_penalty: 2.0               # 方向切换惩罚：提高以惩罚频繁前进↔后退方向切换
-      non_straight_penalty: 3.0         # 弧线惩罚：折中值，允许适度弯道但不蜿蜒
-      cost_penalty: 1.8                 # 代价区域惩罚
+      reverse_penalty: 4.0             # 倒车惩罚：大幅提高以抑制路点处 Reeds-Shepp cusp 倒车
+      change_penalty: 0.2               # 方向切换惩罚：提高以惩罚频繁前进↔后退方向切换
+      non_straight_penalty: 1.3         # 弧线惩罚：折中值，允许适度弯道但不蜿蜒
+      cost_penalty: 4.0                 # 代价区域惩罚
 
       # ---- 启发性缓存（竞赛场景目标不固定，建议关闭以加速启动） ----
       # 关闭后 configure() 无需预计算全状态空间，启动从 72s 降至 ~5s
@@ -434,7 +433,7 @@ planner_server:
       # ---- 其他 ----
       downsample_costmap: true             # 2x降采样: 100×100→50×50 格, 搜索空间↓75%, ARM大幅加速
       downsampling_factor: 2               # 5cm→10cm分辨率, 5m×5m小场地精度足够
-      allow_unknown: true
+      allow_unknown: false
       debug_visualizations: false
 
 planner_server_rclcpp_node:

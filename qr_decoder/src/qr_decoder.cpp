@@ -17,8 +17,9 @@ public:
     this->declare_parameter<std::string>("rgb_topic", "/aurora/rgb/image_raw");
     this->declare_parameter<std::string>("depth_topic", "/aurora/depth/image_raw");
     this->declare_parameter<bool>("enable_depth_filter", true);
-    this->declare_parameter<int>("depth_min_mm", 150);
-    this->declare_parameter<int>("depth_max_mm", 2000);
+    this->declare_parameter<int>("depth_min_mm", 50);
+    this->declare_parameter<int>("depth_max_mm", 4000);
+    this->declare_parameter<int>("min_qr_length", 1);
     this->declare_parameter<double>("fx", 421.307);
     this->declare_parameter<double>("fy", 422.254);
     this->declare_parameter<double>("cx", 320.27);
@@ -29,6 +30,7 @@ public:
     enable_depth_filter_ = this->get_parameter("enable_depth_filter").as_bool();
     depth_min_mm_ = this->get_parameter("depth_min_mm").as_int();
     depth_max_mm_ = this->get_parameter("depth_max_mm").as_int();
+    min_qr_length_ = this->get_parameter("min_qr_length").as_int();
     fx_ = this->get_parameter("fx").as_double();
     fy_ = this->get_parameter("fy").as_double();
     cx_ = this->get_parameter("cx").as_double();
@@ -49,20 +51,20 @@ public:
       "/odom", 10,
       std::bind(&QrCodeDetection::odomCallback, this, std::placeholders::_1));
 
-    // Configure the ZBar scanner once — avoids recreating it every frame.
-    scanner_.set_config(zbar::ZBAR_NONE, zbar::ZBAR_CFG_ENABLE, 1);
+    scanner_.set_config(zbar::ZBAR_NONE, zbar::ZBAR_CFG_ENABLE, 0);  // disable all
+    scanner_.set_config(zbar::ZBAR_QRCODE, zbar::ZBAR_CFG_ENABLE, 1); // QR only
     scanner_.enable_cache(true);
 
     frame_count_ = 0;
     last_qr_frame_ = -1;
-    qr_detected_this_frame_ = false;
+    consecutive_rejects_ = 0;
 
     RCLCPP_INFO(this->get_logger(),
       "QR decoder (ZBar) started: rgb=%s, depth=%s, filter=%s, range=[%d, %d]mm, "
-      "intrinsics: fx=%.1f fy=%.1f cx=%.1f cy=%.1f",
+      "min_qr_len=%d, intrinsics: fx=%.1f fy=%.1f cx=%.1f cy=%.1f",
       rgb_topic_.c_str(), depth_topic_.c_str(),
       enable_depth_filter_ ? "on" : "off",
-      depth_min_mm_, depth_max_mm_,
+      depth_min_mm_, depth_max_mm_, min_qr_length_,
       fx_, fy_, cx_, cy_);
   }
 
@@ -103,72 +105,81 @@ private:
     cv::Mat gray;
     cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
 
-    zbar::Image zbar_image(gray.cols, gray.rows, "Y800", (uchar *)gray.data, gray.cols * gray.rows);
-
+    // Multi-scale ZBar: original + 0.5x downscale
     frame_count_++;
-    bool found_this_frame = false;
+    zbar::Image zbar_orig(gray.cols, gray.rows, "Y800", (uchar*)gray.data, gray.cols*gray.rows);
+    int n = scanner_.scan(zbar_orig);
 
-    int n = scanner_.scan(zbar_image);
+    if (n == 0) {
+      cv::Mat half;
+      cv::resize(gray, half, cv::Size(), 0.5, 0.5, cv::INTER_AREA);
+      zbar::Image zbar_half(half.cols, half.rows, "Y800", (uchar*)half.data, half.cols*half.rows);
+      n = scanner_.scan(zbar_half);
+      zbar_half.set_data(NULL, 0);
+    }
+
     if (n > 0) {
-      found_this_frame = true;
-
-      // Log QR detection onset (first frame containing QR after a gap)
       if (last_qr_frame_ < 0 || (frame_count_ - last_qr_frame_) > 5) {
         RCLCPP_INFO(this->get_logger(),
           "[qr_decoder] QR DETECTED frame=%d symbols=%d (gap=%d frames)",
-          frame_count_, n,
-          last_qr_frame_ < 0 ? -1 : frame_count_ - last_qr_frame_ - 1);
+          frame_count_, n, last_qr_frame_ < 0 ? -1 : frame_count_ - last_qr_frame_ - 1);
       }
       last_qr_frame_ = frame_count_;
-      for (zbar::Image::SymbolIterator symbol = zbar_image.symbol_begin();
-           symbol != zbar_image.symbol_end(); ++symbol) {
+      for (zbar::Image::SymbolIterator symbol = zbar_orig.symbol_begin();
+           symbol != zbar_orig.symbol_end(); ++symbol) {
+
+        std::string qr_data = symbol->get_data();
+
+        // Layer 1: Content validation — reject short/noise detections
+        if (static_cast<int>(qr_data.length()) < min_qr_length_) {
+          consecutive_rejects_++;
+          RCLCPP_WARN(this->get_logger(),
+            "[qr_decoder] REJECT(length): '%s' len=%zu < min=%d (rejects=%d)",
+            qr_data.c_str(), qr_data.length(), min_qr_length_, consecutive_rejects_);
+          continue;
+        }
+
+        // Layer 2: Depth check — advisory only (depth cam often lags RGB)
+        int loc_size = symbol->get_location_size();
+        int cx = 0, cy = 0;
+        for (int i = 0; i < loc_size; i++) {
+          cx += symbol->get_location_x(i);
+          cy += symbol->get_location_y(i);
+        }
+        cx /= loc_size;
+        cy /= loc_size;
 
         int depth_mm = 0;
+        bool depth_valid = false;
         if (enable_depth_filter_ && !latest_depth_.empty()) {
-          int loc_size = symbol->get_location_size();
-          int cx = 0, cy = 0;
-          for (int i = 0; i < loc_size; i++) {
-            cx += symbol->get_location_x(i);
-            cy += symbol->get_location_y(i);
+          if (cx >= 0 && cx < latest_depth_.cols && cy >= 0 && cy < latest_depth_.rows) {
+            depth_mm = latest_depth_.at<uint16_t>(cy, cx);
+            depth_valid = (depth_mm >= static_cast<uint16_t>(depth_min_mm_) &&
+                           depth_mm <= static_cast<uint16_t>(depth_max_mm_));
           }
-          cx /= loc_size;
-          cy /= loc_size;
+        }
 
-          if (cx < 0 || cx >= latest_depth_.cols || cy < 0 || cy >= latest_depth_.rows) {
-            RCLCPP_WARN(this->get_logger(),
-              "QR center (%d,%d) out of depth bounds (%dx%d), skipping",
-              cx, cy, latest_depth_.cols, latest_depth_.rows);
-            continue;
-          }
-
-          depth_mm = latest_depth_.at<uint16_t>(cy, cx);
-          if (depth_mm <= 0) {
-            RCLCPP_DEBUG(this->get_logger(),
-              "Invalid depth (0) at QR center (%d,%d), skipping", cx, cy);
-            continue;
-          }
-          if (depth_mm < static_cast<uint16_t>(depth_min_mm_) ||
-              depth_mm > static_cast<uint16_t>(depth_max_mm_)) {
-            RCLCPP_DEBUG(this->get_logger(),
-              "QR depth %dmm outside [%d, %d]mm, skipping",
-              depth_mm, depth_min_mm_, depth_max_mm_);
-            continue;
-          }
-
-          // 3D position in camera frame
+        // --- Passed content filter: publish (depth is advisory) ---
+        consecutive_rejects_ = 0;
+        if (depth_valid) {
           double Z = depth_mm / 1000.0;
           double X = (cx - cx_) * Z / fx_;
           double Y = (cy - cy_) * Z / fy_;
-
           RCLCPP_INFO(this->get_logger(),
             "[QR] %s | 3D:(%+.3f, %+.3f, %.3f)m | px(%d,%d) D:%dmm",
-            symbol->get_data().c_str(),
-            X, Y, Z, cx, cy, depth_mm);
+            qr_data.c_str(), X, Y, Z, cx, cy, depth_mm);
+        } else if (enable_depth_filter_) {
+          RCLCPP_INFO(this->get_logger(),
+            "[QR] %s | depth=%dmm (advisory, publishing anyway)",
+            qr_data.c_str(), depth_mm);
+        } else {
+          RCLCPP_INFO(this->get_logger(),
+            "[QR] %s | depth filter off",
+            qr_data.c_str());
         }
 
-        const char *qrCode_msg = symbol->get_data().c_str();
         auto sign_com_msg = std_msgs::msg::String();
-        sign_com_msg.data = qrCode_msg;
+        sign_com_msg.data = qr_data;
         sign_com_pub->publish(std::move(sign_com_msg));
 
         geometry_msgs::msg::PoseStamped pose_msg;
@@ -182,18 +193,16 @@ private:
 
         RCLCPP_INFO(this->get_logger(),
           "[QR] %s | robot_pos: (%.2f, %.2f, yaw=%.2f)",
-          qrCode_msg, odom_x_, odom_y_, odom_yaw_);
+          qr_data.c_str(), odom_x_, odom_y_, odom_yaw_);
       }
     }
-
-    zbar_image.set_data(NULL, 0);
 
     // Periodic scanning status (every 200 frames)
     if (frame_count_ % 200 == 0) {
       int gap = last_qr_frame_ < 0 ? -1 : frame_count_ - last_qr_frame_;
       RCLCPP_INFO(this->get_logger(),
-        "[qr_decoder] SCAN_STATUS frame=%d last_qr_frame=%d gap=%d frames",
-        frame_count_, last_qr_frame_, gap);
+        "[qr_decoder] SCAN_STATUS frame=%d last_qr_frame=%d gap=%d frames rejects=%d",
+        frame_count_, last_qr_frame_, gap, consecutive_rejects_);
     }
   }
 
@@ -202,6 +211,7 @@ private:
   bool enable_depth_filter_;
   int depth_min_mm_;
   int depth_max_mm_;
+  int min_qr_length_;
   double fx_, fy_, cx_, cy_;
   cv::Mat latest_depth_;
 
@@ -213,8 +223,8 @@ private:
   double odom_x_ = 0.0, odom_y_ = 0.0, odom_yaw_ = 0.0;
   zbar::ImageScanner scanner_;
   int frame_count_ = 0;
-  int last_qr_frame_ = -1;       // frame number when QR was last detected
-  bool qr_detected_this_frame_ = false;
+  int last_qr_frame_ = -1;
+  int consecutive_rejects_ = 0;
 };
 
 int main(int argc, char *argv[])

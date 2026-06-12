@@ -1,6 +1,6 @@
 import os
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, TimerAction
+from launch.actions import IncludeLaunchDescription, TimerAction, OpaqueFunction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
@@ -14,6 +14,18 @@ stage3_bringup.launch.py — Stage 3 总启动文件
   t=4s → competition_master_stage3 (QR→入口→巡航→VLM→返航)
   t=8s → RViz2 (地图查看)
 """
+
+def _vision_ai_if_available(context):
+    try:
+        get_package_share_directory('racing_vision_ai')
+    except Exception:
+        return []
+    return [Node(
+        package='racing_vision_ai',
+        executable='vision_ai_node',
+        name='vision_ai_node',
+        output='screen',
+    )]
 
 def generate_launch_description():
     origincar_bringup_dir = get_package_share_directory('origincar_bringup')
@@ -31,6 +43,7 @@ def generate_launch_description():
                     os.path.join(origincar_bringup_dir, 'launch', 'camera_all.launch.py')
                 )
             ),
+            OpaqueFunction(function=_vision_ai_if_available),  # VLM视觉AI节点
         ]),
 
         TimerAction(period=1.0, actions=[

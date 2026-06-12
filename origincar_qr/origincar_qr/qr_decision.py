@@ -49,14 +49,17 @@ class QrDecisionNode(Node):
         if not text:
             return
 
-        try:
-            num = int(text)
-        except ValueError:
-            self.get_logger().debug(f"Non-integer QR content: '{text}'")
+        # ── 格式验证: 仅接受 1~4 位纯数字 (范围 1~9999) ──
+        if not text.isdigit() or len(text) < 1 or len(text) > 4:
+            self.get_logger().info(
+                f"[qr_decision] REJECT non-4-digit QR: '{text}' "
+                f"(len={len(text)}, digit={text.isdigit()})",
+                throttle_duration_sec=2.0)
             return
 
+        num = int(text)
         if not (1 <= num <= 9999):
-            self.get_logger().debug(f"QR number out of range [1,9999]: {num}")
+            self.get_logger().debug(f"QR number out of valid range [1,9999]: {num}")
             return
 
         now = self.get_clock().now()

@@ -11,12 +11,12 @@ from ament_index_python import get_package_share_directory
 def generate_launch_description():
     # === QR深度过滤参数 ===
     depth_min_arg = DeclareLaunchArgument(
-        'depth_min_mm', default_value='150',
-        description='最小深度(mm)，小于此距离的QR码被过滤'
+        'depth_min_mm', default_value='50',
+        description='最小深度(mm), 近距离QR(5cm+)允许扫描'
     )
     depth_max_arg = DeclareLaunchArgument(
-        'depth_max_mm', default_value='2000',
-        description='最大深度(mm)，大于此距离的QR码被过滤（半场范围）'
+        'depth_max_mm', default_value='4000',
+        description='最大深度(mm)，半场范围需要4m'
     )
     depth_min_mm = LaunchConfiguration('depth_min_mm')
     depth_max_mm = LaunchConfiguration('depth_max_mm')
@@ -39,7 +39,7 @@ def generate_launch_description():
         launch_arguments={
             'rgb_enable': 'true',
             'depth_enable': 'true',
-            'ir_enable': 'false',
+            'ir_enable': 'true',     # IR=深度传感器, 必须开启才有 /aurora/points2 和 /aurora/depth/image_raw
             'point_cloud_enable': 'true',
             'rgb_fps': '15',
             'ir_fps': '15',

@@ -23,27 +23,36 @@ from origincar_msg.msg import Data
 
 
 class IncrementalPID:
-    """增量式 (velocity form) PID 控制器，带独立积分限幅.
+    """增量式 (velocity form) PID 控制器，带条件积分 + 反算抗饱和.
 
-    数学等价形式 (位置式分解):
-        u(k) = Kp * e(k) + I(k) + Kd * [e(k) - e(k-1)] / dt
+    u(k) = Kp * e(k) + I(k) + Kd * [e(k) - e(k-1)] / dt
 
-        其中 I(k) = clamp( I(k-1) + Ki * e(k) * dt,  -max_i, max_i )
-
-    此形式与经典增量式 (Δu = Kp*Δe + Ki*e*dt + Kd*Δ²e/dt, u += Δu)
-    在无积分限幅时数值等价，但允许通过 max_i 对积分项独立限幅，
-    防止机器人被卡住时积分饱和 (integral windup)。
+    抗饱和 (Astrom & Hagglund 反算跟踪法):
+      - 正常: I(k) = I(k-1) + Ki * e(k) * dt
+      - 饱和且 windup: I(k) += Ki*e*dt + (1/Tt)*(u_clamped - u_unsaturated)*dt
+        反算项将积分器拉回饱和边界，主动加速退饱和
+      - 饱和但自然退绕 (u*e <= 0): 正常积分，允许积分器自行修正
+      - 独立积分限幅 max_i 作为安全网
+    Tt = sqrt(Kd/Ki) = sqrt(Ti*Td)，对 PI 退化为 Ti/2 = Kp/(2*Ki)
     """
 
-    def __init__(self, kp, ki, kd, max_out, max_i):
+    def __init__(self, kp, ki, kd, max_out, max_i, deadband=0.0):
         self.kp = kp
         self.ki = ki
         self.kd = kd
         self.max_out = max_out
         self._max_i = max_i
+        self._deadband = deadband
         self._e = [0.0, 0.0, 0.0]        # e(k), e(k-1), e(k-2)
         self._out = 0.0
         self._integral = 0.0              # 独立积分累加器 (受 max_i 限幅)
+        # 跟踪时间常数: sqrt(Kd/Ki) for PID, Kp/(2*Ki) for PI (PI: Kd→0 时使用)
+        if kd > 0.0 and ki > 0.0:
+            self._Tt = max((kd / ki) ** 0.5, 0.05)
+        elif ki > 0.0:
+            self._Tt = max(kp / (2.0 * ki), 0.05)
+        else:
+            self._Tt = 0.1
 
     def reset(self):
         self._e = [0.0, 0.0, 0.0]
@@ -57,14 +66,34 @@ class IncrementalPID:
         # 移位误差历史
         self._e[2] = self._e[1]
         self._e[1] = self._e[0]
-        self._e[0] = target - actual
+        error = target - actual
+        # 误差死区: 微小误差清零, 防止积分抖动
+        if abs(error) < self._deadband:
+            error = 0.0
+        self._e[0] = error
 
-        # ── 位置式分解 (与增量式数值等价) ─────────────────
+        # ── P + D 项 ─────────────────────────────────
         p_out = self.kp * self._e[0]
         d_out = self.kd * (self._e[0] - self._e[1]) / dt
 
-        # 积分累加 + 独立限幅 (抗积分饱和)
-        self._integral += self.ki * self._e[0] * dt
+        # ── 积分累加 + 条件反算抗饱和 ─────────────────
+        di_normal = self.ki * self._e[0] * dt
+        u_unsaturated = p_out + (self._integral + di_normal) + d_out
+
+        # Windup 条件: 输出饱和 AND 未饱和输出方向与误差同号 (继续推向饱和)
+        windup = ((u_unsaturated > self.max_out and self._e[0] * u_unsaturated > 0.0) or
+                  (u_unsaturated < -self.max_out and self._e[0] * u_unsaturated > 0.0))
+
+        if windup:
+            # 反算跟踪: 拉回积分器到饱和边界
+            u_clamped = max(-self.max_out, min(self.max_out, u_unsaturated))
+            di = di_normal + (1.0 / self._Tt) * (u_clamped - u_unsaturated) * dt
+        else:
+            # 正常积分 (含饱和但自然退绕的情况 — u*e <= 0)
+            di = di_normal
+
+        self._integral += di
+        # 独立积分限幅 (安全网)
         if self._integral > self._max_i:
             self._integral = self._max_i
         elif self._integral < -self._max_i:
@@ -72,7 +101,7 @@ class IncrementalPID:
 
         self._out = p_out + self._integral + d_out
 
-        # 输出限幅 (belt-and-suspenders: max_i 限积分 + max_out 限总和)
+        # 输出限幅 (belt-and-suspenders)
         if self._out > self.max_out:
             self._out = self.max_out
         elif self._out < -self.max_out:
@@ -91,7 +120,7 @@ class VelocityPID(Node):
         self.declare_parameter('kd_vx', 0.05)
         self.declare_parameter('max_vx', 0.85)
         self.declare_parameter('kp_wz', 1.0)
-        self.declare_parameter('ki_wz', 0.4)
+        self.declare_parameter('ki_wz', 0.1)
         self.declare_parameter('kd_wz', 0.02)
         self.declare_parameter('max_wz', 2.8)
         self.declare_parameter('max_i_fraction', 0.8)
@@ -107,6 +136,7 @@ class VelocityPID(Node):
             kd=self.get_parameter('kd_vx').value,
             max_out=self.get_parameter('max_vx').value,
             max_i=max_i_vx,
+            deadband=0.02,   # m/s 误差死区
         )
         self._pid_wz = IncrementalPID(
             kp=self.get_parameter('kp_wz').value,
@@ -114,6 +144,7 @@ class VelocityPID(Node):
             kd=self.get_parameter('kd_wz').value,
             max_out=self.get_parameter('max_wz').value,
             max_i=max_i_wz,
+            deadband=0.05,   # rad/s 误差死区
         )
 
         # ── 状态 ──────────────────────────────────────────
@@ -232,11 +263,14 @@ class VelocityPID(Node):
         desired_wz = self._last_desired_wz
         MIN_DIR_SWITCH_DT = 0.015       # dt过短 → 高频噪声, 抑制
         MIN_RESET_INTERVAL = 0.25        # 两次重置最小间隔, 防高频振荡
+        VX_DEADBAND = 0.05               # vx死区: |vx|<此值不算"真正的方向"
+        WZ_DEADBAND = 0.08               # wz死区: |wz|<此值不算"真正的方向"
 
         if dt >= MIN_DIR_SWITCH_DT:
             # ── vx channel ──
             dir_switch_vx = (self._prev_desired_vx != 0.0 and desired_vx != 0.0 and
-                             (desired_vx * self._prev_desired_vx) < 0.0)
+                             (desired_vx * self._prev_desired_vx) < 0.0 and
+                             (abs(desired_vx) > VX_DEADBAND or abs(self._prev_desired_vx) > VX_DEADBAND))
             if dir_switch_vx:
                 since_last = (now - self._last_dir_switch_time_vx).nanoseconds / 1e9
                 if since_last >= MIN_RESET_INTERVAL:
@@ -248,7 +282,8 @@ class VelocityPID(Node):
 
             # ── wz channel ──
             dir_switch_wz = (self._prev_desired_wz != 0.0 and desired_wz != 0.0 and
-                             (desired_wz * self._prev_desired_wz) < 0.0)
+                             (desired_wz * self._prev_desired_wz) < 0.0 and
+                             (abs(desired_wz) > WZ_DEADBAND or abs(self._prev_desired_wz) > WZ_DEADBAND))
             if dir_switch_wz:
                 since_last = (now - self._last_dir_switch_time_wz).nanoseconds / 1e9
                 if since_last >= MIN_RESET_INTERVAL:

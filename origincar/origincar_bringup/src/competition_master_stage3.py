@@ -26,7 +26,9 @@ from rclpy.action import ActionClient
 from std_msgs.msg import String, Int32, Empty
 from geometry_msgs.msg import Twist, PoseStamped
 from nav2_msgs.action import NavigateToPose, NavigateThroughPoses
+from nav2_msgs.srv import ClearCostmapAroundRobot
 from nav2_msgs.msg import CostmapFilterInfo
+from rclpy.qos import QoSProfile, QoSDurabilityPolicy, QoSHistoryPolicy, QoSReliabilityPolicy
 from action_msgs.msg import GoalStatus
 
 
@@ -54,13 +56,15 @@ class CompetitionMasterStage3(Node):
 
         # cruise_cw: 顺时针 (odd QR) — 途经点 + VLM 停靠点
         #            仅最后一个路点 (VLM 停靠点) 用于 NavigateToPose
+        # 2026-06-12: 手动驾驶标定路径
         self.declare_parameter('cruise_cw', [
-            0.87, 0.83, 0.0,   3.21, -1.82, 0.0,
+            0.82, 0.56, 0.0,   2.23, 0.77, 0.0,   3.12, -1.34, 0.0,
         ])
         # cruise_ccw: 逆时针 (even QR) — 途经点 + VLM 停靠点
         #             仅最后一个路点 (VLM 停靠点) 用于 NavigateToPose
+        # 2026-06-12: 手动驾驶标定路径
         self.declare_parameter('cruise_ccw', [
-            1.85, -2.14, 0.0,   2.01, 1.09, 0.0,
+            1.73, -1.98, 0.0,   3.10, -1.35, 0.0,   2.10, 0.92, 0.0,
         ])
 
         # ═══════════════════════════════════════════════════════════
@@ -71,7 +75,7 @@ class CompetitionMasterStage3(Node):
         self.declare_parameter('nav_to_entry_timeout', 60.0)
         self.declare_parameter('cruise_timeout', 180.0)  # 不重试, 一次走完
         self.declare_parameter('vlm_timeout', 30.0)
-        self.declare_parameter('return_timeout', 60.0)
+        self.declare_parameter('return_timeout', 120.0)
         self.declare_parameter('default_qr_direction', '逆时针')  # 未扫到 QR 时的回退方向
 
         # ═══════════════════════════════════════════════════════════
@@ -160,6 +164,12 @@ class CompetitionMasterStage3(Node):
         self.through_client = ActionClient(
             self, NavigateThroughPoses, 'navigate_through_poses')
 
+        # ClearCostmapAroundRobot service clients (返航时清除障碍物标记)
+        self._clear_around_local = self.create_client(
+            ClearCostmapAroundRobot, 'local_costmap/clear_around_local_costmap')
+        self._clear_around_global = self.create_client(
+            ClearCostmapAroundRobot, 'global_costmap/clear_around_global_costmap')
+
         # Subscribers
         self.qr_sub = self.create_subscription(
             String, '/sign', self.qr_callback, 10)
@@ -176,8 +186,11 @@ class CompetitionMasterStage3(Node):
             Empty, '/global_costmap/clear_entirely_global_costmap', 10)
         self.local_costmap_clear_pub = self.create_publisher(
             Empty, '/local_costmap/clear_entirely_local_costmap', 10)
+        _fi_qos = QoSProfile(depth=10, reliability=QoSReliabilityPolicy.RELIABLE,
+                             durability=QoSDurabilityPolicy.TRANSIENT_LOCAL,
+                             history=QoSHistoryPolicy.KEEP_LAST)
         self.keepout_info_pub = self.create_publisher(
-            CostmapFilterInfo, '/costmap_filter_info', 10)
+            CostmapFilterInfo, '/costmap_filter_info', _fi_qos)
 
         # ── 定时器 ──────────────────────────────────────────────
         self._timeout_timer = self.create_timer(1.0, self._check_timeouts)
@@ -432,10 +445,34 @@ class CompetitionMasterStage3(Node):
         self._start_cruise()
 
     def _disable_keepout_and_clear(self):
-        """清除双 costmap (官方 override_lethal_cost 负责脱困)"""
+        """禁用 keepout (空 mask) + 清除双 costmap. 巡航/返航时允许穿过禁区."""
+        disable_msg = CostmapFilterInfo()
+        disable_msg.type = 0
+        disable_msg.filter_mask_topic = "/keepout_disabled"  # 不存在的topic → filter订阅但无数据 → no-op
+        disable_msg.base = 0.0
+        disable_msg.multiplier = 1.0
+        self.keepout_info_pub.publish(disable_msg)
         self.costmap_clear_pub.publish(Empty())
         self.local_costmap_clear_pub.publish(Empty())
-        self.get_logger().info("[KEEPOUT] 清除 global + local costmap")
+        self.get_logger().info("[KEEPOUT] keepout disabled + costmaps cleared")
+
+    def _cancel_keepout_republish(self):
+        if hasattr(self, '_keepout_repub_timer') and self._keepout_repub_timer is not None:
+            self._keepout_repub_timer.cancel()
+            self._keepout_repub_timer = None
+
+    def _start_keepout_republish(self):
+        """每2秒重新发布keepout禁用, 防止BT恢复时costmap_filter_info_server覆盖."""
+        if self.state in ('CRUISE_CHANNEL', 'RETURN_P'):
+            disable_msg = CostmapFilterInfo()
+            disable_msg.type = 0
+            disable_msg.filter_mask_topic = "/keepout_disabled"
+            disable_msg.base = 0.0
+            disable_msg.multiplier = 1.0
+            self.keepout_info_pub.publish(disable_msg)
+        else:
+            self._keepout_repub_timer.cancel()
+            self._keepout_repub_timer = None
 
     def _start_cruise(self):
         """发送 NavigateThroughPoses: 通道入口(安全起点)→途经点→VLM停靠点"""
@@ -444,6 +481,9 @@ class CompetitionMasterStage3(Node):
         wps = [entry_wp] + self._get_cruise_waypoints()
 
         self._disable_keepout_and_clear()
+        # 每2秒重新发布keepout禁用, 防止BT恢复时禁区被重新启用
+        self._keepout_repub_timer = self.create_timer(
+            2.0, self._start_keepout_republish)
 
         if not self.through_client.wait_for_server(timeout_sec=3.0):
             self.get_logger().error("navigate_through_poses server 未就绪!")
@@ -615,7 +655,11 @@ class CompetitionMasterStage3(Node):
                 self.get_logger().info(
                     "[结果回调] 已到达VLM路点 (人形立牌), 触发VLM推理..."
                 )
+                self._cancel_keepout_republish()
                 self._trigger_vlm()
+            elif self.state == 'RETURN_P':
+                self.get_logger().info("[结果回调] 已回到P点, 任务完成!")
+                self._finish()
         elif status == GoalStatus.STATUS_CANCELED:
             self._nav_start_time = None
             if self._pending_entry_nav:
@@ -640,23 +684,41 @@ class CompetitionMasterStage3(Node):
     # ═══════════════════════════════════════════════════════════════
 
     def _trigger_vlm(self):
-        """发布 /sign4return=100 触发 VLM 推理, 然后立即返航 (不等结果)"""
-        self.get_logger().info("[VLM] 发布 sign4return=100, 后台识别, 立即返航...")
-        self._vlm_triggered = True
+        """VLM路点拍照, 后台推理, 结果在P点显示."""
+        self.get_logger().info("[VLM] 发布 sign4return=100, 拍照推理中...")
         self.sign4return_pub.publish(Int32(data=100))
-        # 不等 VLM 结果, 直接开始返航
+        self._vlm_triggered = True
         self._start_return()
 
+    def _on_return_delay(self):
+        """返航延迟回调: 只发一次, 然后取消定时器."""
+        if self._return_sent:
+            return
+        self._return_sent = True
+        if self._return_delay_timer is not None:
+            self._return_delay_timer.cancel()
+            self._return_delay_timer = None
+        self.send_nav_goal(self.p_point_x, self.p_point_y,
+                           self.p_point_yaw, "P点返航")
+
     def _start_return(self):
-        """从 VLM 路点直接 NavigateToPose 回 P 点, 同样禁用 keepout"""
+        """从 VLM 路点直接 NavigateToPose 回 P 点, 同样禁用 keepout."""
         self._state_transition('RETURN_P')
         self._disable_keepout_and_clear()
+
+        # ClearCostmapAroundRobot: 清除机器人周围1.5m的传感器障碍物标记
+        # VLM点附近可能有墙壁/锥桶, 直接规划会因"起点在致死区域"而失败
+        req = ClearCostmapAroundRobot.Request()
+        req.reset_distance = 1.5
+        if self._clear_around_local.wait_for_service(timeout_sec=1.0):
+            self._clear_around_local.call_async(req)
+        if self._clear_around_global.wait_for_service(timeout_sec=1.0):
+            self._clear_around_global.call_async(req)
         self.get_logger().info(
-            f"[RETURN] 直接返航至 P点 ({self.p_point_x:.2f},{self.p_point_y:.2f})")
-        self.send_nav_goal(
-            self.p_point_x, self.p_point_y,
-            self.p_point_yaw, "P点返航"
-        )
+            f"[RETURN] 清除机器人周围1.5m + 直接返航至 P点 ({self.p_point_x:.2f},{self.p_point_y:.2f})")
+        # 0.5s 延迟后发送返航目标 (create_timer 是重复的, 在回调里取消)
+        self._return_sent = False
+        self._return_delay_timer = self.create_timer(0.5, self._on_return_delay)
 
     # ═══════════════════════════════════════════════════════════════
     # ── 超时检查 ─────────────────────────────────────────────────
@@ -764,6 +826,7 @@ class CompetitionMasterStage3(Node):
             self._goal_handle.cancel_goal_async()
             self._goal_handle = None
         self.send_stop()
+        self._reenable_keepout()
         self._state_transition('TIMEOUT')
         self._log_summary()
 
@@ -784,8 +847,10 @@ class CompetitionMasterStage3(Node):
         )
 
     def _finish(self):
-        """任务完成"""
+        """任务完成: 停车, 恢复禁区, 打印VLM结果"""
         self.send_stop()
+        self._cancel_keepout_republish()
+        self._reenable_keepout()
         self._state_transition('DONE')
         self._log_summary()
 

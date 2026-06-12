@@ -1,0 +1,14 @@
+# Force LF line endings for Python scripts (must execute on Linux RDK X5)
+*.py text eol=lf
+# Force LF for YAML configs (parsed by ROS2 on Linux)
+*.yaml text eol=lf
+*.yml text eol=lf
+# Force LF for shell scripts
+*.sh text eol=lf
+# Force LF for launch files
+*.launch.py text eol=lf
+# Force LF for XML (behavior trees)
+*.xml text eol=lf
+# Binary files
+*.pgm binary
+*.png binary

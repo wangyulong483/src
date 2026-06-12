@@ -439,3 +439,7 @@ def main():
         pass
     finally:
         rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()
