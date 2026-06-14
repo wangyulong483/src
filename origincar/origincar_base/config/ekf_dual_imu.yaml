@@ -1,15 +1,15 @@
 ### ekf_dual_imu.yaml — 双 IMU EKF 融合配置 ###
 # @brief 融合轮式里程计 + 两个 IMU:
-#   imu0: MPU6050 → STM32 Mahony(Ki=0) → Madgwick 二次滤波 → /imu/data/madgwick
-#   imu1: BMI088 → hobot_imu_sensor → /imu_data (原始角速度+加速度, 无姿态)
+#   imu0: MPU6050 → STM32 → /imu/data_raw → Madgwick(β=0.033) → /imu/data/madgwick
+#   imu1: BMI088 → IIO(零偏校准) → Madgwick(β=0.003) → /imu/data/bmi088_madgwick
 #
 # 融合策略:
-#   - imu0 (MPU6050): 提供 yaw 姿态 + yaw 角速度 (Madgwick 已补偿陀螺零偏)
-#   - imu1 (BMI088):  提供 yaw 角速度 (汽车级陀螺, 低噪声, 低漂移)
+#   - imu0 (MPU6050): 提供 yaw 姿态参考 + yaw 角速度 (已校准, 绝对方向准确)
+#   - imu1 (BMI088):  提供 yaw 角速度 (汽车级陀螺, 差分模式避免yaw打架)
 #   - odom0:          提供 X 位移 + X/Y 线速度 + Z 角速度 (编码器)
 #
-# BMI088 陀螺噪声 ~1/10 MPU6050, 零偏 <2°/h. 双 IMU 冗余:
-#   一个传感器丢失时 EKF 仍可维持姿态 (sensor_timeout=2s)
+# BMI088 通过 Madgwick(β=0.003, Bosch datasheet) 滤波提供低噪声角速度;
+# 加速度计初始yaw因安装方向偏差不可靠, 故仅用差分角速度增量.
 
 ekf_filter_node:
     ros__parameters:
@@ -52,39 +52,37 @@ ekf_filter_node:
         odom0_differential: true
         odom0_relative: false
 
-        # --- 输入 1: MPU6050 + Madgwick 二次滤波 ---
-        # 提供 yaw 姿态 (Madgwick 已解算) + yaw 角速度
+        # --- 输入 1: MPU6050 + Madgwick (主姿态参考) ---
+        # 提供 yaw 姿态 (Madgwick 已解算, 绝对方向准确) + yaw 角速度
         imu0: /imu/data/madgwick
         imu0_config: [false, false, false,   # 位置: 无
-                      false, false, true,    # 姿态: 仅 yaw (Madgwick 解算)
+                      false, false, true,    # 姿态: 仅 yaw (MPU6050 Madgwick)
                       false, false, false,   # 速度: 无
                       false, false, true,    # 角速度: Z (yaw)
                       false, false, false]   # 加速度: 无
         imu0_nodelay: false
         imu0_differential: false
         imu0_relative: true
-        imu0_queue_size: 20         # 限制缓冲区, 防止高负载消息堆积
+        imu0_queue_size: 20
         imu0_pose_rejection_threshold: 20.0
         imu0_twist_rejection_threshold: 1.542
         imu0_linear_acceleration_rejection_threshold: 10.0
         imu0_remove_gravitational_acceleration: true
 
-        # --- 输入 2: BMI088 原始数据 ---
-        # 仅提供 yaw 角速度 (陀螺仪汽车级, 低噪声, 不提供姿态)
-        # 配置与 imu0 互补: 陀螺仪质量更高, 但不含姿态解算
-        imu1: /imu_data
+        # --- 输入 2: BMI088 + Madgwick(β=0.003) (辅助角速度, 差分模式) ---
+        # 仅提供 yaw 角速度 (汽车级陀螺, 差分避免与imu0 yaw打架)
+        imu1: /imu/data/bmi088_madgwick
         imu1_config: [false, false, false,   # 位置: 无
-                      false, false, false,   # 姿态: 无 (BMI088 原始数据无姿态解算)
+                      false, false, false,   # 姿态: 无 (BMI088 accel yaw不可靠)
                       false, false, false,   # 速度: 无
-                      false, false, true,    # 角速度: Z (yaw, 汽车级陀螺)
-                      false, false, false]   # 加速度: 暂不融合 (保持与 imu0 一致)
+                      false, false, true,    # 角速度: Z (汽车级陀螺, Madgwick滤波)
+                      false, false, false]   # 加速度: 无
         imu1_nodelay: false
-        imu1_differential: false
+        imu1_differential: true              # 差分模式: 仅角速度增量, 避免yaw冲突
         imu1_relative: true
-        imu1_queue_size: 20         # 限制缓冲区, 防止高负载消息堆积
-        # BMI088 噪声更低 → 放宽剔除阈值 (避免误剔除有效数据)
+        imu1_queue_size: 20
         imu1_pose_rejection_threshold: 20.0
-        imu1_twist_rejection_threshold: 2.0          # 比 imu0 稍宽
+        imu1_twist_rejection_threshold: 2.0          # 汽车级陀螺放宽
         imu1_linear_acceleration_rejection_threshold: 10.0
         imu1_remove_gravitational_acceleration: true
 

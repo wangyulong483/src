@@ -1,0 +1,15 @@
+# imu_madgwick_bmi088.yaml — BMI088 专用 Madgwick AHRS 参数
+# 基于 Bosch 数据手册: 陀螺噪声 0.014°/s/√Hz, 加表噪声 230µg/√Hz, 零偏 <2°/h
+# β=0.003: ~10× 低于 MPU6050(0.033), 更信任汽车级陀螺积分
+# gyro_noise=0.000244: √(3/4)×0.014°/s/√Hz → rad/s/√Hz
+# accel_noise=0.010: 230µg/√Hz×10=2.3mg rms@100Hz
+
+imu_madgwick_bmi088:
+    ros__parameters:
+        gain: 0.003           # ★ Bosch datasheet: β ∝ gyro_noise×√bandwidth
+
+        frequency: 100.0
+
+        gyro_noise: 0.000244  # 0.014°/s/√Hz × π/180 → rad/s/√Hz
+
+        accel_noise: 0.010    # 230 µg/√Hz × √100Hz / 1e6 × 9.81 → m/s²

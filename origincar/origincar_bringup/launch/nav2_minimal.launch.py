@@ -73,7 +73,7 @@ def generate_launch_description():
             name='keepout_filter_info_server',
             parameters=[{
                 'type': 0,
-                'filter_info_topic': '/costmap_filter_info',
+                'filter_info_topic': '/costmap_filter_info_server',
                 'mask_topic': '/keepout_mask',
                 'base': 0.0, 'multiplier': 1.0,
             }], output='screen'),

@@ -269,7 +269,7 @@ local_costmap:
       keepout_filter:
         plugin: "nav2_costmap_2d::KeepoutFilter"
         enabled: True
-        filter_info_topic: "/costmap_filter_info"
+        filter_info_topic: "/costmap_ctrl"
         override_lethal_cost: True          # PR #5187: 误入禁区时降为高代价可通行
         lethal_override_cost: 252           # MAX_NON_OBSTACLE, 最优先逃离但可通行
       obstacle_layer:
@@ -355,7 +355,7 @@ global_costmap:
       keepout_filter:
         plugin: "nav2_costmap_2d::KeepoutFilter"
         enabled: True
-        filter_info_topic: "/costmap_filter_info"
+        filter_info_topic: "/costmap_ctrl"
         override_lethal_cost: True
         lethal_override_cost: 252
       always_send_full_costmap: True
@@ -401,7 +401,7 @@ planner_server:
 
       # ---- 启发式查找表（ARM 优化） ----
       # 小场地：查找表 10m 足够覆盖 5m×5m 场地（对角线 ~7m）
-      lookup_table_size: 10.0
+      lookup_table_size: 20.0          # 10.0→20.0: 默认值, 更大运动基元缓存, 内存+38KB
 
       # ---- 解析扩展：终点进场对齐的核心 ----
       analytic_expansion_ratio: 2.0       # 更频繁尝试解析扩展（ARM 快速终止搜索）
@@ -411,15 +411,15 @@ planner_server:
       analytic_expansion_max_cost_override: false
 
       # ---- 阿克曼专属惩罚 ----
-      reverse_penalty: 4.0             # 倒车惩罚：大幅提高以抑制路点处 Reeds-Shepp cusp 倒车
-      change_penalty: 0.2               # 方向切换惩罚：提高以惩罚频繁前进↔后退方向切换
+      reverse_penalty: 2.0             # 4.0→2.0: 官方推荐1.3-5.0, 不过度抑制必要倒车
+      change_penalty: 0.10              # 0.2→0.10: 官方推荐0.0-0.3, 抑制不必要cusp
       non_straight_penalty: 1.3         # 弧线惩罚：折中值，允许适度弯道但不蜿蜒
       cost_penalty: 4.0                 # 代价区域惩罚
 
       # ---- 启发性缓存（竞赛场景目标不固定，建议关闭以加速启动） ----
       # 关闭后 configure() 无需预计算全状态空间，启动从 72s 降至 ~5s
       # 若竞赛目标固定不变，可重新启用以获得 40x 重规划加速
-      cache_obstacle_heuristic: false
+      cache_obstacle_heuristic: true      # false→true: 缓存静态代价图启发式, 重规划20-40x加速, 内存+23KB
 
       # ---- 路径平滑 ----
       smooth_path: true

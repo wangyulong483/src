@@ -216,9 +216,16 @@ class Bmi088IioBridge(Node):
         # 是否已为 SI 单位 (NVIDIA 驱动已转换, mainline 需 scale)
         self.declare_parameter("gyro_attr_is_si", True)
         self.declare_parameter("accel_attr_is_si", True)
+        # scale override: RDK X5 IIO 驱动不提供 scale 文件, 需手动指定
+        # BMI088 @ ±1000°/s → 1 LSB = 0.00053 rad/s
+        # BMI088 @ ±3g     → 1 LSB = 0.00341 m/s²
+        self.declare_parameter("gyro_scale_override", 0.0)
+        self.declare_parameter("accel_scale_override", 0.0)
 
         rate = self.get_parameter("rate").value
         self._frame_id = self.get_parameter("frame_id").value
+        self._gyro_scale_override = self.get_parameter("gyro_scale_override").value or None
+        self._accel_scale_override = self.get_parameter("accel_scale_override").value or None
 
         # ── 诊断: 扫描所有 IIO 设备并打印 name 文件内容 ────────
         # 等效于: ls /sys/bus/iio/devices/*/name; cat /sys/bus/iio/devices/*/name
@@ -312,6 +319,8 @@ class Bmi088IioBridge(Node):
                 attr_info = _detect_attr_base(dev["path"], GYRO_ATTR_CANDIDATES)
                 if attr_info:
                     base_attr, is_si, scale = attr_info
+                    if not is_si and self._gyro_scale_override:
+                        scale = self._gyro_scale_override
                     self._gyro_info = {
                         "path": dev["path"],
                         "base_attr": base_attr,
@@ -320,6 +329,7 @@ class Bmi088IioBridge(Node):
                     }
                     self.get_logger().info(
                         f"  gyro:  {dev['path']} ({reason}) attr={base_attr} is_si={is_si}"
+                        f"{' scale_override=' + str(scale) if self._gyro_scale_override else ''}"
                     )
                 else:
                     self.get_logger().warn(
@@ -342,6 +352,8 @@ class Bmi088IioBridge(Node):
                 attr_info = _detect_attr_base(dev["path"], ACCEL_ATTR_CANDIDATES)
                 if attr_info:
                     base_attr, is_si, scale = attr_info
+                    if not is_si and self._accel_scale_override:
+                        scale = self._accel_scale_override
                     self._accel_info = {
                         "path": dev["path"],
                         "base_attr": base_attr,
@@ -350,6 +362,7 @@ class Bmi088IioBridge(Node):
                     }
                     self.get_logger().info(
                         f"  accel: {dev['path']} ({reason}) attr={base_attr} is_si={is_si}"
+                        f"{' scale_override=' + str(scale) if self._accel_scale_override else ''}"
                     )
                 else:
                     self.get_logger().warn(
@@ -367,6 +380,12 @@ class Bmi088IioBridge(Node):
         # ── 定时器 ────────────────────────────────────────────
         period = 1.0 / max(rate, 1.0)
         self._timer = self.create_timer(period, self._publish)
+
+        # ── 陀螺零偏校准 (Bosch 建议: 静止时采样取均值) ────
+        self._gyro_bias = (0.0, 0.0, 0.0)
+        self._bias_samples = []
+        self._bias_calibrated = False
+        self._bias_timer = self.create_timer(0.01, self._collect_bias_sample)
 
         status = "OK" if (self._gyro_info or self._accel_info) else "DEGRADED (zero data)"
         self.get_logger().info(f"BMI088 IIO Bridge 启动 @ {rate:.0f}Hz -> /imu_data  [{status}]")
@@ -387,13 +406,38 @@ class Bmi088IioBridge(Node):
                 "================================================================="
             )
 
+    def _collect_bias_sample(self):
+        """开机后 2 秒内采集陀螺样本用于零偏校准 (Bosch datasheet 建议)"""
+        if self._bias_calibrated or self._gyro_info is None:
+            if hasattr(self, '_bias_timer') and self._bias_timer:
+                self._bias_timer.cancel()
+                self._bias_timer = None
+            return
+        gx, gy, gz = _read_vec3(
+            self._gyro_info["path"], self._gyro_info["base_attr"],
+            self._gyro_info["is_si"], self._gyro_info["scale"])
+        self._bias_samples.append((gx, gy, gz))
+        if len(self._bias_samples) >= 200:  # 2s @ 100Hz
+            n = len(self._bias_samples)
+            self._gyro_bias = (
+                sum(s[0] for s in self._bias_samples) / n,
+                sum(s[1] for s in self._bias_samples) / n,
+                sum(s[2] for s in self._bias_samples) / n,
+            )
+            self._bias_calibrated = True
+            self._bias_timer.cancel()
+            self._bias_timer = None
+            self.get_logger().info(
+                f"  gyro bias calibrated: ({self._gyro_bias[0]:.6f}, "
+                f"{self._gyro_bias[1]:.6f}, {self._gyro_bias[2]:.6f}) rad/s")
+
     def _publish(self):
         now = self.get_clock().now()
         msg = Imu()
         msg.header.stamp = now.to_msg()
         msg.header.frame_id = self._frame_id
 
-        # 角速度 (rad/s)
+        # 角速度 (rad/s) — 减去静止零偏
         if self._gyro_info:
             gx, gy, gz = _read_vec3(
                 self._gyro_info["path"],
@@ -401,6 +445,10 @@ class Bmi088IioBridge(Node):
                 self._gyro_info["is_si"],
                 self._gyro_info["scale"],
             )
+            if self._bias_calibrated:
+                gx -= self._gyro_bias[0]
+                gy -= self._gyro_bias[1]
+                gz -= self._gyro_bias[2]
             msg.angular_velocity.x = gx
             msg.angular_velocity.y = gy
             msg.angular_velocity.z = gz

@@ -119,7 +119,28 @@ def generate_launch_description():
             parameters=[{
                 'rate': 100.0,
                 'frame_id': 'gyro_link',
+                # RDK X5 IIO 驱动不提供 scale 文件 → 手动指定
+                # BMI088 gyro @ ±1000°/s: 1 LSB = 0.000530 rad/s
+                # BMI088 accel @ ±3g:     1 LSB = 0.003410 m/s²
+                'gyro_scale_override': 0.000530,
+                'accel_scale_override': 0.003410,
             }],
+        ),
+
+        # -- BMI088 Madgwick 滤波 (汽车级IMU → yaw姿态+角速度, 替代MPU6050为主IMU) --
+        launch_ros.actions.Node(
+            condition=IfCondition(use_bmi088),
+            package='origincar_bringup',
+            executable='imu_madgwick_filter.py',
+            name='imu_madgwick_bmi088',
+            output='screen',
+            parameters=[Path(origincar_base_dir, 'config', 'imu_madgwick_bmi088.yaml')],
+            respawn=True,
+            respawn_delay=2.0,
+            remappings=[
+                ('/imu/data_raw', '/imu_data'),
+                ('/imu/data/madgwick', '/imu/data/bmi088_madgwick'),
+            ],
         ),
 
         # -- EKF 双IMU: use_ekf=true AND use_bmi088=true --

@@ -19,17 +19,25 @@ competition_master_stage3 — Stage 3 管理层节点
 """
 
 import math
+import os
 import subprocess
 import rclpy
 from rclpy.node import Node
 from rclpy.action import ActionClient
 from std_msgs.msg import String, Int32, Empty
-from geometry_msgs.msg import Twist, PoseStamped
+from geometry_msgs.msg import Twist, PoseStamped, PoseWithCovarianceStamped
 from nav2_msgs.action import NavigateToPose, NavigateThroughPoses
 from nav2_msgs.srv import ClearCostmapAroundRobot
 from nav2_msgs.msg import CostmapFilterInfo
+from nav_msgs.msg import Path
 from rclpy.qos import QoSProfile, QoSDurabilityPolicy, QoSHistoryPolicy, QoSReliabilityPolicy
 from action_msgs.msg import GoalStatus
+
+try:
+    import psutil
+    _HAS_PSUTIL = True
+except ImportError:
+    _HAS_PSUTIL = False
 
 
 def _flat_to_waypoints(arr, stride=3):
@@ -85,7 +93,7 @@ class CompetitionMasterStage3(Node):
         self.declare_parameter('keepout_disable_duration_sec', 30.0)
         self.declare_parameter('backup_linear_x', -0.15)     # 慢速=更小转弯半径
         self.declare_parameter('backup_angular_z', 2.80)    # +wz: 右后方向
-        self.declare_parameter('start_delay_sec', 8.0)       # BT 激活等待
+        self.declare_parameter('start_delay_sec', 0.5)       # 轮询起点延迟 (0s发车: 每0.5s检查action server)
         self.declare_parameter('cancel_wait_timeout_sec', 3.0)  # 等待 BT 取消确认
         self.declare_parameter('qr_decision_kill_timeout_sec', 2.0)  # 等待 qr_decision 返回方向
         self.declare_parameter('vlm_result_topic', 'vlm_result')
@@ -178,6 +186,17 @@ class CompetitionMasterStage3(Node):
         self.vlm_result_sub = self.create_subscription(
             String, self.vlm_result_topic, self._on_vlm_result, 10)
 
+        # ── 诊断订阅 ──────────────────────────────────────────
+        self._robot_pose = None
+        self._amcl_sub = self.create_subscription(
+            PoseWithCovarianceStamped, '/amcl_pose', self._on_amcl_pose, 10)
+        self._plan_info = None
+        self._plan_sub = self.create_subscription(Path, '/plan', self._on_plan, 10)
+        self._cmd_vx = 0.0; self._cmd_wz = 0.0
+        self._cmd_diag_sub = self.create_subscription(
+            Twist, '/cmd_vel_muxed', self._on_cmd_diag, 10)
+        self._trajectory = []  # [(ts, x, y, yaw), ...]
+
         # Publishers
         self.stop_pub = self.create_publisher(Twist, '/stop_cmd_vel', 10)
         self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel', 10)
@@ -190,10 +209,22 @@ class CompetitionMasterStage3(Node):
                              durability=QoSDurabilityPolicy.TRANSIENT_LOCAL,
                              history=QoSHistoryPolicy.KEEP_LAST)
         self.keepout_info_pub = self.create_publisher(
-            CostmapFilterInfo, '/costmap_filter_info', _fi_qos)
+            CostmapFilterInfo, '/costmap_ctrl', _fi_qos)
+        # ★ 启动时重置: 覆盖上轮运行的禁用残留
+        _reset_msg = CostmapFilterInfo()
+        _reset_msg.type = 0
+        _reset_msg.filter_mask_topic = "/keepout_mask"
+        _reset_msg.base = 0.0; _reset_msg.multiplier = 1.0
+        self.keepout_info_pub.publish(_reset_msg)
 
         # ── 定时器 ──────────────────────────────────────────────
         self._timeout_timer = self.create_timer(1.0, self._check_timeouts)
+        self._diag_timer = self.create_timer(2.0, self._diagnostic_log)
+
+        # ── 阶段计时 ──────────────────────────────────────────
+        self._phase_times = {}
+        self._phase_start_time = None
+        self._launch_time = self.get_clock().now()
 
         # ═══════════════════════════════════════════════════════════
         # ── 启动日志 ────────────────────────────────────────────
@@ -250,11 +281,15 @@ class CompetitionMasterStage3(Node):
             self.get_logger().error(f"[KILL] 终止进程 {name} 异常: {e}")
 
     def _state_transition(self, new_state):
-        """统一状态转换, 带诊断日志 (跳过重复转换)"""
+        """统一状态转换, 带诊断日志 + 阶段耗时追踪"""
         if self.state == new_state:
             return
+        now = self._get_current_raw_time()
         old = self.state
+        if self._phase_start_time is not None and old != 'INIT':
+            self._phase_times[old] = now - self._phase_start_time
         self.state = new_state
+        self._phase_start_time = now
         self.get_logger().info(
             f"[状态机] {old} → {new_state}"
         )
@@ -371,6 +406,84 @@ class CompetitionMasterStage3(Node):
         self.get_logger().info(f"[VLM] 后台收到推理结果: {msg.data[:120]}...")
 
     # ═══════════════════════════════════════════════════════════════
+    # ── 诊断回调 ─────────────────────────────────────────────────
+    # ═══════════════════════════════════════════════════════════════
+
+    def _on_amcl_pose(self, msg):
+        q = msg.pose.pose.orientation
+        siny = 2.0 * (q.w * q.z + q.x * q.y)
+        cosy = 1.0 - 2.0 * (q.y * q.y + q.z * q.z)
+        yaw = math.atan2(siny, cosy)
+        self._robot_pose = {'x': msg.pose.pose.position.x,
+                            'y': msg.pose.pose.position.y, 'yaw': yaw}
+        ts = msg.header.stamp.sec + msg.header.stamp.nanosec * 1e-9
+        self._trajectory.append((ts, msg.pose.pose.position.x,
+                                 msg.pose.pose.position.y, yaw))
+
+    def _on_plan(self, msg):
+        if not msg.poses:
+            self._plan_info = None; return
+        pts = [(p.pose.position.x, p.pose.position.y) for p in msg.poses]
+        total_len = sum(math.hypot(pts[i][0]-pts[i-1][0], pts[i][1]-pts[i-1][1])
+                       for i in range(1, len(pts)))
+        mid = pts[len(pts)//2]
+        self._plan_info = {'n': len(pts), 'len': total_len,
+                          'start': pts[0], 'mid': mid, 'end': pts[-1]}
+
+    def _on_cmd_diag(self, msg):
+        self._cmd_vx = msg.linear.x; self._cmd_wz = msg.angular.z
+
+    # ── 硬件监控 ──────────────────────────────────────────────
+    @staticmethod
+    def _read_sysfs(path):
+        try:
+            with open(path, 'r') as f: return f.read().strip()
+        except Exception: return None
+
+    def _get_hw_stats(self):
+        parts = []
+        freq_raw = self._read_sysfs('/sys/devices/system/cpu/cpufreq/policy0/cpuinfo_cur_freq')
+        if freq_raw: parts.append(f"cpuFreq={int(freq_raw)//1000}MHz")
+        cpu_temp = self._read_sysfs('/sys/class/hwmon/hwmon0/temp3_input')
+        if cpu_temp: parts.append(f"cpuT={int(cpu_temp)//1000}C")
+        bpu_temp = self._read_sysfs('/sys/class/hwmon/hwmon0/temp2_input')
+        if bpu_temp: parts.append(f"bpuT={int(bpu_temp)//1000}C")
+        if _HAS_PSUTIL:
+            try:
+                parts.append(f"cpu={psutil.cpu_percent(interval=0.01):.0f}%")
+                parts.append(f"mem={psutil.virtual_memory().percent:.0f}%")
+            except Exception: pass
+        return ' '.join(parts) if parts else 'hw=N/A'
+
+    def _diagnostic_log(self):
+        if self._robot_pose is None: return
+        p = self._robot_pose
+        elapsed = self._get_current_raw_time() - self._clock_start if self._clock_start else 0.0
+        plan_str = ""
+        if self._plan_info:
+            pi = self._plan_info
+            plan_str = (f" plan[{pi['n']}pts {pi['len']:.1f}m] "
+                       f"({pi['start'][0]:.2f},{pi['start'][1]:.2f})"
+                       f"→({pi['end'][0]:.2f},{pi['end'][1]:.2f})")
+        self.get_logger().info(
+            f"[DIAG] state={self.state} "
+            f"pos=({p['x']:.2f},{p['y']:.2f}) yaw={math.degrees(p['yaw']):.0f}deg "
+            f"cmd=(vx={self._cmd_vx:.2f} wz={self._cmd_wz:.2f}) "
+            f"elapsed={elapsed:.1f}s{plan_str} {self._get_hw_stats()}")
+
+    def _save_trajectory(self):
+        if not self._trajectory: return
+        try:
+            path = '/userdata/dev_ws/trajectory.csv'
+            with open(path, 'w') as f:
+                f.write('timestamp,x,y,yaw\n')
+                for ts, x, y, yaw in self._trajectory:
+                    f.write(f'{ts:.3f},{x:.4f},{y:.4f},{yaw:.4f}\n')
+            self.get_logger().info(f'[TRAJ] 轨迹已保存: {path} ({len(self._trajectory)} 点)')
+        except Exception as e:
+            self.get_logger().warn(f'[TRAJ] 保存失败: {e}')
+
+    # ═══════════════════════════════════════════════════════════════
     # ── NAV_TO_QR → NAV_TO_ENTRY 转换 (沿用 stage2 模式) ────────
     # ═══════════════════════════════════════════════════════════════
 
@@ -480,11 +593,6 @@ class CompetitionMasterStage3(Node):
         entry_wp = [self.entry_point_x, self.entry_point_y, self.entry_point_yaw]
         wps = [entry_wp] + self._get_cruise_waypoints()
 
-        self._disable_keepout_and_clear()
-        # 每2秒重新发布keepout禁用, 防止BT恢复时禁区被重新启用
-        self._keepout_repub_timer = self.create_timer(
-            2.0, self._start_keepout_republish)
-
         if not self.through_client.wait_for_server(timeout_sec=3.0):
             self.get_logger().error("navigate_through_poses server 未就绪!")
             return
@@ -567,6 +675,11 @@ class CompetitionMasterStage3(Node):
         goal_msg.pose.pose.orientation.z = math.sin(yaw / 2.0)
         goal_msg.pose.pose.orientation.w = math.cos(yaw / 2.0)
 
+        if self._robot_pose:
+            dist = math.hypot(x - self._robot_pose['x'], y - self._robot_pose['y'])
+            self.get_logger().info(
+                f"[DIAG] nav目标距离: {dist:.2f}m, "
+                f"robot=({self._robot_pose['x']:.2f},{self._robot_pose['y']:.2f}) → target=({x:.2f},{y:.2f})")
         self.get_logger().info(
             f">>> 发送导航目标 [{description}]: "
             f"({x:.2f}, {y:.2f}, yaw={yaw:.2f})"
@@ -655,7 +768,6 @@ class CompetitionMasterStage3(Node):
                 self.get_logger().info(
                     "[结果回调] 已到达VLM路点 (人形立牌), 触发VLM推理..."
                 )
-                self._cancel_keepout_republish()
                 self._trigger_vlm()
             elif self.state == 'RETURN_P':
                 self.get_logger().info("[结果回调] 已回到P点, 任务完成!")
@@ -702,9 +814,8 @@ class CompetitionMasterStage3(Node):
                            self.p_point_yaw, "P点返航")
 
     def _start_return(self):
-        """从 VLM 路点直接 NavigateToPose 回 P 点, 同样禁用 keepout."""
+        """从 VLM 路点直接 NavigateToPose 回 P 点."""
         self._state_transition('RETURN_P')
-        self._disable_keepout_and_clear()
 
         # ClearCostmapAroundRobot: 清除机器人周围1.5m的传感器障碍物标记
         # VLM点附近可能有墙壁/锥桶, 直接规划会因"起点在致死区域"而失败
@@ -821,14 +932,14 @@ class CompetitionMasterStage3(Node):
 
     def _timeout_shutdown(self):
         """全局超时处理"""
-        # 取消所有目标 (统一使用 NavigateToPose action client)
         if self._goal_handle is not None:
             self._goal_handle.cancel_goal_async()
             self._goal_handle = None
         self.send_stop()
-        self._reenable_keepout()
+        self._stop_keepalive = self.create_timer(0.1, lambda: self.stop_pub.publish(Twist()))
         self._state_transition('TIMEOUT')
         self._log_summary()
+        self._save_trajectory()
 
     # ═══════════════════════════════════════════════════════════════
     # ── 启动 & 完成 ──────────────────────────────────────────────
@@ -838,6 +949,9 @@ class CompetitionMasterStage3(Node):
         """延迟启动: 等待 BT 激活后开始第一阶段导航"""
         if self.state != 'INIT':
             return
+        launch_dur = self._get_current_raw_time() - self._launch_time.nanoseconds / 1e9
+        self._phase_times['LAUNCH'] = launch_dur
+        self.get_logger().info(f"[LAUNCH] 发车阶段: {launch_dur:.1f}s")
         self.get_logger().info(">>> 系统就绪, 开始 Stage 3 导航")
         self._clock_start = self._get_current_raw_time()
         self._state_transition('NAV_TO_QR')
@@ -847,12 +961,12 @@ class CompetitionMasterStage3(Node):
         )
 
     def _finish(self):
-        """任务完成: 停车, 恢复禁区, 打印VLM结果"""
+        """任务完成: 停车, 打印VLM结果, 保存轨迹"""
         self.send_stop()
-        self._cancel_keepout_republish()
-        self._reenable_keepout()
+        self._stop_keepalive = self.create_timer(0.1, lambda: self.stop_pub.publish(Twist()))
         self._state_transition('DONE')
         self._log_summary()
+        self._save_trajectory()
 
     def _log_summary(self):
         """打印任务摘要"""
@@ -864,6 +978,23 @@ class CompetitionMasterStage3(Node):
         self.get_logger().info(f">>> [Stage 3] 任务结束 <<<")
         self.get_logger().info(f"  最终状态: {self.state}")
         self.get_logger().info(f"  总耗时:   {elapsed:.1f}s")
+        # 各阶段耗时
+        phase_order = ['LAUNCH', 'NAV_TO_QR', 'NAV_TO_ENTRY', 'BACKING_UP',
+                       'CRUISE_CHANNEL', 'RETURN_P']
+        self.get_logger().info(f"  --- 各阶段耗时 ---")
+        total_phases = 0.0
+        for ph in phase_order:
+            if ph in self._phase_times:
+                t = self._phase_times[ph]; total_phases += t
+                self.get_logger().info(f"  {ph:.<22s} {t:.1f}s")
+        for ph, t in sorted(self._phase_times.items()):
+            if ph not in phase_order:
+                total_phases += t
+                self.get_logger().info(f"  {ph:.<22s} {t:.1f}s")
+        other = elapsed - total_phases
+        if abs(other) > 0.5:
+            self.get_logger().info(f"  {'(transition/overhead)':.<22s} {other:.1f}s")
+        self.get_logger().info(f"  --- ---")
         self.get_logger().info(f"  QR 原始数据: {self.qr_data}")
         if self._qr_direction:
             self.get_logger().info(
@@ -884,10 +1015,19 @@ class CompetitionMasterStage3(Node):
         self.get_logger().info("=" * 60)
 
     def run(self):
-        """主入口: 延迟启动后 spin"""
+        """主入口: 轮询 Nav2 action server, 就绪后立即发车 (0s 延迟方案)"""
         self._start_timer = self.create_timer(
-            self.start_delay_sec, self._start_nav)  # BT激活约需 N 秒
+            self.start_delay_sec, self._poll_then_start)
         rclpy.spin(self)
+
+    def _poll_then_start(self):
+        """轮询 Nav2 action server, 就绪后调用 _start_nav"""
+        if self.state != 'INIT':
+            return
+        if not self.nav_client.wait_for_server(timeout_sec=0.3):
+            self._start_timer = self.create_timer(0.5, self._poll_then_start)
+            return
+        self._start_nav()
 
 
 def main(args=None):
