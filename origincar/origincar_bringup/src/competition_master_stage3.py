@@ -93,7 +93,7 @@ class CompetitionMasterStage3(Node):
         self.declare_parameter('keepout_disable_duration_sec', 30.0)
         self.declare_parameter('backup_linear_x', -0.15)     # 慢速=更小转弯半径
         self.declare_parameter('backup_angular_z', 0.80)    # 2.80→0.80: 降低转速防止IMU/AMCL跟丢
-        self.declare_parameter('start_delay_sec', 0.5)       # 轮询起点延迟 (0s发车: 每0.5s检查action server)
+        self.declare_parameter('start_delay_sec', 0.1)       # 0.5→0.1: 更快轮询Nav2 action server
         self.declare_parameter('cancel_wait_timeout_sec', 3.0)  # 等待 BT 取消确认
         self.declare_parameter('qr_decision_kill_timeout_sec', 2.0)  # 等待 qr_decision 返回方向
         self.declare_parameter('vlm_result_topic', 'vlm_result')
@@ -258,23 +258,13 @@ class CompetitionMasterStage3(Node):
     # ═══════════════════════════════════════════════════════════════
 
     def _kill_process(self, name):
-        """安全终止进程 (subprocess.run 替代 os.system, 带错误检查)"""
+        """安全终止进程 (subprocess.Popen 非阻塞)"""
         try:
-            result = subprocess.run(
+            subprocess.Popen(
                 ['pkill', '-f', name],
-                capture_output=True, text=True, timeout=5.0
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
             )
-            if result.returncode == 0:
-                self.get_logger().info(f"[KILL] 已终止进程: {name}")
-            elif result.returncode == 1:
-                self.get_logger().info(f"[KILL] 没有匹配的进程: {name}")
-            else:
-                self.get_logger().warn(
-                    f"[KILL] 终止进程 {name} 返回码={result.returncode}: "
-                    f"{result.stderr.strip()}"
-                )
-        except subprocess.TimeoutExpired:
-            self.get_logger().error(f"[KILL] 终止进程 {name} 超时 (5s)")
+            self.get_logger().info(f"[KILL] 已发送终止信号: {name}")
         except FileNotFoundError:
             self.get_logger().error(f"[KILL] 命令 pkill 未找到，跳过终止 {name}")
         except Exception as e:
@@ -803,14 +793,13 @@ class CompetitionMasterStage3(Node):
         self._start_return()
 
     def _on_return_delay(self):
-        """返航延迟回调: 只发一次, 然后取消定时器."""
+        """返航延迟回调: NavigateToPose 直接回P点."""
         if self._return_sent:
             return
         self._return_sent = True
         if self._return_delay_timer is not None:
             self._return_delay_timer.cancel()
             self._return_delay_timer = None
-        # 使用当前朝向作为目标yaw，直走到P点就停，不旋转对齐初始朝向
         approach_yaw = self._robot_pose['yaw'] if self._robot_pose else self.p_point_yaw
         self.send_nav_goal(self.p_point_x, self.p_point_y,
                            approach_yaw, "P点返航")
@@ -831,7 +820,7 @@ class CompetitionMasterStage3(Node):
             f"[RETURN] 清除机器人周围1.5m + 直接返航至 P点 ({self.p_point_x:.2f},{self.p_point_y:.2f})")
         # 0.5s 延迟后发送返航目标 (create_timer 是重复的, 在回调里取消)
         self._return_sent = False
-        self._return_delay_timer = self.create_timer(0.5, self._on_return_delay)
+        self._return_delay_timer = self.create_timer(0.1, self._on_return_delay)
 
     # ═══════════════════════════════════════════════════════════════
     # ── 超时检查 ─────────────────────────────────────────────────
@@ -910,7 +899,6 @@ class CompetitionMasterStage3(Node):
                     f"[TIMEOUT] NAV_TO_QR 超时, 使用回退方向: {self._qr_direction}"
                 )
             self._state_transition('BACKING_UP')
-            self._start_backup()
             self._start_backup()
         elif state == 'NAV_TO_ENTRY':
             # 入口段超时: 仍然尝试巡航

@@ -20,7 +20,7 @@
         RemovePassedGoals 放在 ComputePathThroughPoses 之前，确保 FollowPath
         失败后重规划时已过路点被正确清理，不会反复规划通过同一路点的完整路径。
         -->
-        <RateController hz="0.5">
+        <RateController hz="1.0">
           <RecoveryNode number_of_retries="1" name="ComputePathThroughPoses">
             <Sequence name="RemovePassedAndCompute">
               <RemovePassedGoals input_goals="{goals}" output_goals="{goals}"

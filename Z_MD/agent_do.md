@@ -2,6 +2,136 @@
 
 ---
 
+## 2026-06-15 17:20 — 速度参数回归 → 禁区卡死 + 紧急回退
+
+> **结果**: ❌ 未完成 (Ctrl-C 强制终止 @ 85.3s)。机器人卡在禁区 36 秒。
+
+### 问题演进
+
+```
+82.0s 基线 (desired=0.50) → 速度参数激进 (desired=0.55, accel=1.4, bins=40)
+→ 弯道更冲 → 冲入禁区 → "Starting point in lethal space" × 20+ 次
+→ BT 恢复循环: clear→backup→wait→retry→fail→repeat (36s卡死)
+→ 甚至 backup 行为也失败: "Collision Ahead - Exiting DriveOnHeading"
+```
+
+### 根因
+
+| 参数 | 基线 | 本次 | 影响 |
+|------|------|------|------|
+| `desired_linear_vel` | 0.50 | **0.55** | 10%更快 → 反应时间缩短 → 弯道冲入禁区 |
+| `max_linear_accel` | 1.2 | **1.4** | 更快加速进入危险区 |
+| `angle_quantization_bins` | 48 | **40** | 17%粗化 → 路径精度不足 → 避禁区能力下降 |
+
+**在 0.5m 宽通道 + 0.55m 膨胀禁区场景下，速度参数没有余量。82.0s 的 0.50 m/s 是安全极限。**
+
+### 保留的安全优化 (未回退)
+
+| 参数 | 值 | 验证 |
+|------|-----|------|
+| RateController | **1.0Hz** (0.5→1.0) | 理论正确, 更多重规划应帮助避障 |
+| max_iterations | **1000** (2000→1000) | 77.3s 基线验证 |
+| max_planning_time | **1.5** (3.0→1.5) | 仅影响失败路径 |
+| analytic_expansion_ratio | **3.0** (2.0→3.0) | 更快解析扩展 |
+| waypoint_pause_duration | **50ms** (200→50) | 0.6s节省 |
+| 代码优化 4 项 | 延迟瘦身+Bug修复 | 纯收益 |
+
+### 当前部署状态
+
+- originbot_nav2_rpp.yaml: **已回退速度参数, SSH部署完成**
+- BT XML: RateController 1.0Hz **保留**
+- competition_master_stage3.py: 代码优化 **保留**
+
+---
+
+## 2026-06-15 16:30 — 多 Agent 联合优化：目标 <80s（待部署）
+
+> **用户要求**: 82.0s DONE → 目标 <80s。4 Agent 并行分析 + EXA MCP 研究 + 辩论合成。
+
+### 诊断方法论
+
+```
+Agent 1 (瓶颈分析) ──→ 3 大瓶颈: cusp/recovery, CPU饱和, RETURN_P效率
+Agent 2 (EXA MCP)  ──→ 7 次搜索: planner加速, BT限流, RMW, 代价地图
+Agent 3 (代码审查)  ──→ 8 处时间浪费: 固定延迟, 阻塞调用, 重复bug
+Agent 4 (配置分析)  ──→ 10 项参数: 快速胜利, 回归检测, 风险分级
+     ↓
+Agent 5 (辩论合成) ──→ 解决4个冲突, 统一方案, Tier分级
+```
+
+### 🔥 关键发现: BT RateController = 0.5Hz 瓶颈
+
+**BT XML 中 `RateController hz="0.5"` 将重规划限制为每2秒一次！** 在 0.60 m/s 巡航速度下, 机器人每2秒走 1.2m, 但 lookahead 只有 0.72m → 机器人"跑过"自己的前瞻距离 → 追尾过期路径 → 进入禁区 → 触发恢复 → 浪费 4-7s/次。
+
+同时 `max_iterations=2000`（77.3s 基线是 1000）, 每次规划耗时 ~750ms, planner 锁定在 ~1.3Hz。
+
+### 最终优化方案 (Tier 1 — 必须做)
+
+**目标: 74.0–76.4s（保守估计节省 5.6–8.0s）**
+
+#### Nav2 配置: `originbot_navigation/param/originbot_nav2_rpp.yaml`
+
+| # | 参数 | 当前 | 新值 | 节省 | 原理 |
+|---|------|------|------|------|------|
+| 1 | `max_iterations` | 2000 | **1000** | 0.5-1.0s | 77.3s 基线验证, 5m×5m 场地足够; 规划时间 750→350ms |
+| 2 | `max_planning_time` | 3.0 | **1.5** | 0.5-1.5s | 快速失败重试; 卡在致命起点不再浪费3s |
+| 3 | `desired_linear_vel` | 0.50 | **0.55** | 1.0-2.0s | 10%提速, lookahead 约束仍满足 (0.66m > 0.60m) |
+| 4 | `max_linear_vel` | 0.60 | **0.65** | 0.5-1.0s | 开放段短时提速余量; velocity_smoother 已有余量 |
+| 5 | `max_linear_accel` | 1.2 | **1.4** | 0.3-0.5s | 更快脱离低速段; velocity_smoother 上限 1.5 |
+| 6 | `max_linear_decel` | -1.5 | **-1.7** | 0.3-0.5s | 匹配 velocity_smoother 上限; 更快刹停 |
+| 7 | `waypoint_pause_duration` | 200ms | **50ms** | 0.5s | 4路点×150ms; 50ms 足够传感器刷新 |
+| 8 | `analytic_expansion_ratio` | 2.0 | **3.0** | 0.2-0.5s | 更频繁解析扩展, 更快找到直连目标 |
+| 9 | smoother `max_iterations` | 500 | **300** | 0.2-0.5s | 内置平滑器; BT已移除 SmoothPath |
+| 10 | `angle_quantization_bins` | 48 | **40** | 0.3-0.5s | 搜索分支削减17%, 9°分辨率足够 |
+
+#### BT XML (两个文件): `behavior_trees/navigate_*_ackermann_rpp.xml`
+
+| # | 参数 | 当前 | 新值 | 节省 | 原理 |
+|---|------|------|------|------|------|
+| 11 | `RateController hz` | **0.5** | **1.0** | 3.0-5.0s | **最大单项收益！** 消除2秒过期路径窗口, 减少恢复触发 |
+
+#### Python 代码: `origincar/origincar_bringup/src/competition_master_stage3.py`
+
+| # | 参数 | 当前 | 新值 | 节省 | 原理 |
+|---|------|------|------|------|------|
+| 12 | `start_delay_sec` | 0.5 | **0.1** | 0.4s | 更快轮询 Nav2 action server |
+| 13 | `_return_delay_timer` | 0.5s | **0.1s** | 0.4s | 代价地图清除异步, 不需要等0.5s |
+| 14 | 重复 `_start_backup()` | L914 | **删除** | BUG修复 | 双定时器泄漏; 异常路径资源泄漏 |
+
+### 拒绝的修改 (经辩论裁定)
+
+| 拒绝项 | 原因 |
+|--------|------|
+| `change_penalty` 0.10→0.0 | 0.10 在代价函数中可忽略 (3个cusp=0.30 vs reverse_penalty=2.0/段). 移除风险多余振荡. |
+| `lookahead_time` 1.2→1.8 | RateController 修复后 0.72m lookahead ≥ 0.60m 穿行距离. 长前瞻在窄道风险穿墙. |
+| `backup_duration_sec` 6.0→5.0 | 节省1s但导致46°朝向偏差→通道入口修正耗时更多→净损失. 6.0s经实验调优. |
+| `RETURN_P yaw` → p_point_yaw | 当前朝向避免最终旋转 (已验证优化 LRN-20260615-004). 改回去反而增加0.5-1s. |
+| BT `backup_speed` 0.12→0.20 | 恢复行为, 更快倒车增加窄道碰撞风险. 保持安全. |
+
+### 预期效果
+
+| 场景 | 预计时间 | 相当于 |
+|------|---------|--------|
+| **Tier 1 全部** | **74.0–76.4s** | 打破 80s 屏障, 接近 77.3s 基线 |
+| 仅 RateController + max_iterations | 77.5–79.0s | 刚好破 80s |
+
+### 风险与回退
+
+- **max_iterations=1000**: 若复杂障碍布局下规划失败, 回退到 1500 (中间值)
+- **desired_linear_vel=0.55**: 若窄道振荡加剧, 回退到 0.50
+- **RateController=1.0Hz**: CPU 额外负载 ~20%, ARM 仍有足够余量
+- 回退策略: 任何参数单跑一圈退化 → 立即回退该参数 → 不影响其他改动
+
+### 部署流程 (待用户确认)
+
+1. 编辑 4 文件 (`originbot_nav2_rpp.yaml` + 2 BT XML + `competition_master_stage3.py`)
+2. `ssh_upload` → RDK X5
+3. `sed -i 's/\r$//'` 修复 CRLF
+4. `colcon build --packages-select originbot_navigation origincar_bringup`
+5. 运行一圈验证
+
+---
+
 ## 2026-06-15 15:30 — 大膨胀势场验证成功: **82.0s DONE!**
 
 > **用户反馈**: 规划路径贴墙。0.55m 膨胀方案验证。

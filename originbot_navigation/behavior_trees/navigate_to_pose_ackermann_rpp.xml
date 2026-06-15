@@ -21,7 +21,7 @@
         <!--
         第1级：全局重规划 @ 0.5Hz（SmoothPath 已移除 — Humble ConstrainedSmoother NaN bug）
         -->
-        <RateController hz="0.5">
+        <RateController hz="1.0">
           <RecoveryNode number_of_retries="1" name="ComputePathToPose">
             <Sequence name="ClearAroundAndCompute">
               <ClearCostmapAroundRobot name="ClearGlobalAroundRobot"
