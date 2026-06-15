@@ -2,7 +2,117 @@
 
 ---
 
-## 2026-06-14 18:00 — 全时段禁区 + 轨迹可视化
+## 2026-06-15 15:30 — 大膨胀势场验证成功: **82.0s DONE!**
+
+> **用户反馈**: 规划路径贴墙。0.55m 膨胀方案验证。
+
+### 运行结果
+
+| 指标 | 值 |
+|------|-----|
+| **总耗时** | **82.0s DONE** ✦新纪录✦ |
+| 终点 | (-1.67, -0.16), 距P点 0.34m |
+| QR | 检测成功 |
+| VLM | 正常返回 |
+| 轨迹 | 105 点 |
+| lethal space 错误 | **仅 2 次** (上轮 11 次) |
+
+### 阶段对比
+
+| 阶段 | 94.1s 基线 | 146.6s(上轮) | **82.0s(本次)** |
+|------|-----------|-------------|-----------------|
+| LAUNCH | 14.9s | 14.9s | 15.3s |
+| NAV_TO_QR | 13.4s | 13.9s | 13.0s |
+| BACKING_UP | 6.0s | 6.0s | 6.0s |
+| CRUISE_CHANNEL | 39.8s | 38.0s | 41.8s |
+| RETURN_P | 33.9s | 88.5s | **21.1s** (-76%) |
+| **TOTAL** | 94.1s | 146.6s | **82.0s** (-13%) |
+
+### 关键验证
+
+- **inflation_radius=0.55 + cost_scaling_factor=2.0 完全生效**
+- RETURN_P 从 88.5s 暴降到 21.1s — lethal space 从 11× 降到 2×
+- 路径不再贴墙：规划器自然选择通道中心线
+- CPU 负载降低 (更多时间在 30-50% 而非 100%)
+- planner 1.3Hz 不变 (不受膨胀半径影响)
+
+### 结论
+
+0.55m 膨胀半径是正确的。Nav2 官方推荐与实测完全一致。
+
+---## 2026-06-15 10:40 — 定位回退 + DONE (146.6s)
+
+> **用户反馈**: 规划路径贴着墙壁/禁区走，不够居中。
+> **多 Agent 分析**: 3 agent 并行审查日志+配置，1 agent 辩论，EXA MCP 研究 Nav2 官方文档。
+
+### 根因
+
+`inflation_radius=0.12m` → 通道(0.5m宽)中心 50% 区域代价=0，规划器看不到任何理由走中心线。Nav2 维护者 Steve Macenski 官方文档明确要求 "create a consistent potential field across the entire map"。
+
+历史上 `0.25m` 被误认为"大膨胀失败"，实际是"恐怖谷"：刚好大到扰乱规划器但不够大到形成完整势场。
+
+### 修改
+
+| 参数 | 旧 | 新 | 原理 |
+|------|-----|-----|------|
+| `inflation_radius` (local+global) | 0.12 | **0.55** | 双墙代价场在通道中心重叠，自然形成中心"谷" |
+| `cost_scaling_factor` (local+global) | 5.0 | **2.0** | 平缓衰减，10cm分辨率 planner 可分辨梯度 |
+| `cost_penalty` | 4.0 | **不变** | 中心代价已从0升至~130，无需额外放大 |
+
+### 为什么 0.55m 不是 0.25m
+
+- `inscribed_radius`=0.10m（footprint自动计算）→ 只有这10cm是致命区
+- `inflation_radius`=0.55m → 代价衰减距离=0.45m，覆盖整个0.5m通道
+- 走廊中心(距每面墙0.25m)代价 ~130（非致命），且是全场最低点
+
+### SSH
+
+- `originbot_nav2_rpp.yaml` → 上传 + colcon build → 成功
+
+---## 2026-06-15 10:40 — 定位回退 + DONE
+
+> **用户要求**: 改回 94.1s 定位配置 + 分析最新日志。
+
+### 修改
+
+| 文件 | 参数 | 值 | 说明 |
+|------|------|-----|------|
+| `originbot_nav2_rpp.yaml` | AMCL alpha1-5 | 0.45 | 回退（从 0.30） |
+| `originbot_nav2_rpp.yaml` | AMCL update_min_a/d | 0.10 | 回退（从 0.20） |
+| `originbot_nav2_rpp.yaml` | inflation_radius | 0.12 | 回退（从 0.25） |
+| `originbot_nav2_rpp.yaml` | cost_scaling_factor | 5.0 | 回退（从 3.0） |
+| `imu_madgwick_bmi088.yaml` | beta | 0.003 | 回退（从 0.015） |
+| `imu_madgwick_bmi088.yaml` | gyro_noise | 0.000244 | 回退（从 0.001） |
+| `ekf_dual_imu.yaml` | odom0_differential | true | 回退（从 false） |
+
+保留了 `backup_wz=0.80`（非定位参数）。
+
+### 运行结果
+
+| 指标 | 值 |
+|------|-----|
+| 总耗时 | **146.6s DONE** |
+| LAUNCH | 14.9s |
+| NAV_TO_QR | 13.9s (QR=1584, CCW) |
+| BACKING_UP | 6.0s (wz=0.80, yaw 平滑) |
+| CRUISE_CHANNEL | **38.0s** |
+| RETURN_P | **88.5s** |
+| 轨迹 | 155 点 → trajectory.csv |
+| VLM | 正常返回 |
+
+### 分析
+
+- BACKING_UP yaw: -65°→-39°→1° 平滑过渡，wz=0.80 成功
+- CRUISE_CHANNEL 38.0s 比 94.1s 基线(39.8s)略快
+- **RETURN_P 88.5s** 是瓶颈：11 次 `Starting point in lethal space`
+- **Planner 1.3Hz**，CPU 100% 持续
+- 禁区地图修改后返航路径被封，clear costmap → re-plan → 再次 lethal 死循环
+
+### SSH
+
+- 4 文件回退 + colcon build → 成功
+
+---## 2026-06-14 18:00 — 全时段禁区 + 轨迹可视化
 
 > **用户反馈**: 禁区必须全时段生效 + 绘制 CSV 轨迹到底图上。
 

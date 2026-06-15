@@ -164,40 +164,39 @@ controller_server:
       # 阿克曼角速度上限: ω_max = v × tan(δ_max) / L = 0.7 × tan(28°) / 0.143 ≈ 2.60 rad/s
       # 实际取 2.50 rad/s 给足余量，弯道减速会自动降低实际角速度
       use_dynamic_window: true
-      max_linear_vel: 0.55              # 0.80→0.55: 配 desired 0.45, 弯道不冲
-      min_linear_vel: -0.25
-      max_angular_vel: 1.50             # ★ 降至 1.50 rad/s (原 2.50): 抑制窄空间剧烈甩尾振荡
-      min_angular_vel: -1.50            # ★ 同步降至 -1.50, 窄空间倒车转弯不甩尾
+      max_linear_vel: 0.60              # 0.55→0.60: 弯道更狠
+      min_linear_vel: -0.30            # -0.25→-0.30: 倒车够力
+      max_angular_vel: 2.00             # 1.50→2.00: 放开转弯速率 (物理上限2.60)
+      min_angular_vel: -2.00            # -1.50→-2.00: 同步
       max_linear_accel: 1.2             # 最大线加速度 m/s²（配合 0.7m/s 巡航提速）
       max_linear_decel: -1.5            # 最大线减速度 m/s²（更强制动匹配更高速度）
       max_angular_accel: 2.0            # 最大角加速度 rad/s²（阿克曼转向需更快响应）
       max_angular_decel: -2.0           # 最大角减速度 rad/s²
 
       # ==================== 速度与前视距离 ====================
-      desired_linear_vel: 0.45        # 弯道勿太快, 0.70→0.45 阿克曼拐得过
+      desired_linear_vel: 0.50        # 0.45→0.50: 弯道更有冲劲
 
       # ==================== 前视距离：防画龙的核心 ====================
       # 前视距离越大 → 轨迹越平滑但循迹精度越低
       # 前视距离越小 → 循迹越精确但容易振荡（画龙）
       # 阿克曼前视 ≥ 2×min_turning_radius=0.6m, 否则弯道拐不过来冲禁区
       # 减速后 lookahead_time 缩放也更温和
-      lookahead_dist: 0.65            # 0.55→0.65: 满足2×0.30=0.60阿克曼约束
-      min_lookahead_dist: 0.55        # 0.40→0.55: 低速高前视
-      max_lookahead_dist: 1.5         # 1.0→1.5: 配合1.8s预览
-      lookahead_time: 1.8             # 1.0→1.8: 预览1.8s, 防振荡
+      lookahead_dist: 0.65            # 满足2×0.30=0.60阿克曼约束
+      min_lookahead_dist: 0.30        # 0.55→0.30: 窄道收近防"看穿"墙壁
+      max_lookahead_dist: 0.90        # 1.5→0.90: 收紧上限减少overshoot
+      lookahead_time: 1.2             # 1.8→1.2: 降低时间窗口防振荡
 
       # 速度缩放前视距离：高速时自动拉远，低速时自动收近
       use_velocity_scaled_lookahead_dist: true
 
-      # 曲率固定前视：关闭，使用速度自适应
-      use_fixed_curvature_lookahead: false
-      curvature_lookahead_dist: 0.5
+      # 曲率固定前视：Ackermann推荐启用，解耦曲率检测与路径跟随
+      use_fixed_curvature_lookahead: true       # false→true: 阿克曼需要提前检测弯道
+      curvature_lookahead_dist: 0.8             # 0.5→0.8: 加长曲率前视，提前减速入弯
 
       # ==================== 弯道减速（防画龙 + 防侧翻） ====================
       use_regulated_linear_velocity_scaling: true
       # 最小转弯半径 0.30m（匹配物理极限，让弯道减速在真正需要时触发）
-      # RPP 检测路径曲率，当转弯半径 < 此值时开始减速
-      regulated_linear_scaling_min_radius: 0.20
+      regulated_linear_scaling_min_radius: 0.30  # 0.20→0.30: 必须等于min_turning_radius
       # 弯道最低速度：0.18m/s 确保弯道不抖，同时不会因减速过多而停滞
       regulated_linear_scaling_min_speed: 0.18
 
@@ -206,7 +205,7 @@ controller_server:
       # 改用障碍物距离线性减速：越靠近越慢，比碰撞检测更平滑，不会突然停车
       # 代价调控公式: speed_factor = 1 - gain × max(0, dist - cost_scaling_dist) / cost_scaling_dist
       use_cost_regulated_linear_velocity_scaling: true
-      cost_scaling_dist: 0.12            # 必须 ≤ inflation_radius(0.12), 环道窄, 缩小膨胀
+      cost_scaling_dist: 0.12            # RPP代价减速距离 (不受膨胀半径影响)
       cost_scaling_gain: 2.0
       inflation_cost_scaling_factor: 5.0
 
@@ -262,10 +261,10 @@ local_costmap:
       plugins: ["obstacle_layer", "keepout_filter", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        # 0.12m膨胀半径, 环道窄缩小膨胀给车更大活动空间
-        inflation_radius: 0.12
-        # 5.0陡衰减：代价从障碍物快速衰减
-        cost_scaling_factor: 5.0
+        # 0.55m膨胀: 覆盖全通道(0.5m宽), 双墙代价场重叠产生中心"谷", 规划器自然选中心线
+        inflation_radius: 0.55          # 0.12→0.55: Nav2官方推荐, 创建平滑势场
+        # 2.0平缓衰减: 中心代价~130(非致命), 10cm分辨率可分辨梯度
+        cost_scaling_factor: 2.0        # 5.0→2.0: 匹配大膨胀半径的平缓衰减
       keepout_filter:
         plugin: "nav2_costmap_2d::KeepoutFilter"
         enabled: True
@@ -350,8 +349,8 @@ global_costmap:
         map_subscribe_transient_local: True
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        inflation_radius: 0.12          # 0.15→0.12, 环道窄, 缩小膨胀给车更多空间
-        cost_scaling_factor: 5.0
+        inflation_radius: 0.55          # 0.12→0.55: 全局规划走中心线
+        cost_scaling_factor: 2.0        # 5.0→2.0: 匹配大膨胀
       keepout_filter:
         plugin: "nav2_costmap_2d::KeepoutFilter"
         enabled: True

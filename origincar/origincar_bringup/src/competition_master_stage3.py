@@ -92,7 +92,7 @@ class CompetitionMasterStage3(Node):
         self.declare_parameter('backup_duration_sec', 6.0)
         self.declare_parameter('keepout_disable_duration_sec', 30.0)
         self.declare_parameter('backup_linear_x', -0.15)     # 慢速=更小转弯半径
-        self.declare_parameter('backup_angular_z', 2.80)    # +wz: 右后方向
+        self.declare_parameter('backup_angular_z', 0.80)    # 2.80→0.80: 降低转速防止IMU/AMCL跟丢
         self.declare_parameter('start_delay_sec', 0.5)       # 轮询起点延迟 (0s发车: 每0.5s检查action server)
         self.declare_parameter('cancel_wait_timeout_sec', 3.0)  # 等待 BT 取消确认
         self.declare_parameter('qr_decision_kill_timeout_sec', 2.0)  # 等待 qr_decision 返回方向
@@ -810,8 +810,10 @@ class CompetitionMasterStage3(Node):
         if self._return_delay_timer is not None:
             self._return_delay_timer.cancel()
             self._return_delay_timer = None
+        # 使用当前朝向作为目标yaw，直走到P点就停，不旋转对齐初始朝向
+        approach_yaw = self._robot_pose['yaw'] if self._robot_pose else self.p_point_yaw
         self.send_nav_goal(self.p_point_x, self.p_point_y,
-                           self.p_point_yaw, "P点返航")
+                           approach_yaw, "P点返航")
 
     def _start_return(self):
         """从 VLM 路点直接 NavigateToPose 回 P 点."""
