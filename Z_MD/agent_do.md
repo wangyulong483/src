@@ -2,6 +2,100 @@
 
 ---
 
+## 2026-06-16 19:30 — VLM 路点 yaw 左偏 60°（待部署）
+
+> **用户要求**: 阿克曼不能原地旋转，到达 VLM 路点时直接对准。逆时针 VLM 点 yaw 从 0→0.907rad (52°)。
+
+### 修改
+
+**文件**: `competition_master_stage3.py`
+
+| 路点 | 旧 yaw | 新 yaw | 说明 |
+|------|--------|--------|------|
+| `cruise_ccw[-1]` VLM 点 | `0.0` | **`0.907`** (~52°) | 左偏 60°，到达即对准回程标志 |
+
+顺时针 VLM 点暂不改动。
+
+### 原理
+
+阿克曼不能原地旋转，直接在 NavigateThroughPoses 最后一段的目标 yaw 上做偏移。RPP 在接近终点时自然调整车头朝向，到达即对准，零额外时间。
+
+---
+
+## 2026-06-16 19:09 — RateController 1.0Hz 验证成功: **70.1s DONE! ✦新纪录✦**
+
+> **结果**: ✅ DONE 70.1s。比 82.0s 基线快 14.5%，首次突破 75s 屏障。
+
+### 运行结果
+
+| 指标 | 值 |
+|------|-----|
+| **总耗时** | **70.1s DONE** ✦新纪录✦ |
+| 终点 | (-1.68, -0.07), 距P点 0.31m |
+| QR | 1584, CCW, 检测成功 |
+| VLM | **未收到**（触发后即发送 RETURN_P，未等待） |
+| 轨迹 | 98 点 → trajectory.csv |
+| lethal space 错误 | **0 次**（零！） |
+| CPU | 75-100%, mem 18-19% |
+
+### 阶段对比
+
+| 阶段 | 82.0s 基线 | **70.1s (本次)** | Delta |
+|------|-----------|-----------------|-------|
+| LAUNCH | 15.3s | 14.4s | -0.9s |
+| NAV_TO_QR | 13.0s | 12.0s | -1.0s |
+| BACKING_UP | 6.0s | 6.0s | 0s |
+| CRUISE_CHANNEL | 41.8s | **30.6s** | **-11.2s (-27%)** |
+| RETURN_P | 21.1s | 21.3s | +0.2s |
+| **TOTAL** | **82.0s** | **70.1s** | **-11.9s (-14.5%)** |
+
+### 关键变化 vs 82.0s 基线
+
+| 参数 | 82.0s | 本次 | 效果 |
+|------|-------|------|------|
+| `RateController hz` (BT XML) | 0.5 | **1.0** | **最大单项收益！** 消除2s过期路径窗口 |
+| `max_iterations` | 1000 | **1500** | 中间值，规划时间 ~350ms |
+| `max_planning_time` | 3.0 | **1.5** | 快速失败重试 |
+| `analytic_expansion_ratio` | 2.0 | **3.0** | 更频繁解析扩展 |
+| `waypoint_pause_duration` | 200ms | **50ms** | 4路点×150ms = 0.6s 节省 |
+| `start_delay_sec` | 0.5 | **0.1** | 更快轮询 Nav2 action server |
+| `_return_delay_timer` | 0.5s | **0.1s** | 代价地图清除异步 |
+
+保持不变: `desired_linear_vel=0.50`, `inflation_radius=0.55`, `cost_scaling_factor=2.0`, `backup_wz=0.80`
+
+### CRUISE_CHANNEL 详细轨迹 (CCW, 4 poses)
+
+```
+t=18.0s  进入通道 (-0.97,-1.62) yaw=41°
+t=25.6s  通道入口 (0.43,-1.10) yaw=18°  ← 7.6s 穿越狭窄入口
+t=31.6s  WP1附近 (1.69,-1.82) yaw=-63°
+t=39.6s  WP2附近 (3.30,-1.18) yaw=98°  ← 8.0s WP1→WP2
+t=47.6s  接近VLM (2.21,0.65) yaw=105°
+t=48.6s  Reached goal → VLM触发 → RETURN_P
+```
+
+### 持续问题
+
+| 问题 | 状态 | 说明 |
+|------|------|------|
+| Planner ~1.3Hz | 未解 | 每 2s DIAG 间隔内 planner 始终 ~1.3Hz，CPU 100% |
+| DIR_SWITCH 高频 | 未解 | REEDS_SHEPP cusp，velocity_pid 每 0.5-2s 一次方向切换 |
+| VLM 未收到 | **已知** | 代码不等待 VLM 结果，触发后立即发 RETURN_P |
+| mux TIMEOUT | 正常 | 状态转换期 nav 源无新数据，0.5s 超时后 idle→recover |
+
+### 结论
+
+**RateController 0.5→1.0Hz 是正确方向。** 0.55m 膨胀势场 + 1.0Hz 重规划 + 安全速度(0.50m/s) = 70.1s。零次禁区碰撞证明了势场方案的鲁棒性。CRUISE_CHANNEL 的 -27% 改善主要来自更频繁的路径更新避免了追尾过期路径。
+
+继续优化的方向：planner CPU 瓶颈（~1.3Hz 限制了 RateController 收益上限）、REEDS_SHEPP cusp 抑制。
+
+### SSH
+
+- 4 文件上传 + CRLF fix + colcon build → 成功
+- 修改文件: `originbot_nav2_rpp.yaml`, `navigate_to_pose_ackermann_rpp.xml`, `navigate_through_poses_ackermann_rpp.xml`, `competition_master_stage3.py`
+
+---
+
 ## 2026-06-15 17:20 — 速度参数回归 → 禁区卡死 + 紧急回退
 
 > **结果**: ❌ 未完成 (Ctrl-C 强制终止 @ 85.3s)。机器人卡在禁区 36 秒。
