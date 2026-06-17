@@ -142,7 +142,7 @@ controller_server:
     # ---- Goal Checker: 适度放宽，减少原地旋转耗时 ----
     goal_checker:
       plugin: "nav2_controller::SimpleGoalChecker"
-      xy_goal_tolerance: 0.20          # 从0.15放宽到0.20，避免到达后因微小误差触发重规划绕圈
+      xy_goal_tolerance: 0.10          # 收紧到10cm，提升P点停靠精度
       yaw_goal_tolerance: 3.14         # P点不查朝向; VLM朝向靠路点几何保证
       stateful: true                   # 先锁定 XY，再检查 Yaw，防止来回振荡
       symmetric_yaw_tolerance: false
@@ -218,7 +218,7 @@ controller_server:
       # ==================== 接近目标减速 ====================
       # 0.7m/s → 0.10m/s 平滑过渡，0.8m 开始减速（比原 0.6m 更早，匹配更高巡航速度）
       min_approach_linear_velocity: 0.10
-      approach_velocity_scaling_dist: 0.8
+      approach_velocity_scaling_dist: 1.0   # 提前1.0m开始减速，给阿克曼更多缓冲
 
       # ==================== 阿克曼原地旋转：关闭（必须！） ====================
       # 阿克曼车无法原地旋转，此参数必须为 false
