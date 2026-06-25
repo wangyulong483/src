@@ -29,7 +29,7 @@ from geometry_msgs.msg import Twist, PoseStamped, PoseWithCovarianceStamped
 from nav2_msgs.action import NavigateToPose, NavigateThroughPoses
 from nav2_msgs.srv import ClearCostmapAroundRobot
 from nav2_msgs.msg import CostmapFilterInfo
-from nav_msgs.msg import Path
+from nav_msgs.msg import Path, OccupancyGrid
 from rclpy.qos import QoSProfile, QoSDurabilityPolicy, QoSHistoryPolicy, QoSReliabilityPolicy
 from action_msgs.msg import GoalStatus
 
@@ -72,7 +72,7 @@ class CompetitionMasterStage3(Node):
         #             仅最后一个路点 (VLM 停靠点) 用于 NavigateToPose
         # 2026-06-12: 手动驾驶标定路径
         self.declare_parameter('cruise_ccw', [
-            1.73, -1.98, 0.0,   3.10, -1.35, 0.0,   2.10, 0.92, 0.907,  # VLM yaw: 左偏60°≈52°=0.907rad
+            1.73, -1.98, 0.0,   3.10, -1.35, 0.0,   2.10, 0.92, 0.80,  # VLM yaw: 微调 0.907→0.80 (~46°)
         ])
 
         # ═══════════════════════════════════════════════════════════
@@ -195,7 +195,17 @@ class CompetitionMasterStage3(Node):
         self._cmd_vx = 0.0; self._cmd_wz = 0.0
         self._cmd_diag_sub = self.create_subscription(
             Twist, '/cmd_vel_muxed', self._on_cmd_diag, 10)
-        self._trajectory = []  # [(ts, x, y, yaw), ...]
+        self._trajectory = []  # [(elapsed, x, y, yaw, state, cmd_vx, cmd_wz, plan_n, plan_len, plan_ex, plan_ey, cpu, mem, cputemp), ...]
+        self._plan_history = []  # [(elapsed, state, n_pts, len_m, sx, sy, ex, ey), ...] 每次规划记录
+
+        # ── 障碍物录制: 缓存global_costmap, 退出时保存为PGM ──
+        self._costmap_msg = None  # 最新的 OccupancyGrid
+        self._costmap_sub = self.create_subscription(
+            OccupancyGrid, '/global_costmap/costmap', self._on_costmap, 10)
+        self._nav_goal_pos = None       # (x, y) current nav target for dist-to-goal
+        self._hw_cache = {'cpu': -1, 'mem': -1, 'cpu_temp': -1}
+        self._exit_reason = 'unknown'
+        self._timeout_handled = False   # 防止 _timeout_shutdown 重复触发
 
         # Publishers
         self.stop_pub = self.create_publisher(Twist, '/stop_cmd_vel', 10)
@@ -225,6 +235,9 @@ class CompetitionMasterStage3(Node):
         self._phase_times = {}
         self._phase_start_time = None
         self._launch_time = self.get_clock().now()
+
+        # ★ 清理上轮残留 CSV/JSON (防止堆积)
+        self._cleanup_old_trajectories()
 
         # ═══════════════════════════════════════════════════════════
         # ── 启动日志 ────────────────────────────────────────────
@@ -404,11 +417,30 @@ class CompetitionMasterStage3(Node):
         siny = 2.0 * (q.w * q.z + q.x * q.y)
         cosy = 1.0 - 2.0 * (q.y * q.y + q.z * q.z)
         yaw = math.atan2(siny, cosy)
-        self._robot_pose = {'x': msg.pose.pose.position.x,
-                            'y': msg.pose.pose.position.y, 'yaw': yaw}
-        ts = msg.header.stamp.sec + msg.header.stamp.nanosec * 1e-9
-        self._trajectory.append((ts, msg.pose.pose.position.x,
-                                 msg.pose.pose.position.y, yaw))
+        x = msg.pose.pose.position.x
+        y = msg.pose.pose.position.y
+        self._robot_pose = {'x': x, 'y': y, 'yaw': yaw}
+
+        # ── 丰富轨迹记录 (每 ~10Hz) ─────────────────────────
+        elapsed = self._get_current_raw_time() - self._clock_start if self._clock_start else 0.0
+
+        # plan info snapshot
+        plan_n = 0; plan_len = 0.0; plan_ex = 0.0; plan_ey = 0.0
+        if self._plan_info:
+            pi = self._plan_info
+            plan_n = pi['n']; plan_len = pi['len']
+            plan_ex = pi['end'][0]; plan_ey = pi['end'][1]
+
+        # HW snapshot (from cache, refreshed at 2Hz by _diagnostic_log)
+        hw = self._hw_cache
+
+        self._trajectory.append((
+            elapsed, x, y, yaw,
+            self.state,
+            self._cmd_vx, self._cmd_wz,
+            plan_n, plan_len, plan_ex, plan_ey,
+            hw.get('cpu', -1), hw.get('mem', -1), hw.get('cpu_temp', -1)
+        ))
 
     def _on_plan(self, msg):
         if not msg.poses:
@@ -419,9 +451,19 @@ class CompetitionMasterStage3(Node):
         mid = pts[len(pts)//2]
         self._plan_info = {'n': len(pts), 'len': total_len,
                           'start': pts[0], 'mid': mid, 'end': pts[-1]}
+        # ★ 记录每次规划: 用于评估planner质量
+        elapsed = self._get_current_raw_time() - self._clock_start if self._clock_start else 0.0
+        self._plan_history.append((
+            elapsed, self.state, len(pts), total_len,
+            pts[0][0], pts[0][1], pts[-1][0], pts[-1][1]
+        ))
 
     def _on_cmd_diag(self, msg):
         self._cmd_vx = msg.linear.x; self._cmd_wz = msg.angular.z
+
+    def _on_costmap(self, msg):
+        """缓存最新 global_costmap, 退出时保存为PGM供可视化障碍物"""
+        self._costmap_msg = msg
 
     # ── 硬件监控 ──────────────────────────────────────────────
     @staticmethod
@@ -430,19 +472,31 @@ class CompetitionMasterStage3(Node):
             with open(path, 'r') as f: return f.read().strip()
         except Exception: return None
 
-    def _get_hw_stats(self):
-        parts = []
+    def _refresh_hw_cache(self):
+        """刷新硬件监控缓存 (供 _diagnostic_log 和 CSV 轨迹使用)"""
+        hw = {'cpu': -1, 'mem': -1, 'cpu_temp': -1, 'bpu_temp': -1, 'cpu_freq': -1}
         freq_raw = self._read_sysfs('/sys/devices/system/cpu/cpufreq/policy0/cpuinfo_cur_freq')
-        if freq_raw: parts.append(f"cpuFreq={int(freq_raw)//1000}MHz")
+        if freq_raw: hw['cpu_freq'] = int(freq_raw) // 1000
         cpu_temp = self._read_sysfs('/sys/class/hwmon/hwmon0/temp3_input')
-        if cpu_temp: parts.append(f"cpuT={int(cpu_temp)//1000}C")
+        if cpu_temp: hw['cpu_temp'] = int(cpu_temp) // 1000
         bpu_temp = self._read_sysfs('/sys/class/hwmon/hwmon0/temp2_input')
-        if bpu_temp: parts.append(f"bpuT={int(bpu_temp)//1000}C")
+        if bpu_temp: hw['bpu_temp'] = int(bpu_temp) // 1000
         if _HAS_PSUTIL:
             try:
-                parts.append(f"cpu={psutil.cpu_percent(interval=0.01):.0f}%")
-                parts.append(f"mem={psutil.virtual_memory().percent:.0f}%")
+                hw['cpu'] = int(psutil.cpu_percent(interval=0.01))
+                hw['mem'] = int(psutil.virtual_memory().percent)
             except Exception: pass
+        self._hw_cache = hw
+        return hw
+
+    def _get_hw_stats(self):
+        hw = self._refresh_hw_cache()  # 刷新缓存
+        parts = []
+        if hw['cpu_freq'] > 0: parts.append(f"cpuFreq={hw['cpu_freq']}MHz")
+        if hw['cpu_temp'] >= 0: parts.append(f"cpuT={hw['cpu_temp']}C")
+        if hw['bpu_temp'] >= 0: parts.append(f"bpuT={hw['bpu_temp']}C")
+        if hw['cpu'] >= 0: parts.append(f"cpu={hw['cpu']}%")
+        if hw['mem'] >= 0: parts.append(f"mem={hw['mem']}%")
         return ' '.join(parts) if parts else 'hw=N/A'
 
     def _diagnostic_log(self):
@@ -461,17 +515,156 @@ class CompetitionMasterStage3(Node):
             f"cmd=(vx={self._cmd_vx:.2f} wz={self._cmd_wz:.2f}) "
             f"elapsed={elapsed:.1f}s{plan_str} {self._get_hw_stats()}")
 
-    def _save_trajectory(self):
-        if not self._trajectory: return
+    def _cleanup_old_trajectories(self):
+        """启动时删除上轮残留的所有 trajectory 文件, 防止堆积."""
+        import glob as _glob
         try:
-            path = '/userdata/dev_ws/trajectory.csv'
-            with open(path, 'w') as f:
-                f.write('timestamp,x,y,yaw\n')
-                for ts, x, y, yaw in self._trajectory:
-                    f.write(f'{ts:.3f},{x:.4f},{y:.4f},{yaw:.4f}\n')
-            self.get_logger().info(f'[TRAJ] 轨迹已保存: {path} ({len(self._trajectory)} 点)')
+            for pat in ['/userdata/dev_ws/trajectory_*.csv',
+                        '/userdata/dev_ws/trajectory_*.json',
+                        '/userdata/dev_ws/trajectory_*.pgm']:
+                for f in _glob.glob(pat):
+                    os.remove(f)
         except Exception as e:
-            self.get_logger().warn(f'[TRAJ] 保存失败: {e}')
+            self.get_logger().warn(f'[CLEANUP] failed: {e}')
+
+    def _save_trajectory(self):
+        """保存全程 CSV + 摘要 JSON，无论退出原因都调用。"""
+        if not self._trajectory:
+            self.get_logger().warn('[TRAJ] 无轨迹数据, 跳过保存')
+            return
+        import json
+        from datetime import datetime
+
+        run_ts = datetime.now().strftime('%Y%m%d_%H%M%S')
+        csv_path = f'/userdata/dev_ws/trajectory_{run_ts}.csv'
+        json_path = f'/userdata/dev_ws/trajectory_{run_ts}_summary.json'
+
+        # ── 写入 CSV ─────────────────────────────────────────
+        try:
+            with open(csv_path, 'w') as f:
+                f.write('elapsed_s,x_m,y_m,yaw_rad,state,'
+                        'cmd_vx,cmd_wz,'
+                        'plan_pts,plan_len_m,plan_end_x,plan_end_y,'
+                        'cpu_pct,mem_pct,cpu_temp_c\n')
+                for row in self._trajectory:
+                    elapsed, x, y, yaw, state, cvx, cwz, pn, pl, pex, pey, cpu, mem, cput = row
+                    f.write(f'{elapsed:.3f},{x:.4f},{y:.4f},{yaw:.4f},{state},'
+                            f'{cvx:.3f},{cwz:.3f},'
+                            f'{pn},{pl:.3f},{pex:.3f},{pey:.3f},'
+                            f'{cpu},{mem},{cput}\n')
+            self.get_logger().info(
+                f'[TRAJ] CSV已保存: {csv_path} ({len(self._trajectory)} 点)')
+        except Exception as e:
+            self.get_logger().error(f'[TRAJ] CSV保存失败: {e}')
+
+        # ── 写入摘要 JSON ─────────────────────────────────────
+        try:
+            elapsed_total = 0.0
+            if self._clock_start is not None:
+                elapsed_total = self._get_current_raw_time() - self._clock_start
+
+            # 收集各阶段耗时
+            phase_order = ['LAUNCH', 'NAV_TO_QR', 'NAV_TO_ENTRY',
+                           'BACKING_UP', 'CRUISE_CHANNEL', 'RETURN_P']
+            phases = {}
+            for ph in phase_order:
+                if ph in self._phase_times:
+                    phases[ph] = round(self._phase_times[ph], 2)
+
+            # 最后已知位置
+            last_pos = None
+            if self._robot_pose:
+                last_pos = {'x': round(self._robot_pose['x'], 4),
+                            'y': round(self._robot_pose['y'], 4),
+                            'yaw': round(self._robot_pose['yaw'], 4)}
+
+            # 轨迹统计
+            n_pts = len(self._trajectory)
+            traj_stats = {}
+            if n_pts > 0:
+                xs = [r[1] for r in self._trajectory]
+                ys = [r[2] for r in self._trajectory]
+                dx = max(xs) - min(xs)
+                dy = max(ys) - min(ys)
+                # 按状态统计
+                state_counts = {}
+                for r in self._trajectory:
+                    st = r[4]
+                    state_counts[st] = state_counts.get(st, 0) + 1
+                traj_stats = {
+                    'n_points': n_pts,
+                    'x_range': round(dx, 3),
+                    'y_range': round(dy, 3),
+                    'state_distribution': {s: c for s, c in
+                                           sorted(state_counts.items(),
+                                                  key=lambda x: -x[1])}
+                }
+
+            summary = {
+                'run_ts': run_ts,
+                'final_state': self.state,
+                'exit_reason': getattr(self, '_exit_reason', 'unknown'),
+                'elapsed_total_s': round(elapsed_total, 2),
+                'phase_times_s': phases,
+                'last_position': last_pos,
+                'trajectory_stats': traj_stats,
+                'qr_raw': self.qr_data,
+                'qr_direction': self._qr_direction,
+                'vlm_received': self._vlm_received,
+                'vlm_result': self._vlm_result[:300] if self._vlm_result else None,
+                'params': {
+                    'total_timeout': self.total_timeout,
+                    'backup_linear_x': self.backup_linear_x,
+                    'backup_angular_z': self.backup_angular_z,
+                }
+            }
+            with open(json_path, 'w') as f:
+                json.dump(summary, f, indent=2, ensure_ascii=False)
+            self.get_logger().info(
+                f'[TRAJ] 摘要JSON已保存: {json_path}')
+        except Exception as e:
+            self.get_logger().error(f'[TRAJ] JSON保存失败: {e}')
+
+        # ── 保存规划历史 CSV ──────────────────────────────────
+        if self._plan_history:
+            try:
+                plans_path = csv_path.replace('.csv', '_plans.csv')
+                with open(plans_path, 'w') as f:
+                    f.write('elapsed_s,state,n_pts,len_m,start_x,start_y,end_x,end_y\n')
+                    for p in self._plan_history:
+                        f.write(f'{p[0]:.3f},{p[1]},{p[2]},{p[3]:.3f},{p[4]:.3f},{p[5]:.3f},{p[6]:.3f},{p[7]:.3f}\n')
+                self.get_logger().info(
+                    f'[TRAJ] 规划历史已保存: {plans_path} ({len(self._plan_history)} 次规划)')
+            except Exception as e:
+                self.get_logger().error(f'[TRAJ] 规划历史保存失败: {e}')
+
+        # ── 保存 costmap PGM (障碍物可视化) ────────────────────
+        if self._costmap_msg is not None:
+            try:
+                self._save_costmap_pgm(csv_path.replace('.csv', '_costmap.pgm'))
+            except Exception as e:
+                self.get_logger().error(f'[TRAJ] costmap PGM保存失败: {e}')
+
+    def _save_costmap_pgm(self, path):
+        """OccupancyGrid → PGM P5 (binary) 用于障碍物叠加可视化"""
+        msg = self._costmap_msg
+        w, h = msg.info.width, msg.info.height
+        # OccupancyGrid: -1=unknown, 0=free, 100=occupied
+        # PGM: 0=black(obstacle), 255=white(free), 127=unknown
+        pgm_data = bytearray(w * h)
+        for i, val in enumerate(msg.data):
+            if val < 0:
+                pgm_data[i] = 127  # unknown → gray
+            elif val > 90:
+                pgm_data[i] = 0    # lethal obstacle → black
+            elif val > 50:
+                pgm_data[i] = 60   # likely obstacle → dark gray
+            else:
+                pgm_data[i] = 255  # free → white (transparent in overlay)
+        with open(path, 'wb') as f:
+            f.write(f'P5\n{w} {h}\n255\n'.encode())
+            f.write(pgm_data)
+        self.get_logger().info(f'[TRAJ] costmap PGM已保存: {path}')
 
     # ═══════════════════════════════════════════════════════════════
     # ── NAV_TO_QR → NAV_TO_ENTRY 转换 (沿用 stage2 模式) ────────
@@ -675,6 +868,7 @@ class CompetitionMasterStage3(Node):
             f"({x:.2f}, {y:.2f}, yaw={yaw:.2f})"
         )
         self._nav_start_time = self.get_clock().now()   # 记录发送时间，启动段超时
+        self._nav_goal_pos = (x, y)                     # 记录目标位置，用于 CSV 距离计算
         self._send_goal_future = self.nav_client.send_goal_async(goal_msg)
         self._send_goal_future.add_done_callback(self.goal_response_callback)
 
@@ -809,7 +1003,6 @@ class CompetitionMasterStage3(Node):
         self._state_transition('RETURN_P')
 
         # ClearCostmapAroundRobot: 清除机器人周围1.5m的传感器障碍物标记
-        # VLM点附近可能有墙壁/锥桶, 直接规划会因"起点在致死区域"而失败
         req = ClearCostmapAroundRobot.Request()
         req.reset_distance = 1.5
         if self._clear_around_local.wait_for_service(timeout_sec=1.0):
@@ -817,8 +1010,8 @@ class CompetitionMasterStage3(Node):
         if self._clear_around_global.wait_for_service(timeout_sec=1.0):
             self._clear_around_global.call_async(req)
         self.get_logger().info(
-            f"[RETURN] 清除机器人周围1.5m + 直接返航至 P点 ({self.p_point_x:.2f},{self.p_point_y:.2f})")
-        # 0.5s 延迟后发送返航目标 (create_timer 是重复的, 在回调里取消)
+            f"[RETURN] 返航至 P点 ({self.p_point_x:.2f},{self.p_point_y:.2f})")
+
         self._return_sent = False
         self._return_delay_timer = self.create_timer(0.1, self._on_return_delay)
 
@@ -831,7 +1024,8 @@ class CompetitionMasterStage3(Node):
         # ── 全局超时检查 ──────────────────────────────────────
         if self._clock_start is not None:
             elapsed_total = self._get_current_raw_time() - self._clock_start
-            if elapsed_total > self.total_timeout:
+            if elapsed_total > self.total_timeout and not self._timeout_handled:
+                self._timeout_handled = True
                 self.get_logger().error(
                     f">>> [TIMEOUT] 全局超时! 已运行 {elapsed_total:.1f}s "
                     f"> {self.total_timeout}s, 当前状态={self.state}"
@@ -913,15 +1107,18 @@ class CompetitionMasterStage3(Node):
             )
             self._trigger_vlm()
         elif state == 'RETURN_P':
-            # 返航段超时: 视为失败
+            # 返航段超时: 视为失败, 但保存轨迹
             self.get_logger().error(
                 "[TIMEOUT] RETURN_P 超时, 任务终止!"
             )
+            self._exit_reason = 'return_timeout'
             self._state_transition('TIMEOUT')
             self._log_summary()
+            self._save_trajectory()
 
     def _timeout_shutdown(self):
         """全局超时处理"""
+        self._exit_reason = 'total_timeout'
         if self._goal_handle is not None:
             self._goal_handle.cancel_goal_async()
             self._goal_handle = None
@@ -952,6 +1149,7 @@ class CompetitionMasterStage3(Node):
 
     def _finish(self):
         """任务完成: 停车, 打印VLM结果, 保存轨迹"""
+        self._exit_reason = 'done'
         self.send_stop()
         self._stop_keepalive = self.create_timer(0.1, lambda: self.stop_pub.publish(Twist()))
         self._state_transition('DONE')
@@ -1026,8 +1224,17 @@ def main(args=None):
     try:
         node.run()
     except KeyboardInterrupt:
-        pass
+        node.get_logger().info('[MAIN] 收到 Ctrl+C, 正在保存轨迹...')
+        node._exit_reason = 'keyboard_interrupt'
+    except Exception as e:
+        node.get_logger().error(f'[MAIN] 异常退出: {e}')
+        node._exit_reason = f'exception:{e}'
     finally:
+        # ★ 无论何种退出, 保存全程 CSV 轨迹
+        try:
+            node._save_trajectory()
+        except Exception as e:
+            node.get_logger().error(f'[MAIN] 最终保存失败: {e}')
         try:
             node.destroy_node()
         except Exception:

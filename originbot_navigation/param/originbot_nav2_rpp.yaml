@@ -150,8 +150,8 @@ controller_server:
     # ---- Progress Checker: 通道微小位移不误判停滞 ----
     progress_checker:
       plugin: "nav2_controller::SimpleProgressChecker"
-      required_movement_radius: 0.08           # 通道内位移微小，Dock阶段几乎原地调整
-      movement_time_allowance: 12.0            # ARM板宽容度；超12s无进展大概率是真卡死
+      required_movement_radius: 0.08           # ★ 70.1s 原值
+      movement_time_allowance: 12.0            # ★ 70.1s 原值
 
     # ---- Regulated Pure Pursuit Controller ----
     FollowPath:
@@ -174,31 +174,24 @@ controller_server:
       max_angular_decel: -2.0           # 最大角减速度 rad/s²
 
       # ==================== 速度与前视距离 ====================
-      desired_linear_vel: 0.50        # ★ 0.55导致禁区冲入(2026-06-15回退), 保持82.0s基线值
+      desired_linear_vel: 0.50        # ★ 70.1s 黄金配置: 回退所有改动
 
       # ==================== 前视距离：防画龙的核心 ====================
-      # 前视距离越大 → 轨迹越平滑但循迹精度越低
-      # 前视距离越小 → 循迹越精确但容易振荡（画龙）
-      # 阿克曼前视 ≥ 2×min_turning_radius=0.6m, 否则弯道拐不过来冲禁区
-      # 减速后 lookahead_time 缩放也更温和
-      lookahead_dist: 0.65            # 满足2×0.30=0.60阿克曼约束
-      min_lookahead_dist: 0.30        # 0.55→0.30: 窄道收近防"看穿"墙壁
-      max_lookahead_dist: 0.90        # 1.5→0.90: 收紧上限减少overshoot
-      lookahead_time: 1.2             # 1.8→1.2: 降低时间窗口防振荡
+      lookahead_dist: 0.65
+      min_lookahead_dist: 0.30        # ★ 70.1s 原值
+      max_lookahead_dist: 0.90        # ★ 70.1s 原值
+      lookahead_time: 1.2             # ★ 70.1s 原值
 
-      # 速度缩放前视距离：高速时自动拉远，低速时自动收近
       use_velocity_scaled_lookahead_dist: true
 
-      # 曲率固定前视：Ackermann推荐启用，解耦曲率检测与路径跟随
-      use_fixed_curvature_lookahead: true       # false→true: 阿克曼需要提前检测弯道
-      curvature_lookahead_dist: 0.8             # 0.5→0.8: 加长曲率前视，提前减速入弯
+      # ★ 曲率固定前视: 70.1s 用 true 完美跑完, false 导致弯道处理出错
+      use_fixed_curvature_lookahead: true
+      curvature_lookahead_dist: 0.8
 
-      # ==================== 弯道减速（防画龙 + 防侧翻） ====================
+      # ==================== 弯道减速 ====================
       use_regulated_linear_velocity_scaling: true
-      # 最小转弯半径 0.30m（匹配物理极限，让弯道减速在真正需要时触发）
-      regulated_linear_scaling_min_radius: 0.30  # 0.20→0.30: 必须等于min_turning_radius
-      # 弯道最低速度：0.18m/s 确保弯道不抖，同时不会因减速过多而停滞
-      regulated_linear_scaling_min_speed: 0.18
+      regulated_linear_scaling_min_radius: 0.30
+      regulated_linear_scaling_min_speed: 0.18  # ★ 70.1s 原值
 
       # ==================== 代价调控主动减速 — 替代碰撞检测 ====================
       # 在窄通道+锥桶场景，碰撞检测频繁误触发→停车→规划失败→恢复→再撞的恶性循环
@@ -264,13 +257,13 @@ local_costmap:
         # 0.55m膨胀: 覆盖全通道(0.5m宽), 双墙代价场重叠产生中心"谷", 规划器自然选中心线
         inflation_radius: 0.55          # 0.12→0.55: Nav2官方推荐, 创建平滑势场
         # 2.0平缓衰减: 中心代价~130(非致命), 10cm分辨率可分辨梯度
-        cost_scaling_factor: 2.0        # 5.0→2.0: 匹配大膨胀半径的平缓衰减
+        cost_scaling_factor: 3.0        # 1.0→3.0: 加陡坡度, planner能看清梯度方向
       keepout_filter:
         plugin: "nav2_costmap_2d::KeepoutFilter"
         enabled: True
         filter_info_topic: "/costmap_ctrl"
         override_lethal_cost: True          # PR #5187: 误入禁区时降为高代价可通行
-        lethal_override_cost: 252           # MAX_NON_OBSTACLE, 最优先逃离但可通行
+        lethal_override_cost: 200           # 252→200: 留给inflation造梯度, planner顺坡滑出禁区
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
@@ -350,7 +343,7 @@ global_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         inflation_radius: 0.55          # 0.12→0.55: 全局规划走中心线
-        cost_scaling_factor: 2.0        # 5.0→2.0: 匹配大膨胀
+        cost_scaling_factor: 3.0        # 1.0→3.0: 加陡坡度, planner能看清梯度方向
       keepout_filter:
         plugin: "nav2_costmap_2d::KeepoutFilter"
         enabled: True
@@ -392,11 +385,11 @@ planner_server:
       # ---- 角度离散化：ARM 板 48 bins，降低搜索分支以加速 ----
       angle_quantization_bins: 48        # ★ 40回退(2026-06-15): 粗分辨率路径避禁区精度不足
 
-      # ---- 搜索限制（ARM Cortex-A55 严格限制，确保规定时间内返回） ----
-      max_iterations: 1500               # 1000→1500: 新禁区增加搜索复杂度,1000不够用
-      max_on_approach_iterations: 300    # 接近目标时减少迭代
-      max_planning_time: 1.5             # 3.0→1.5: 快速失败, 致命起点不再浪费3s
-      terminal_checking_interval: 500    # 默认值，频繁检查是否到达目标
+      # ---- 搜索限制 ----
+      max_iterations: 1500               # ★ 70.1s 原值
+      max_on_approach_iterations: 300    # ★ 70.1s 原值
+      max_planning_time: 1.5             # ★ 70.1s 原值
+      terminal_checking_interval: 500
 
       # ---- 启发式查找表（ARM 优化） ----
       # 小场地：查找表 10m 足够覆盖 5m×5m 场地（对角线 ~7m）

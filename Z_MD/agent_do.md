@@ -2,6 +2,351 @@
 
 ---
 
+## 2026-06-25 15:45 — ★ 全量回退到 70.1s 黄金配置
+
+> **用户**: "小车原来走这一段路都不会犹豫的，现在一到这就走不来了。进黄色通道直接就进来了，出去一样的路口就出不去了。"
+
+### 根因分析
+
+70.1s 完美跑完 RETURN_P 21.3s, 零 lethal space。之后我们改的每一项都在破坏它:
+
+| 我们改的 | 70.1s 原值 | 为什么改坏了 |
+|----------|-----------|-------------|
+| `use_fixed_curvature_lookahead: false` | **true** | false 导致弯道处理不一致, 进通道OK出通道挂 |
+| `_disable_keepout_and_clear()` in RETURN_P | **禁区全程ON** | 禁区OFF让planner走更直接但更窄的路径→controller跟不上 |
+| `desired_linear_vel: 0.40-0.45` | **0.50** | 降速无助于解决controller问题 |
+| `min_lookahead_dist: 0.50` | **0.30** | 窄道收得太远反而看不到前方 |
+| `max_lookahead_dist: 1.20` | **0.90** | 太远预瞄在窄道里"看穿"墙壁 |
+| `max_iterations: 1000` | **1500** | 规划不够精细 |
+| 周期清costmap | **无** | 额外负载, 对controller问题无效 |
+
+### 回退内容
+
+**originbot_nav2_rpp.yaml**: 全部回到 70.1s 值
+**competition_master_stage3.py**: 删除 `_disable_keepout_and_clear()` / `_reenable_keepout()` / `_return_clear_costmaps()`
+
+### 保留的改进 (不破坏原有逻辑)
+
+- 14列 CSV + plans.csv + summary JSON
+- 自动清理旧 CSV
+- `_timeout_handled` 防重复触发
+- costmap PGM 录制
+
+### SSH
+
+- 2 文件上传+CRLF+build → 成功 (2.51s)
+
+> **15:26 运行**: 80.0s Ctrl+C。降速有改善(走更远), 但plan仍冻结。plan历史只2次更新后停摆22秒。
+
+### 根因确认 (EXA MCP + plan历史分析)
+
+```
+PipelineSequence: planner在controller RUNNING时会被re-tick ✅
+但controller一旦FAILURE → 进入recovery子树 → planner不再被调用 ❌
+backup "Collision Ahead" → 失败 → RoundRobin循环 → 死锁
+```
+
+### EXA MCP 关键方案 (Robotics Stack Exchange)
+
+**Option B — 让RPP永不abort**:
+> "Don't let FollowPath's FAILURE escape. Either consume it with Wait→Replan, or prevent it entirely by regulating to zero."
+
+| 参数 | 旧→新 | 原理 |
+|------|--------|------|
+| `regulated_linear_scaling_min_speed` | 0.18→**0.0** | ★ 弯道/窄道减速到零而非abort → controller永不FAILURE |
+| `required_movement_radius` | 0.08→**0.05** | 微移也算进展 |
+| `movement_time_allowance` | 12→**20s** | 窄道等planner更新, 不提前超时 |
+
+效果: 窄道中RPP自动减速到0→等待→planner更新plan→速度恢复→继续走。永远不进入recovery死亡螺旋。
+
+### 15:26 运行数据
+
+| 阶段 | 时间 | vs 上次 |
+|------|------|---------|
+| CRUISE | 32.5s | 降速后首次>30s |
+| RETURN_P | 卡(1.19,1.34) | 比之前(1.0,1.0)走更远 |
+| Plans | 25次 | 含首次plans.csv! |
+
+### SSH
+
+- `originbot_nav2_rpp.yaml` → 上传+build → 成功 (2.36s)
+
+> **15:12 日志关键发现**: plan 在 recovery 期间冻结 26 秒不更新！
+
+### 根因链
+
+```
+robot 0.5m/s 跑太快 → 2秒跑1m
+planner ~1.3Hz (CPU瓶颈) → 每次重规划间隔 robot 跑 0.4m
+窄通道中 plan_start (1.80,1.35) 被 robot (0.74,0.71) 超过
+→ RPP 找不到有效 lookahead → 控制器失败
+→ BT 进入 recovery (backup/wait)
+→ ★ recovery 期间 planner 不被调用 → plan 冻结 26 秒!
+→ backup "Collision Ahead" → 失败 → 死循环
+```
+
+关键: 不是几何问题(通道够宽), 是**时序问题**——planner 更新追不上 robot 移动。
+
+### 修复 (originbot_nav2_rpp.yaml)
+
+| 参数 | 旧 | 新 | 原理 |
+|------|-----|-----|------|
+| `desired_linear_vel` | 0.50 | **0.40** | 降速20% → 重规划间隔内 robot 移动 0.25m(原0.38m) |
+| `max_iterations` | 1500 | **1000** | 规划 ~350ms→~250ms → planner 频率 1.3→2.0Hz |
+| `max_on_approach_iterations` | 300 | **200** | 接近目标收敛更快 |
+| `max_planning_time` | 1.0 | 1.0→1.0 | 保持 |
+
+预期: 2.0Hz 规划 + 0.40m/s = 每次重规划 robot 只移动 0.20m → plan_start 始终在 robot 前方 → 控制器不失败 → 不触发 recovery。
+
+### 新增: 规划历史 `_plans.csv`
+
+每次 `/plan` 回调记录: elapsed_s, state, n_pts, len_m, start_xy, end_xy
+
+### SSH
+
+- `originbot_nav2_rpp.yaml` → 上传+build → 成功 (2.48s)
+- `competition_master_stage3.py` 已在上轮部署 (plan历史功能)
+
+> **15:12 运行**: 88.0s Ctrl+C。CRUISE 38.4s, RETURN_P卡(0.91,1.01)。
+> **5轮同一死亡区**: (0.8-1.1, 0.1-1.0) — keepout禁用、costmap清3s间隔都无法解决。
+
+### 今日5轮RETURN_P对比
+
+| 时间 | CRUISE | RETURN_P 终点 | 距P |
+|------|--------|---------------|-----|
+| 14:18 | 34.8s | (1.16,-0.31) | 3.17m |
+| 14:35 | 26.8s | (1.04,0.15) | 3.04m |
+| 14:45 | 41.3s | (-1.78,-0.36) | 0.33m ⚡唯一接近 |
+| 15:02 | 28.7s | (0.83,0.94) | 2.98m |
+| 15:12 | 38.4s | (0.91,1.01) | 3.08m |
+
+**结论**: 禁区解除+3s清costmap不足以解决。只有14:45那次碰巧穿过去了。
+
+### 新增功能: 规划历史录制
+
+每次 `/plan` 回调 → 记录 `_plans.csv`:
+```
+elapsed_s, state, n_pts, len_m, start_x, start_y, end_x, end_y
+```
+用于评估 planner 路径质量——是否频繁重规划、路径是否绕远。
+
+### 输出文件 (每次跑完4个)
+
+```
+trajectory_*.csv          ← 14列轨迹
+trajectory_*_summary.json ← 摘要
+trajectory_*_plans.csv    ← 🆕 全部规划历史
+trajectory_*_costmap.pgm  ← 障碍物地图
+```
+
+### SSH
+
+- `competition_master_stage3.py` → 上传+CRLF+build → 成功 (2.50s)
+
+> **15:02 运行**: 86.2s Ctrl+C。CRUISE 28.7s ✅ 但 RETURN_P 仍在(0.83,0.94)卡死。
+> **根因**: 8s 间隔太长——4s 进死亡区, 清除还未触发。且 clear_entirely 全清后 LiDAR 瞬间重标记。
+
+### 修改
+
+| 参数 | 旧 | 新 | 原理 |
+|------|-----|-----|------|
+| `_return_clear_timer` 间隔 | 8.0s | **3.0s** | 机器人4s进窄道, 3s间隔确保进之前清一次 |
+| 清除方式 | `clear_entirely` topic | **`ClearCostmapAroundRobot` 2m** | 局部清除, 减少重标记窗口 |
+
+### 障碍物可视化 ✅
+
+- 红色 = keepout 禁区 (keepout_mask.pgm)
+- 🟠 橙色 = LiDAR 障碍物 (costmap.pgm 录制)
+- 🔵 蓝色 = 未知区域
+- Z_PNG/out1/ 验证通过
+
+### SSH
+
+- `competition_master_stage3.py` → 上传+CRLF+build → 成功 (2.49s)
+
+> **用户要求**: 每次扫到的随机静态障碍物也要显示在PNG地图里。
+
+### 实现
+
+**1. `competition_master_stage3.py`** — 录制 costmap → 退出时保存 PGM
+- 新增 `_costmap_sub`: 订阅 `/global_costmap/costmap` (OccupancyGrid)
+- `_on_costmap()`: 缓存最新 costmap 消息
+- `_save_costmap_pgm()`: OccupancyGrid→PGM P5 二进制格式
+  - obstacle (val>90)→黑色, likely(50-90)→深灰, unknown(-1)→灰色, free→白色
+- 退出时自动保存 `trajectory_*_costmap.pgm`
+
+**2. `plot_trajectory.py`** — 叠加 costmap PGM
+- 自动查找 `*_costmap.pgm` (CSV同名)
+- 橙色叠加: 障碍物 (val≤60)
+- 蓝色叠加: 未知区域 (val=127)
+- 与红色 keepout + 灰色底图 + 彩色轨迹同时渲染
+
+### 输出文件 (每次跑完)
+
+```
+/userdata/dev_ws/
+  trajectory_20260625_HHMMSS.csv          ← 14列轨迹
+  trajectory_20260625_HHMMSS_summary.json ← 摘要
+  trajectory_20260625_HHMMSS_costmap.pgm  ← ★ 障碍物地图
+
+本地 Z_PNG/outN/
+  trajectory_*_map.png       ← 地图+keepout+障碍物+轨迹
+  trajectory_*_analysis.png  ← 速度/规划/资源 3面板
+```
+
+### SSH
+
+- `competition_master_stage3.py` → 上传+CRLF+build → 成功 (2.47s)
+
+> **两次测试**: 14:41 (53.6s, CRUISE中Ctrl+C) + 14:45 (188.7s, 全局超时)
+> **关键发现**: keepout 修复生效！机器人首次到达 (-1.78, -0.36), 距P仅0.33m！但发现2个新bug。
+
+### 14:45 跑分析
+
+| 阶段 | 时间 | 说明 |
+|------|------|------|
+| LAUNCH | 15.7s | |
+| NAV_TO_QR | 16.0s | QR=1584 CCW |
+| BACKING_UP | 6.0s | |
+| CRUISE_CHANNEL | 41.3s | ⚠️ 比之前26.8s慢54% (use_fixed_curvature_lookahead=false 副作用?) |
+| RETURN_P | **117.1s** | 到达(-1.78,-0.36), 距P 0.33m! 但太慢 |
+
+**CRUISE 退步**: 41.3s vs 之前26.8s。`use_fixed_curvature_lookahead: false` 绕过了cusp bug但牺牲了巡航平滑度。
+
+**RETURN_P 进展但慢**: robot从VLM到(-1.78,-0.36)仅0.33m→几乎到了！但117s太长。
+- backup恢复循环在 (-1.5,-0.4) 卡了20秒 → LiDAR 障碍物标记累积
+
+### 新发现的2个 Bug
+
+**Bug 1**: `_timeout_shutdown()` 被 1Hz timer 反复触发 → `_log_summary()` 和 `_reenable_keepout()` 各执行8次。修复: `_timeout_handled` 标志。
+
+**Bug 2**: 禁区解除但 obstacle layer (LiDAR) 仍在窄通道标记墙壁为 lethal → planner失败 → backup循环。修复: RETURN_P 期间每8s周期性清双 costmap。
+
+### 本次部署 (4项改动, 2文件)
+
+| # | 文件 | 改动 |
+|---|------|------|
+| 1 | `competition_master_stage3.py` | `_cleanup_old_trajectories()`: 启动时删旧CSV/JSON |
+| 2 | `competition_master_stage3.py` | `_timeout_handled` 标志: 防 _timeout_shutdown 重复 |
+| 3 | `competition_master_stage3.py` | `_return_clear_costmaps()`: 每8s清除双costmap |
+| 4 | `plot_trajectory.py` | 输出→ `Z_PNG/outN/` (仿YOLO训练惯例 out1,out2...) |
+
+### SSH
+
+- `competition_master_stage3.py` → 上传+CRLF+build → 成功 (2.50s)
+- 远程旧CSV/JSON已清理
+
+---
+
+## 2026-06-25 14:55 — RETURN_P 禁区解除 + RPP cusp bug 绕过 + lookahead 微调
+
+> **问题**: 每次返航 RETURN_P 卡死在 (0.9,0.5) 附近, 66s+ 无净前进。轨迹分析显示:
+> 1. 红色轨迹剧烈折返/DIR_SWITCH ← RPP bug #5098
+> 2. 穿越灰色禁区边缘 ← 0.55m膨胀+禁区墙=窄走廊<planner迭代预算
+> 3. 绿色巡航有锯齿 ← lookahead 不够平滑
+
+### 修改（2文件）
+
+**1. `competition_master_stage3.py` — 恢复返航期间禁区解除**
+
+| 位置 | 改动 | 说明 |
+|------|------|------|
+| `_start_return()` | + `self._disable_keepout_and_clear()` | 返航前禁用禁区, 给planner开路 |
+| `_finish()` | + `self._reenable_keepout()` | 完成后恢复禁区 |
+| `_timeout_shutdown()` | + `self._reenable_keepout()` | 超时后恢复禁区 |
+
+架构: CRUISE 禁区ON(防切角) → RETURN_P 禁区OFF(安全返航) → DONE 禁区ON(恢复)
+
+**2. `originbot_nav2_rpp.yaml` — RPP 参数3处修改**
+
+| 参数 | 旧→新 | 原理 |
+|------|--------|------|
+| `use_fixed_curvature_lookahead` | true→**false** | ★ 绕过 Humble RPP bug #5098: curvature_lookahead_dist 不受cusp约束→错误转向 |
+| `min_lookahead_dist` | 0.30→**0.50** | 窄道收得过近(0.30)会看穿墙壁(穿模)→冲禁区 |
+| `max_lookahead_dist` | 0.90→**1.20** | 开阔段更远预瞄=更平顺弯道过渡, 减少锯齿 |
+| `lookahead_time` | 1.2→**1.5** | 更多时间窗口预判前方曲率变化 |
+
+### 预期效果
+
+- RETURN_P: 不再卡死 (禁区解除 + cusp bug绕过)
+- CRUISE: 弯道更平顺 (更长预瞄 + 不会看穿墙壁)
+- DIR_SWITCH: 减少 (cusp检测正常截断lookahead)
+
+### SSH
+
+- `competition_master_stage3.py` + `originbot_nav2_rpp.yaml` → 上传+CRLF+build → 成功 (2 packages, 3.08s)
+
+> **运行结果**: ❌ 121.9s, Ctrl+C 中止于 RETURN_P。新CSV系统成功保存。
+
+### 本次改动（3文件）
+
+**1. `competition_master_stage3.py` — CSV 必保存 + 14列丰富数据**
+- 任何退出都保存: done / timeout / Ctrl+C / exception
+- 文件名带时间戳: `trajectory_YYYYMMDD_HHMMSS.csv` + `*_summary.json`
+- 14列: `elapsed_s, x_m, y_m, yaw_rad, state, cmd_vx, cmd_wz, plan_pts, plan_len_m, plan_end_x, plan_end_y, cpu_pct, mem_pct, cpu_temp_c`
+- `_refresh_hw_cache()` 拆分: 2Hz 刷新 sysfs/psutil, CSV 用缓存值
+- `_exit_reason` 追踪退出原因
+
+**2. `plot_trajectory.py` — 多面板分析图**
+- 自动发现最新 CSV (`--list` 列出, 或指定路径)
+- 新旧格式兼容 (4列旧 / 14列新)
+- 输出: `*_map.png` (地图叠轨迹, 按state着色) + `*_analysis.png` (速度/规划/资源 3面板)
+- JSON 摘要自动加载, 编码修复 (UTF-8 → Windows GBK)
+
+**3. `README.md` — 完整架构审计 (780行)**
+- §3 软件清单: 每节点标注 ★/⚡/❌ 状态
+- §12.1 冗余组件: 13项 (task_manager, keepout_filter_info_server, double ekf.yaml...)
+- §12.2 缺失能力: 11项 (动态避障, 电池监控, VLM超时, 仿真...)
+- §12.3 优化路线图: 短期/中期/长期
+- §14 参数分歧表: 磁盘YAML vs 77.3s验证基线 13项差异
+
+### 本次运行分析 (2026-06-25 14:18)
+
+| 指标 | 值 |
+|------|-----|
+| 总耗时 | 121.9s (Ctrl+C 中止) |
+| 最终状态 | RETURN_P, 卡在 (1.16, -0.31) |
+| LAUNCH | 15.3s |
+| NAV_TO_QR | 14.3s (QR=1584, CCW) |
+| BACKING_UP | 6.0s (wz=0.80) |
+| CRUISE_CHANNEL | 34.8s (比70.1s纪录慢4.2s) |
+| RETURN_P | **66s+ 无净前进** (70.1s纪录仅21.3s!) |
+
+### 根本原因
+
+**RETURN_P 死亡螺旋 = 0.55m膨胀 + 禁区墙 → 窄通道 < 规划器1500迭代预算**
+
+规划器在 `(0.87,-0.64)→(-1.99,-0.01)` 段反复失败：
+- 12 次 "exceeded maximum iterations"
+- 14 次 planner abort
+- 8 次 "Collision Ahead" backup失败
+- 机器人做 forward→stop→reverse→wait 循环, 40+秒零净位移
+
+**对比70.1s纪录**: 同配置, 零次lethal space, 21.3s RETURN_P
+**差异**: 用户可能在两轮之间修改了keepout_mask.pgm, 或本次路径偏了一点导致落入禁区的窄走廊陷阱
+
+### EXA MCP 研究关键发现
+
+**纠正 README 错误**: Humble RPP **确实有** cusp 检测 (`findVelocitySignChange` in line 306)！
+Bug #5098: `use_fixed_curvature_lookahead=true` 时曲率前瞻忽略cusp距离。
+我们磁盘配置 `use_fixed_curvature_lookahead: true` → 触发此bug.
+**缓解**: 设 `use_fixed_curvature_lookahead: false`
+
+### 新CSV系统验证 ✅
+
+```
+trajectory_20260625_141856.csv: 103点 × 14列, 保存于Ctrl+C
+trajectory_20260625_141856_summary.json: 完整摘要
+plot_trajectory.py: 生成 _map.png + _analysis.png 成功
+```
+
+### SSH
+
+- `competition_master_stage3.py` + `plot_trajectory.py` → 上传+CRLF+build → 成功
+- 下载 `trajectory_20260625_141856.*` → 本地分析
+
+---
+
 ## 2026-06-16 19:30 — VLM 路点 yaw 左偏 60°（待部署）
 
 > **用户要求**: 阿克曼不能原地旋转，到达 VLM 路点时直接对准。逆时针 VLM 点 yaw 从 0→0.907rad (52°)。

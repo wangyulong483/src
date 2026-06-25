@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "C:/Users/27826/Desktop/src/deptrum-ros-driver"
+    "cmake.sourceDirectory": "C:/Users/27826/Desktop/src/deptrum-ros-driver",
+    "cmake.ignoreCMakeListsMissing": true
 }
