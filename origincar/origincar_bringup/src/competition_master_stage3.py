@@ -24,7 +24,7 @@ import subprocess
 import rclpy
 from rclpy.node import Node
 from rclpy.action import ActionClient
-from std_msgs.msg import String, Int32, Empty, Bool
+from std_msgs.msg import String, Int32, Empty
 from geometry_msgs.msg import Twist, PoseStamped, PoseWithCovarianceStamped
 from nav2_msgs.action import NavigateToPose, NavigateThroughPoses
 from nav2_msgs.srv import ClearCostmapAroundRobot
@@ -72,7 +72,7 @@ class CompetitionMasterStage3(Node):
         #             仅最后一个路点 (VLM 停靠点) 用于 NavigateToPose
         # 2026-06-12: 手动驾驶标定路径
         self.declare_parameter('cruise_ccw', [
-            1.73, -1.98, 0.0,   2.78, -0.95, 0.0,   2.10, 0.92, 0.907,  # WP2手动标定
+            1.73, -1.98, 0.0,   3.10, -1.35, 0.0,   2.10, 0.92, 0.907,  # VLM yaw: 左偏60°≈52°=0.907rad
         ])
 
         # ═══════════════════════════════════════════════════════════
@@ -196,12 +196,6 @@ class CompetitionMasterStage3(Node):
         self._cmd_diag_sub = self.create_subscription(
             Twist, '/cmd_vel_muxed', self._on_cmd_diag, 10)
         self._trajectory = []  # [(ts, x, y, yaw), ...]
-
-        # ── 锥桶检测 → 动态禁区 ──────────────────────────────
-        self._cone_in_channel = False          # 通道里是否有锥桶
-        self._keepout_disabled_for_cone = False  # 当前是否因锥桶临时关闭了禁区
-        self._cone_sub = self.create_subscription(
-            Bool, '/cone_in_channel', self._on_cone_in_channel, 10)
 
         # Publishers
         self.stop_pub = self.create_publisher(Twist, '/stop_cmd_vel', 10)
@@ -388,37 +382,6 @@ class CompetitionMasterStage3(Node):
         if hasattr(self, '_qr_kill_timer') and self._qr_kill_timer is not None:
             self._qr_kill_timer.cancel()
             self._qr_kill_timer = None
-
-    def _on_cone_in_channel(self, msg):
-        """锥桶检测回调: 通道里有锥桶→降低禁区代价, 锥桶消失→恢复"""
-        self._cone_in_channel = msg.data
-
-        if self.state != 'CRUISE_CHANNEL':
-            return
-
-        if msg.data and not self._keepout_disabled_for_cone:
-            # 锥桶堵路 → 降禁区代价 (254×0.4≈101), 可通行且感知边界
-            lower_msg = CostmapFilterInfo()
-            lower_msg.type = 0
-            lower_msg.filter_mask_topic = "/keepout_mask"
-            lower_msg.base = 0.0
-            lower_msg.multiplier = 0.4     # 254→101, 锥桶=254 更致命→选禁区绕行
-            self.keepout_info_pub.publish(lower_msg)
-            self.costmap_clear_pub.publish(Empty())
-            self.local_costmap_clear_pub.publish(Empty())
-            self._keepout_disabled_for_cone = True
-            self.get_logger().info("[CONE] 锥桶! 禁区代价降至101, 车可借道且感知边界")
-
-        elif not msg.data and self._keepout_disabled_for_cone:
-            # 锥桶消失 → 恢复禁区 LETHAL
-            restore_msg = CostmapFilterInfo()
-            restore_msg.type = 0
-            restore_msg.filter_mask_topic = "/keepout_mask"
-            restore_msg.base = 0.0
-            restore_msg.multiplier = 1.0   # 254 LETHAL, 禁止进入
-            self.keepout_info_pub.publish(restore_msg)
-            self._keepout_disabled_for_cone = False
-            self.get_logger().info("[CONE] 锥桶已通过, 恢复禁区")
 
     # ═══════════════════════════════════════════════════════════════
     # ── VLM 回调 ─────────────────────────────────────────────────
@@ -844,17 +807,6 @@ class CompetitionMasterStage3(Node):
     def _start_return(self):
         """从 VLM 路点直接 NavigateToPose 回 P 点."""
         self._state_transition('RETURN_P')
-
-        # ★ 强制恢复禁区 LETHAL (锥桶检测可能在巡航中降了 multiplier)
-        if self._keepout_disabled_for_cone:
-            restore_msg = CostmapFilterInfo()
-            restore_msg.type = 0
-            restore_msg.filter_mask_topic = "/keepout_mask"
-            restore_msg.base = 0.0
-            restore_msg.multiplier = 1.0
-            self.keepout_info_pub.publish(restore_msg)
-            self._keepout_disabled_for_cone = False
-            self.get_logger().info("[RETURN] 强制恢复禁区 LETHAL (防止锥桶检测残留)")
 
         # ClearCostmapAroundRobot: 清除机器人周围1.5m的传感器障碍物标记
         # VLM点附近可能有墙壁/锥桶, 直接规划会因"起点在致死区域"而失败

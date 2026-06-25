@@ -2,186 +2,23 @@
 
 ---
 
-## 2026-06-17 17:00 — P点停靠精度 + 81.3s DONE (尖角大幅减少)
+## 2026-06-16 19:30 — VLM 路点 yaw 左偏 60°（待部署）
 
-> **结果**: 81.3s DONE。里程计修正+WP2标定生效，DIR_SWITCH ~6次(历史最少)。VLM收到。锥桶检测工作。
-
-| 指标 | 84.5s | **本次** |
-|------|-------|---------|
-| CRUISE_CHANNEL | 28.8s | 28.9s |
-| RETURN_P | 37.6s | 34.7s |
-| DIR_SWITCH | ~20+ | **~6** |
-| Lethal errors | 0 | **0** |
-| **TOTAL** | 84.5s | **81.3s** |
-
-### P点精度: 到达距目标30cm, 最后4秒前后振荡
-
-车到达时(-1.77,0.20)距P(-1.99,-0.01)约30cm。阿克曼无法微调→反复冲过头→倒车→再冲(PID误差180%)。
-
-### 修改
-
-| 参数 | 旧 | 新 | 效果 |
-|------|-----|-----|------|
-| `xy_goal_tolerance` | 0.20m | **0.10m** | 到达标准收紧到10cm |
-| `approach_velocity_scaling_dist` | 0.8m | **1.0m** | 提前1m开始减速 |
-
-### SSH
-- originbot_nav2_rpp.yaml → 上传 + build 2.47s ✅
-
----
-
-## 2026-06-17 16:55 — 里程计各向异性补偿修正 (右侧偏根因)（已部署）
-
-> **问题**: 小车总是向右偏入禁区。Agent分析定位到 origincar_base.cpp 里程计补偿系数。
-
-### 根因
-
-`origincar_base.cpp:375-376` 两个方向用了不同的补偿系数:
-
-```cpp
-Robot_Pos.X += 1.03 * Vx * cos(yaw) * dt;   // X方向补偿3%
-Robot_Pos.Y += 1.125 * Vx * sin(yaw) * dt;  // Y方向补偿12.5%, 多了9.2%!
-```
-
-同一个前进速度, Y分量被多报9.2%。车斜着走时EKF收到"偏左"的虚假信号→持续向右修正→系统右偏入禁区。
-
-### 修复
-
-按EXA MCP校准最佳实践 (UMBmark/统一比例因子), 合并为单一各向同性补偿:
-
-```cpp
-double scale = 1.06;  // 统一比例因子, 作用在车体速度上
-Robot_Pos.X += scale * Vx * cos(yaw) * dt;
-Robot_Pos.Y += scale * Vx * sin(yaw) * dt;
-```
-
-### 理论依据
-
-- Borenstein UMBmark 校准法: 差速机器人系统误差两大来源是不等轮径+不确定轴距, 都应通过统一比例因子修正
-- 各行业校准方法 (Yahboom/Waveshare/Duckietown): 全部使用单一线性比例因子
-- 1.06 取 1.03 和 1.125 的中值, 与EXA推荐的 `实际距离/报告距离` 校准法一致
-
-### SSH
-- origincar_base.cpp → 上传 + colcon build 4.78s ✅
-
----
-
-## 2026-06-17 16:35 — WP2 手动标定 + VLM yaw 回退（已部署）
-
-> **用户手动驾驶标定**: Begin navigating from (0.39,-1.13) to (2.78,-0.95)
+> **用户要求**: 阿克曼不能原地旋转，到达 VLM 路点时直接对准。逆时针 VLM 点 yaw 从 0→0.907rad (52°)。
 
 ### 修改
 
 **文件**: `competition_master_stage3.py`
 
-| 路点 | 旧 | 新 | 说明 |
-|------|-----|-----|------|
-| `cruise_ccw` WP2 | `3.10, -1.35, 0.0` | **`2.78, -0.95, 0.0`** | 手动标定, 更靠西北, U弯更平滑 |
-| `cruise_ccw` VLM yaw | `0.907` (52°) | **`0.0`** | 回退, 让车自然到达不强制旋转 |
+| 路点 | 旧 yaw | 新 yaw | 说明 |
+|------|--------|--------|------|
+| `cruise_ccw[-1]` VLM 点 | `0.0` | **`0.907`** (~52°) | 左偏 60°，到达即对准回程标志 |
 
-### 几何改善
+顺时针 VLM 点暂不改动。
 
-```
-旧: WP1(1.73,-1.98) 25°→ WP2(3.10,-1.35) 114°→ VLM(2.10,0.92)
-    弯角: 89° (急转 → REEDS_SHEPP 尖点 → 切禁区)
+### 原理
 
-新: WP1(1.73,-1.98) 45°→ WP2(2.78,-0.95) 110°→ VLM(2.10,0.92)
-    弯角: 65° (更缓, 路径更平滑)
-```
-
-### SSH
-- competition_master_stage3.py → 上传 + build 2.56s ✅
-
----
-
-## 2026-06-16 22:15 — 84.5s DONE + lidar_cone crash 修复
-
-> **结果**: ✅ DONE 84.5s。首次 LiDAR 锥桶检测部署（未生效, 节点崩溃）。VLM 收到。
-
-### 运行结果
-
-| 指标 | 70.1s | **本次** |
-|------|-------|---------|
-| LAUNCH | 14.4s | 14.1s |
-| NAV_TO_QR | 12.0s | 11.7s |
-| BACKING_UP | 6.0s | 6.0s |
-| CRUISE_CHANNEL | 30.6s | **28.8s** ✦最佳✦ |
-| RETURN_P | 21.3s | **37.6s** ⚠️ |
-| **TOTAL** | **70.1s** | **84.5s** |
-| Lethal errors | 0 | **0** |
-| VLM | 未收到 | ✅ 收到 |
-
-### 问题
-
-**1. lidar_cone_detector.py 崩溃**
-```
-TypeError: RcutilsLogger.info() takes 2 positional arguments but 7 were given
-```
-ROS2 的 `get_logger().info()` 不接受 C 风格格式串。修复：改用 Python f-string。→ 已 fix + 部署 (build 3.19s)
-
-**2. RETURN_P 漂移：P 点附近徘徊 16s**
-车在 P 点附近盘旋：(-1.37,-0.05)→(-1.74,0.33)→(-1.69,0.19)→(-1.78,0.35)→(-1.22,0.13)→DONE (-2.05,0.00)
-P 点目标 (-1.99,-0.01)，车反复逼近→冲过去→掉头→重试。REEDS_SHEPP cusp + Ackermann 在目标点附近的先天限制。
-
-**3. CRUISE_CHANNEL 28.8s** — 新纪录（70.1s 是 30.6s）。零 lethal errors 连续两轮。0.55m 膨胀 + RateController 1.0Hz 持续生效。
-
-### SSH
-- lidar_cone_detector.py logger fix → 上传 + build 3.19s ✅
-
----
-
-## 2026-06-16 21:30 — YOLO → LiDAR 锥桶检测: 用 /scan 几何聚类（已部署）
-
-> **决策**: 相机→YOLO→深度对齐→3D→tf→map 链路太长（5步，每步可出错），改为 LiDAR 直接聚类。参考 object-detector-fusion 的 `obstacle_extractor` 密度聚类思路。
-
-### 架构对比
-
-| | YOLO 方案 | LiDAR 方案 |
-|------|-----------|------------|
-| 输入 | Aurora930 RGB → BPU | `/scan` (已有) |
-| 推理 | YOLOv5s BPU ~2TOPS | Python 聚类 ~0% CPU |
-| 3D 定位 | 深度对齐 + tf | **LiDAR 直接给 2D 坐标** |
-| 额外硬件 | 需要 640×640 模型/USB 相机 | 无 |
-| 失败点 | 5 步 | 1 步 |
-| 维护 | C++ BPU 节点 + Python bridge | 单文件 120 行 Python |
-
-### 新增文件
-
-| 文件 | 说明 |
-|------|------|
-| `lidar_cone_detector.py` | LiDAR 几何聚类锥桶检测 |
-
-### 工作原理
-
-```
-/scan (激光扫描)
-  → 提取前向 ±45° 扇区, 0.5-3m 范围
-  → 相邻点间距 <0.3m → 同簇
-  → 簇大小 3-15 点 → 锥桶 (墙壁>15点, 噪点<3点)
-  → 连续 3 帧确认 → /cone_in_channel=True
-  → competition_master → 临时禁用禁区 → planner 绕行
-  → 锥桶通过 (连续 3 帧无检测) → 恢复禁区
-```
-
-### 删除
-
-| 文件 | 说明 |
-|------|------|
-| `cone_3d_bridge.py` | YOLO 2D→3D 桥接 (已删) |
-| `racing_obstacle_detection_yolo` 集成 | 不再需要 |
-
-### 保留
-
-- `competition_master_stage3.py` 的 `_on_cone_in_channel` 动态禁区逻辑（完全不变——它只关心 `/cone_in_channel` Bool 值，不关心里面是 YOLO 还是 LiDAR）
-- `stage3_bringup.launch.py` 的锥桶检测节点（t=3s 启动 LiDAR 检测器替代 YOLO+bridge）
-
-### SSH
-
-- 4 文件上传 + CRLF fix + chmod +x → colcon build 6.47s ✅
-
----
-
-## 2026-06-16 19:30 — VLM 路点 yaw 左偏 60°（已回退 → 见 88.1s 禁区陷阱）
+阿克曼不能原地旋转，直接在 NavigateThroughPoses 最后一段的目标 yaw 上做偏移。RPP 在接近终点时自然调整车头朝向，到达即对准，零额外时间。
 
 ---
 

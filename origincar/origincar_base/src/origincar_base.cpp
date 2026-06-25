@@ -371,10 +371,9 @@ void origincar_base::Control()
       Sampling_Time = (current_time - last_time).seconds();  // 计算采样周期
       
       if (true == Get_Sensor_Data()) {  // 如果成功获取传感器数据
-        // 里程计位置解算 (各向同性补偿, 作用在车体速度上而非世界投影上)
-        double scale = 1.06;
-        Robot_Pos.X+=scale*(Robot_Vel.X * cos(Robot_Pos.Z) - Robot_Vel.Y * sin(Robot_Pos.Z)) * Sampling_Time;
-        Robot_Pos.Y+=scale*(Robot_Vel.X * sin(Robot_Pos.Z) + Robot_Vel.Y * cos(Robot_Pos.Z)) * Sampling_Time;
+        // 里程计位置解算（带补偿系数）
+        Robot_Pos.X+=1.03*(Robot_Vel.X * cos(Robot_Pos.Z) - Robot_Vel.Y * sin(Robot_Pos.Z)) * Sampling_Time;
+        Robot_Pos.Y+=1.125*(Robot_Vel.X * sin(Robot_Pos.Z) + Robot_Vel.Y * cos(Robot_Pos.Z)) * Sampling_Time;
         Robot_Pos.Z+=Robot_Vel.Z * Sampling_Time;
 
         // IMU 姿态解算

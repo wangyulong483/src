@@ -90,10 +90,6 @@ install(PROGRAMS src/competition_master_stage3.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
-install(PROGRAMS src/lidar_cone_detector.py
-  DESTINATION lib/${PROJECT_NAME}
-)
-
 install(PROGRAMS src/bmi088_iio_bridge.py
   DESTINATION lib/${PROJECT_NAME}
 )

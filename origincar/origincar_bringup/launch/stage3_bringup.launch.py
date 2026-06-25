@@ -46,16 +46,6 @@ def generate_launch_description():
             OpaqueFunction(function=_vision_ai_if_available),  # VLM视觉AI节点
         ]),
 
-        # ── LiDAR 锥桶检测 (几何聚类, 不占BPU) ──
-        TimerAction(period=3.0, actions=[
-            Node(
-                package='origincar_bringup',
-                executable='lidar_cone_detector.py',
-                name='lidar_cone_detector',
-                output='screen',
-            ),
-        ]),
-
         TimerAction(period=1.0, actions=[
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(

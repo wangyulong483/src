@@ -15,12 +15,10 @@ import subprocess
 import rclpy
 from rclpy.node import Node
 from rclpy.action import ActionClient
-from std_msgs.msg import String, Empty
+from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 from nav2_msgs.action import NavigateToPose
-from nav2_msgs.msg import CostmapFilterInfo
 from action_msgs.msg import GoalStatus
-from rclpy.qos import QoSProfile, QoSDurabilityPolicy, QoSHistoryPolicy, QoSReliabilityPolicy
 
 
 class CompetitionMasterStage2(Node):
@@ -70,20 +68,6 @@ class CompetitionMasterStage2(Node):
             String, '/qr_event', self._on_qr_event, 10)
         self.stop_pub = self.create_publisher(Twist, '/stop_cmd_vel', 10)
         self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel', 10)
-
-        # ── Keepout 禁区激活 ──────────────────────────────────
-        _fi_qos = QoSProfile(depth=10, reliability=QoSReliabilityPolicy.RELIABLE,
-                             durability=QoSDurabilityPolicy.TRANSIENT_LOCAL,
-                             history=QoSHistoryPolicy.KEEP_LAST)
-        self.keepout_info_pub = self.create_publisher(
-            CostmapFilterInfo, '/costmap_ctrl', _fi_qos)
-        # ★ 启动时发布: 指向 /keepout_mask, 激活 KeepoutFilter
-        _reset = CostmapFilterInfo()
-        _reset.type = 0
-        _reset.filter_mask_topic = "/keepout_mask"
-        _reset.base = 0.0
-        _reset.multiplier = 1.0
-        self.keepout_info_pub.publish(_reset)
 
         # ── 导航超时检测定时器 (1 Hz) ─────────────────────────
         self._timeout_timer = self.create_timer(1.0, self._check_nav_timeout)
