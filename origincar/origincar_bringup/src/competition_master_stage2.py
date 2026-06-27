@@ -13,6 +13,8 @@ QR 方向获取:
 import math
 import subprocess
 import rclpy
+from rclpy.qos import QoSProfile, QoSDurabilityPolicy, QoSHistoryPolicy, QoSReliabilityPolicy
+from nav2_msgs.msg import CostmapFilterInfo
 from rclpy.node import Node
 from rclpy.action import ActionClient
 from std_msgs.msg import String
@@ -71,6 +73,18 @@ class CompetitionMasterStage2(Node):
 
         # ── 导航超时检测定时器 (1 Hz) ─────────────────────────
         self._timeout_timer = self.create_timer(1.0, self._check_nav_timeout)
+
+        # ── 禁区初始化 ──────────────────────────────────────
+        _fi_qos = QoSProfile(depth=10, reliability=QoSReliabilityPolicy.RELIABLE,
+                             durability=QoSDurabilityPolicy.TRANSIENT_LOCAL,
+                             history=QoSHistoryPolicy.KEEP_LAST)
+        self.keepout_info_pub = self.create_publisher(
+            CostmapFilterInfo, '/costmap_ctrl', _fi_qos)
+        _reset_msg = CostmapFilterInfo()
+        _reset_msg.type = 0
+        _reset_msg.filter_mask_topic = "/keepout_mask"
+        _reset_msg.base = 0.0; _reset_msg.multiplier = 1.0
+        self.keepout_info_pub.publish(_reset_msg)
 
         self.get_logger().info("=== [Stage 2] 总控节点初始化 ===")
         self.get_logger().info(

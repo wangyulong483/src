@@ -142,7 +142,7 @@ controller_server:
     # ---- Goal Checker: 适度放宽，减少原地旋转耗时 ----
     goal_checker:
       plugin: "nav2_controller::SimpleGoalChecker"
-      xy_goal_tolerance: 0.20          # 从0.15放宽到0.20，避免到达后因微小误差触发重规划绕圈
+      xy_goal_tolerance: 0.30          # 0.20→0.30: 不纠结最后几厘米, 到了就停
       yaw_goal_tolerance: 3.14         # P点不查朝向; VLM朝向靠路点几何保证
       stateful: true                   # 先锁定 XY，再检查 Yaw，防止来回振荡
       symmetric_yaw_tolerance: false
@@ -199,7 +199,7 @@ controller_server:
       # 代价调控公式: speed_factor = 1 - gain × max(0, dist - cost_scaling_dist) / cost_scaling_dist
       use_cost_regulated_linear_velocity_scaling: true
       cost_scaling_dist: 0.12            # RPP代价减速距离 (不受膨胀半径影响)
-      cost_scaling_gain: 2.0
+      cost_scaling_gain: 1.0            # 2.0→1.0: 通道墙一直近, 高增益=持续减速=不敢走
       inflation_cost_scaling_factor: 5.0
 
       # ==================== 碰撞检测：关闭 ====================
@@ -210,8 +210,8 @@ controller_server:
 
       # ==================== 接近目标减速 ====================
       # 0.7m/s → 0.10m/s 平滑过渡，0.8m 开始减速（比原 0.6m 更早，匹配更高巡航速度）
-      min_approach_linear_velocity: 0.10
-      approach_velocity_scaling_dist: 0.8
+      min_approach_linear_velocity: 0.22   # 0.10→0.22: 不磨蹭, 最后阶段保持速度
+      approach_velocity_scaling_dist: 0.5   # 0.8→0.5: 更靠近目标才减速
 
       # ==================== 阿克曼原地旋转：关闭（必须！） ====================
       # 阿克曼车无法原地旋转，此参数必须为 false
@@ -396,16 +396,17 @@ planner_server:
       lookup_table_size: 20.0          # 10.0→20.0: 默认值, 更大运动基元缓存, 内存+38KB
 
       # ---- 解析扩展：终点进场对齐的核心 ----
-      analytic_expansion_ratio: 3.0       # 2.0→3.0: 更频繁解析扩展, 更快找到直连目标的RS曲线
+      analytic_expansion_ratio: 3.0       # 4.0→3.0: 回退, 4.0过度直连忽略中间障碍
       # 解析扩展最大长度 = 5 × min_turning_radius = 1.5m
       analytic_expansion_max_length: 1.5
       analytic_expansion_max_cost: 150.0
       analytic_expansion_max_cost_override: false
 
+      # ---- 搜索优化 ----
       # ---- 阿克曼专属惩罚 ----
-      reverse_penalty: 2.0             # 4.0→2.0: 官方推荐1.3-5.0, 不过度抑制必要倒车
-      change_penalty: 0.10              # 0.2→0.10: 官方推荐0.0-0.3, 抑制不必要cusp
-      non_straight_penalty: 1.3         # 弧线惩罚：折中值，允许适度弯道但不蜿蜒
+      reverse_penalty: 2.0             # 官方推荐1.3-5.0
+      change_penalty: 0.10             # 0.0→0.10: 回退, 0.0导致巡航路径不可控
+      non_straight_penalty: 1.3        # 1.0→1.3: 回退
       cost_penalty: 4.0                 # 代价区域惩罚
 
       # ---- 启发性缓存（竞赛场景目标不固定，建议关闭以加速启动） ----

@@ -72,7 +72,7 @@ class CompetitionMasterStage3(Node):
         #             仅最后一个路点 (VLM 停靠点) 用于 NavigateToPose
         # 2026-06-12: 手动驾驶标定路径
         self.declare_parameter('cruise_ccw', [
-            1.73, -1.98, 0.0,   3.10, -1.35, 0.0,   2.10, 0.92, 0.80,  # VLM yaw: 微调 0.907→0.80 (~46°)
+            0.25, -1.17, 0.0,   1.66, -1.50, 0.0,   2.90, -0.90, 0.0,   2.17, 0.69, 0.80,  # 手动驾驶标定
         ])
 
         # ═══════════════════════════════════════════════════════════
@@ -226,6 +226,9 @@ class CompetitionMasterStage3(Node):
         _reset_msg.filter_mask_topic = "/keepout_mask"
         _reset_msg.base = 0.0; _reset_msg.multiplier = 1.0
         self.keepout_info_pub.publish(_reset_msg)
+
+        # ── rosbag 录制 ───────────────────────────────────────
+        self._bag_process = None
 
         # ── 定时器 ──────────────────────────────────────────────
         self._timeout_timer = self.create_timer(1.0, self._check_timeouts)
@@ -524,8 +527,49 @@ class CompetitionMasterStage3(Node):
                         '/userdata/dev_ws/trajectory_*.pgm']:
                 for f in _glob.glob(pat):
                     os.remove(f)
+            # 清理旧 rosbag (保留最近2个)
+            bag_dir = '/userdata/dev_ws/bags'
+            if os.path.isdir(bag_dir):
+                bags = sorted(os.listdir(bag_dir))
+                for old in bags[:-2]:
+                    import shutil as _shutil
+                    _shutil.rmtree(os.path.join(bag_dir, old), ignore_errors=True)
         except Exception as e:
             self.get_logger().warn(f'[CLEANUP] failed: {e}')
+
+    def _start_bag_record(self):
+        """启动 rosbag 录制 (后台进程)."""
+        from datetime import datetime
+        bag_dir = '/userdata/dev_ws/bags'
+        os.makedirs(bag_dir, exist_ok=True)
+        bag_name = f"stage3_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        bag_path = os.path.join(bag_dir, bag_name)
+        topics = '/tf /tf_static /scan /odom /amcl_pose /plan /local_plan ' \
+                 '/cmd_vel /cmd_vel_muxed /cmd_vel_corrected ' \
+                 '/global_costmap/costmap /local_costmap/costmap ' \
+                 '/sign /qr_event /vlm_result /robotvel'
+        try:
+            self._bag_process = subprocess.Popen(
+                ['ros2', 'bag', 'record', '-o', bag_path] + topics.split(),
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            self.get_logger().info(f'[BAG] 录制开始: {bag_name}')
+        except Exception as e:
+            self.get_logger().error(f'[BAG] 启动失败: {e}')
+
+    def _stop_bag_record(self):
+        """停止 rosbag 录制."""
+        if self._bag_process is None:
+            return
+        try:
+            self._bag_process.send_signal(subprocess.signal.SIGINT)
+            self._bag_process.wait(timeout=5)
+            self.get_logger().info('[BAG] 录制已停止')
+        except subprocess.TimeoutExpired:
+            self._bag_process.kill()
+            self.get_logger().warn('[BAG] 录制强制终止')
+        except Exception as e:
+            self.get_logger().warn(f'[BAG] 停止异常: {e}')
+        self._bag_process = None
 
     def _save_trajectory(self):
         """保存全程 CSV + 摘要 JSON，无论退出原因都调用。"""
@@ -816,7 +860,10 @@ class CompetitionMasterStage3(Node):
             self.get_logger().warn("NavigateThroughPoses 被拒绝, 3s后重试")
             if self._retry_timer is not None:
                 self._retry_timer.cancel()
-            self._retry_timer = self.create_timer(3.0, lambda: self._start_cruise())
+            if self.state == 'RETURN_P':
+                self._retry_timer = self.create_timer(3.0, self._start_return)
+            else:
+                self._retry_timer = self.create_timer(3.0, lambda: self._start_cruise())
             return
         self.get_logger().info("NavigateThroughPoses 已接受, 巡航中...")
         self._through_result_future = goal_handle.get_result_async()
@@ -826,8 +873,12 @@ class CompetitionMasterStage3(Node):
         status = future.result().status
         if status == GoalStatus.STATUS_SUCCEEDED:
             self._nav_start_time = None
-            self.get_logger().info("[结果回调] 巡航完成, 到达VLM路点, 触发VLM推理...")
-            self._trigger_vlm()
+            if self.state == 'RETURN_P':
+                self.get_logger().info("[结果回调] 返航完成, 已回到P点!")
+                self._finish()
+            else:
+                self.get_logger().info("[结果回调] 巡航完成, 触发VLM推理...")
+                self._trigger_vlm()
         else:
             self.get_logger().warn(f"NavigateThroughPoses 失败 status={status}")
 
@@ -981,9 +1032,11 @@ class CompetitionMasterStage3(Node):
 
     def _trigger_vlm(self):
         """VLM路点拍照, 后台推理, 结果在P点显示."""
+        if self._vlm_triggered:
+            return  # 防重入: 巡航结果回调可能多次触发
+        self._vlm_triggered = True
         self.get_logger().info("[VLM] 发布 sign4return=100, 拍照推理中...")
         self.sign4return_pub.publish(Int32(data=100))
-        self._vlm_triggered = True
         self._start_return()
 
     def _on_return_delay(self):
@@ -999,21 +1052,36 @@ class CompetitionMasterStage3(Node):
                            approach_yaw, "P点返航")
 
     def _start_return(self):
-        """从 VLM 路点直接 NavigateToPose 回 P 点."""
+        """从 VLM 路点 NavigateThroughPoses 经通道入口回 P 点.
+        复用通道入口 (entry_point) 作为中间路点: 进得来就出得去."""
         self._state_transition('RETURN_P')
 
-        # ClearCostmapAroundRobot: 清除机器人周围1.5m的传感器障碍物标记
-        req = ClearCostmapAroundRobot.Request()
-        req.reset_distance = 1.5
-        if self._clear_around_local.wait_for_service(timeout_sec=1.0):
-            self._clear_around_local.call_async(req)
-        if self._clear_around_global.wait_for_service(timeout_sec=1.0):
-            self._clear_around_global.call_async(req)
-        self.get_logger().info(
-            f"[RETURN] 返航至 P点 ({self.p_point_x:.2f},{self.p_point_y:.2f})")
+        if not self.through_client.wait_for_server(timeout_sec=3.0):
+            self.get_logger().error("navigate_through_poses server 未就绪!")
+            return
 
-        self._return_sent = False
-        self._return_delay_timer = self.create_timer(0.1, self._on_return_delay)
+        # 构造路点: VLM→第3环路点→P点
+        goal = NavigateThroughPoses.Goal()
+        for (wx, wy, wyaw) in [
+            (1.07, -0.73, 0.0),                                    # 第3环路点
+            (self.p_point_x, self.p_point_y, self.p_point_yaw),
+        ]:
+            pose = PoseStamped()
+            pose.header.frame_id = 'map'
+            pose.header.stamp = self.get_clock().now().to_msg()
+            pose.pose.position.x = wx
+            pose.pose.position.y = wy
+            pose.pose.orientation.z = math.sin(wyaw / 2.0)
+            pose.pose.orientation.w = math.cos(wyaw / 2.0)
+            goal.poses.append(pose)
+
+        self.get_logger().info(
+            f"[RETURN] NavigateThroughPoses: 通道入口→P点 "
+            f"({self.entry_point_x:.2f},{self.entry_point_y:.2f})→"
+            f"({self.p_point_x:.2f},{self.p_point_y:.2f})")
+        self._nav_start_time = self.get_clock().now()
+        self._through_future = self.through_client.send_goal_async(goal)
+        self._through_future.add_done_callback(self._through_response_cb)
 
     # ═══════════════════════════════════════════════════════════════
     # ── 超时检查 ─────────────────────────────────────────────────
@@ -1119,6 +1187,7 @@ class CompetitionMasterStage3(Node):
     def _timeout_shutdown(self):
         """全局超时处理"""
         self._exit_reason = 'total_timeout'
+        self._stop_bag_record()
         if self._goal_handle is not None:
             self._goal_handle.cancel_goal_async()
             self._goal_handle = None
@@ -1140,6 +1209,7 @@ class CompetitionMasterStage3(Node):
         self._phase_times['LAUNCH'] = launch_dur
         self.get_logger().info(f"[LAUNCH] 发车阶段: {launch_dur:.1f}s")
         self.get_logger().info(">>> 系统就绪, 开始 Stage 3 导航")
+        self._start_bag_record()          # ★ 开始录制 rosbag
         self._clock_start = self._get_current_raw_time()
         self._state_transition('NAV_TO_QR')
         self.send_nav_goal(
@@ -1150,6 +1220,7 @@ class CompetitionMasterStage3(Node):
     def _finish(self):
         """任务完成: 停车, 打印VLM结果, 保存轨迹"""
         self._exit_reason = 'done'
+        self._stop_bag_record()
         self.send_stop()
         self._stop_keepalive = self.create_timer(0.1, lambda: self.stop_pub.publish(Twist()))
         self._state_transition('DONE')
@@ -1224,13 +1295,19 @@ def main(args=None):
     try:
         node.run()
     except KeyboardInterrupt:
-        node.get_logger().info('[MAIN] 收到 Ctrl+C, 正在保存轨迹...')
+        node.get_logger().info('[MAIN] 收到 Ctrl+C, 停止录制 + 保存轨迹...')
+        node._stop_bag_record()
         node._exit_reason = 'keyboard_interrupt'
+        node._log_summary()
     except Exception as e:
         node.get_logger().error(f'[MAIN] 异常退出: {e}')
         node._exit_reason = f'exception:{e}'
     finally:
-        # ★ 无论何种退出, 保存全程 CSV 轨迹
+        # ★ 无论何种退出, 停止录制 + 保存全程 CSV
+        try:
+            node._stop_bag_record()
+        except Exception:
+            pass
         try:
             node._save_trajectory()
         except Exception as e:
