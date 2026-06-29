@@ -64,9 +64,9 @@ class CompetitionMasterStage3(Node):
 
         # cruise_cw: 顺时针 (odd QR) — 途经点 + VLM 停靠点
         #            仅最后一个路点 (VLM 停靠点) 用于 NavigateToPose
-        # 2026-06-12: 手动驾驶标定路径
+        # 2026-06-28: 手动驾驶重标定 (stage2 RViz 逐点导航)
         self.declare_parameter('cruise_cw', [
-            0.82, 0.56, 0.0,   2.23, 0.77, 0.0,   3.12, -1.34, 0.0,
+            0.93, 0.11, 0.0,   2.19, 0.77, 0.0,   3.01, -1.16, 0.0,
         ])
         # cruise_ccw: 逆时针 (even QR) — 途经点 + VLM 停靠点
         #             仅最后一个路点 (VLM 停靠点) 用于 NavigateToPose
@@ -194,7 +194,7 @@ class CompetitionMasterStage3(Node):
         self._plan_sub = self.create_subscription(Path, '/plan', self._on_plan, 10)
         self._cmd_vx = 0.0; self._cmd_wz = 0.0
         self._cmd_diag_sub = self.create_subscription(
-            Twist, '/cmd_vel_muxed', self._on_cmd_diag, 10)
+            Twist, '/cmd_vel', self._on_cmd_diag, 10)
         self._trajectory = []  # [(elapsed, x, y, yaw, state, cmd_vx, cmd_wz, plan_n, plan_len, plan_ex, plan_ey, cpu, mem, cputemp), ...]
         self._plan_history = []  # [(elapsed, state, n_pts, len_m, sx, sy, ex, ey), ...] 每次规划记录
 
@@ -208,7 +208,6 @@ class CompetitionMasterStage3(Node):
         self._timeout_handled = False   # 防止 _timeout_shutdown 重复触发
 
         # Publishers
-        self.stop_pub = self.create_publisher(Twist, '/stop_cmd_vel', 10)
         self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel', 10)
         self.sign4return_pub = self.create_publisher(Int32, '/sign4return', 10)
         self.costmap_clear_pub = self.create_publisher(
@@ -301,8 +300,8 @@ class CompetitionMasterStage3(Node):
         )
 
     def send_stop(self):
-        """发布停止指令"""
-        self.stop_pub.publish(Twist())
+        """发布停止指令 — 直接写入 /cmd_vel 到达 STM32"""
+        self.cmd_vel_pub.publish(Twist())
 
     def _get_current_raw_time(self):
         """获取当前时钟的原始秒数 (用于全局计时)"""
@@ -518,6 +517,63 @@ class CompetitionMasterStage3(Node):
             f"cmd=(vx={self._cmd_vx:.2f} wz={self._cmd_wz:.2f}) "
             f"elapsed={elapsed:.1f}s{plan_str} {self._get_hw_stats()}")
 
+    def _get_nav2_params_snapshot(self):
+        """读取当前 Nav2 YAML 中的关键参数, 用于离线分析关联参数与效果."""
+        import yaml as _yaml
+        nav2_yaml = '/userdata/dev_ws/src/originbot_navigation/param/originbot_nav2_rpp.yaml'
+        flat = {}
+        try:
+            with open(nav2_yaml, 'r') as f:
+                cfg = _yaml.safe_load(f) or {}
+
+            # RPP controller params
+            ctrl = cfg.get('controller_server', {}).get('ros__parameters', {})
+            fp = ctrl.get('FollowPath', {})
+            gc = ctrl.get('goal_checker', {})
+            pc = ctrl.get('progress_checker', {})
+
+            for k in ['desired_linear_vel', 'lookahead_dist', 'min_lookahead_dist',
+                       'max_lookahead_dist', 'lookahead_time', 'cost_scaling_gain',
+                       'cost_scaling_dist', 'min_approach_linear_velocity',
+                       'approach_velocity_scaling_dist', 'max_linear_vel',
+                       'max_angular_vel', 'max_linear_accel',
+                       'regulated_linear_scaling_min_radius',
+                       'regulated_linear_scaling_min_speed']:
+                if k in fp:
+                    flat[f'controller.{k}'] = fp[k]
+
+            for k in ['xy_goal_tolerance', 'yaw_goal_tolerance']:
+                if k in gc:
+                    flat[f'controller.{k}'] = gc[k]
+
+            for k in ['required_movement_radius', 'movement_time_allowance']:
+                if k in pc:
+                    flat[f'controller.{k}'] = pc[k]
+
+            # Planner params
+            planner = cfg.get('planner_server', {}).get('ros__parameters', {})
+            gb = planner.get('GridBased', {})
+            for k in ['reverse_penalty', 'change_penalty', 'non_straight_penalty',
+                       'analytic_expansion_ratio', 'max_iterations',
+                       'max_planning_time', 'angle_quantization_bins',
+                       'cost_penalty', 'minimum_turning_radius']:
+                if k in gb:
+                    flat[f'planner.{k}'] = gb[k]
+
+            # Costmap params (local + global)
+            for scope, key in [('local_costmap', 'local'), ('global_costmap', 'global')]:
+                cm = cfg.get(scope, {}).get(f'{scope}', {}).get('ros__parameters', {})
+                infl = cm.get('inflation_layer', {})
+                if 'inflation_radius' in infl:
+                    flat[f'planner.inflation_radius.{key}'] = infl['inflation_radius']
+                if 'cost_scaling_factor' in infl:
+                    flat[f'planner.cost_scaling_factor.{key}'] = infl['cost_scaling_factor']
+
+            self.get_logger().info(f'[TRAJ] Nav2 params snapshot: {len(flat)} keys')
+        except Exception as e:
+            self.get_logger().warn(f'[TRAJ] Failed to read Nav2 params: {e}')
+        return flat
+
     def _cleanup_old_trajectories(self):
         """启动时删除上轮残留的所有 trajectory 文件, 防止堆积."""
         import glob as _glob
@@ -545,7 +601,7 @@ class CompetitionMasterStage3(Node):
         bag_name = f"stage3_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         bag_path = os.path.join(bag_dir, bag_name)
         topics = '/tf /tf_static /scan /odom /amcl_pose /plan /local_plan ' \
-                 '/cmd_vel /cmd_vel_muxed /cmd_vel_corrected ' \
+                 '/cmd_vel ' \
                  '/global_costmap/costmap /local_costmap/costmap ' \
                  '/sign /qr_event /vlm_result /robotvel'
         try:
@@ -660,6 +716,7 @@ class CompetitionMasterStage3(Node):
                     'total_timeout': self.total_timeout,
                     'backup_linear_x': self.backup_linear_x,
                     'backup_angular_z': self.backup_angular_z,
+                    'nav2_config': self._get_nav2_params_snapshot(),
                 }
             }
             with open(json_path, 'w') as f:
@@ -779,7 +836,6 @@ class CompetitionMasterStage3(Node):
             self._backup_timer.cancel()
             self._backup_timer = None
         self.cmd_vel_pub.publish(Twist())
-        self.stop_pub.publish(Twist())
 
         self._state_transition('CRUISE_CHANNEL')
         self._start_cruise()
@@ -1192,7 +1248,7 @@ class CompetitionMasterStage3(Node):
             self._goal_handle.cancel_goal_async()
             self._goal_handle = None
         self.send_stop()
-        self._stop_keepalive = self.create_timer(0.1, lambda: self.stop_pub.publish(Twist()))
+        self._stop_keepalive = self.create_timer(0.1, lambda: self.cmd_vel_pub.publish(Twist()))
         self._state_transition('TIMEOUT')
         self._log_summary()
         self._save_trajectory()
@@ -1222,7 +1278,7 @@ class CompetitionMasterStage3(Node):
         self._exit_reason = 'done'
         self._stop_bag_record()
         self.send_stop()
-        self._stop_keepalive = self.create_timer(0.1, lambda: self.stop_pub.publish(Twist()))
+        self._stop_keepalive = self.create_timer(0.1, lambda: self.cmd_vel_pub.publish(Twist()))
         self._state_transition('DONE')
         self._log_summary()
         self._save_trajectory()

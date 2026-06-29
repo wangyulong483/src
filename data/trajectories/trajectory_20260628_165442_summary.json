@@ -1,0 +1,71 @@
+{
+  "run_ts": "20260628_165442",
+  "final_state": "DONE",
+  "exit_reason": "done",
+  "elapsed_total_s": 94.11,
+  "phase_times_s": {
+    "LAUNCH": 15.7,
+    "NAV_TO_QR": 15.76,
+    "BACKING_UP": 6.01,
+    "CRUISE_CHANNEL": 36.03,
+    "RETURN_P": 36.24
+  },
+  "last_position": {
+    "x": -1.606,
+    "y": -0.2988,
+    "yaw": 2.3151
+  },
+  "trajectory_stats": {
+    "n_points": 102,
+    "x_range": 5.163,
+    "y_range": 3.259,
+    "state_distribution": {
+      "RETURN_P": 46,
+      "CRUISE_CHANNEL": 34,
+      "NAV_TO_QR": 15,
+      "BACKING_UP": 7
+    }
+  },
+  "qr_raw": "1584",
+  "qr_direction": "逆时针",
+  "vlm_received": true,
+  "vlm_result": "这张图片展示了一个**室内角落的临时储物场景**，细节如下：  \n\n\n### 物体与细节  \n- **左侧：打开的纸箱与纸尿裤包装**  \n  一个**棕色打开的纸箱**置于地面，箱内露出一包**大王（GOO.N）纸尿裤**的包装。纸尿裤包装以**浅蓝**为主色调，搭配**橙色、粉色**的图案与文字：正面显眼的**红色“GOO.N”品牌名**下方，有婴儿图案、产品特点标识（如透气、吸收等图标），整体色彩丰富，传递出温馨的婴儿用品风格。  \n\n- **地面：塑料布/防水布**  \n  地面铺有一层**浅黄色与绿色相间的塑料布（或防水布）**，布满褶皱，显得随意自然，似为临时防护或储物铺垫。  \n",
+  "params": {
+    "total_timeout": 180.0,
+    "backup_linear_x": -0.15,
+    "backup_angular_z": 0.8,
+    "nav2_config": {
+      "controller.desired_linear_vel": 0.35,
+      "controller.lookahead_dist": 0.75,
+      "controller.min_lookahead_dist": 0.35,
+      "controller.max_lookahead_dist": 0.95,
+      "controller.lookahead_time": 1.6,
+      "controller.cost_scaling_gain": 1.0,
+      "controller.cost_scaling_dist": 0.15,
+      "controller.min_approach_linear_velocity": 0.18,
+      "controller.approach_velocity_scaling_dist": 0.6,
+      "controller.max_linear_vel": 0.5,
+      "controller.max_angular_vel": 1.5,
+      "controller.max_linear_accel": 1.0,
+      "controller.regulated_linear_scaling_min_radius": 0.5,
+      "controller.regulated_linear_scaling_min_speed": 0.15,
+      "controller.xy_goal_tolerance": 0.4,
+      "controller.yaw_goal_tolerance": 3.14,
+      "controller.required_movement_radius": 0.08,
+      "controller.movement_time_allowance": 12.0,
+      "planner.reverse_penalty": 3.0,
+      "planner.change_penalty": 0.15,
+      "planner.non_straight_penalty": 1.5,
+      "planner.analytic_expansion_ratio": 3.0,
+      "planner.max_iterations": 1500,
+      "planner.max_planning_time": 1.5,
+      "planner.angle_quantization_bins": 48,
+      "planner.cost_penalty": 4.0,
+      "planner.minimum_turning_radius": 0.3,
+      "planner.inflation_radius.local": 0.7,
+      "planner.cost_scaling_factor.local": 3.0,
+      "planner.inflation_radius.global": 0.7,
+      "planner.cost_scaling_factor.global": 3.0
+    }
+  }
+}

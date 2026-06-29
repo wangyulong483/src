@@ -1,0 +1,71 @@
+{
+  "run_ts": "20260627_155657",
+  "final_state": "DONE",
+  "exit_reason": "done",
+  "elapsed_total_s": 84.72,
+  "phase_times_s": {
+    "LAUNCH": 15.5,
+    "NAV_TO_QR": 12.18,
+    "BACKING_UP": 6.02,
+    "CRUISE_CHANNEL": 31.24,
+    "RETURN_P": 35.21
+  },
+  "last_position": {
+    "x": -1.8137,
+    "y": -0.1136,
+    "yaw": 1.7888
+  },
+  "trajectory_stats": {
+    "n_points": 114,
+    "x_range": 5.173,
+    "y_range": 3.378,
+    "state_distribution": {
+      "RETURN_P": 49,
+      "CRUISE_CHANNEL": 42,
+      "NAV_TO_QR": 15,
+      "BACKING_UP": 8
+    }
+  },
+  "qr_raw": "1584",
+  "qr_direction": "逆时针",
+  "vlm_received": true,
+  "vlm_result": "这张图片呈现了一个**居家风格的室内场景**（大概率是卧室/房间一角），元素细节如下：  \n\n\n### 物体与布局  \n- **床与床品**：画面下方是一张床，床上铺着**淡绿色+米黄色色块**的床单，布料质感柔软，色彩过渡柔和，营造出温馨的居家氛围。  \n- **被罩的电器（疑似电视机）**：床的上方（或前方）放置着一个被**宝蓝色（浓郁深蓝色）布料**覆盖的长方体物体（从轮廓判断为电视机）。蓝色布罩平整却带有自然褶皱，布料垂坠感强，仅底部露出**银灰色金属支架**与**黑色支撑脚**（支架边缘还带有细微橙色细节，强化了电器属性）。  \n\n\n### 背景与环境  \n- **墙面**：背景是*",
+  "params": {
+    "total_timeout": 180.0,
+    "backup_linear_x": -0.15,
+    "backup_angular_z": 0.8,
+    "nav2_config": {
+      "controller.desired_linear_vel": 0.5,
+      "controller.lookahead_dist": 0.65,
+      "controller.min_lookahead_dist": 0.3,
+      "controller.max_lookahead_dist": 0.9,
+      "controller.lookahead_time": 1.2,
+      "controller.cost_scaling_gain": 2.0,
+      "controller.cost_scaling_dist": 0.12,
+      "controller.min_approach_linear_velocity": 0.22,
+      "controller.approach_velocity_scaling_dist": 0.5,
+      "controller.max_linear_vel": 0.6,
+      "controller.max_angular_vel": 2.0,
+      "controller.max_linear_accel": 1.2,
+      "controller.regulated_linear_scaling_min_radius": 0.3,
+      "controller.regulated_linear_scaling_min_speed": 0.18,
+      "controller.xy_goal_tolerance": 0.4,
+      "controller.yaw_goal_tolerance": 3.14,
+      "controller.required_movement_radius": 0.08,
+      "controller.movement_time_allowance": 12.0,
+      "planner.reverse_penalty": 2.0,
+      "planner.change_penalty": 0.1,
+      "planner.non_straight_penalty": 1.3,
+      "planner.analytic_expansion_ratio": 3.0,
+      "planner.max_iterations": 1500,
+      "planner.max_planning_time": 1.5,
+      "planner.angle_quantization_bins": 48,
+      "planner.cost_penalty": 4.0,
+      "planner.minimum_turning_radius": 0.3,
+      "planner.inflation_radius.local": 0.55,
+      "planner.cost_scaling_factor.local": 3.0,
+      "planner.inflation_radius.global": 0.55,
+      "planner.cost_scaling_factor.global": 3.0
+    }
+  }
+}

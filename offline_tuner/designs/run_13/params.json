@@ -1,0 +1,32 @@
+{
+  "run": 13,
+  "params": {
+    "controller.approach_velocity_scaling_dist": 0.469,
+    "controller.cost_scaling_dist": 0.2352,
+    "controller.cost_scaling_gain": 2.034,
+    "controller.desired_linear_vel": 0.5877,
+    "controller.lookahead_dist": 0.6658,
+    "controller.lookahead_time": 1.4382,
+    "controller.max_angular_vel": 1.9462,
+    "controller.max_linear_accel": 1.474,
+    "controller.max_linear_vel": 0.6597,
+    "controller.max_lookahead_dist": 1.3578,
+    "controller.min_approach_linear_vel": 0.2968,
+    "controller.min_lookahead_dist": 0.5264,
+    "controller.regulated_linear_scaling_min_radius": 0.3586,
+    "controller.regulated_linear_scaling_min_speed": 0.2317,
+    "controller.xy_goal_tolerance": 0.408,
+    "planner.analytic_expansion_ratio": 2.4828,
+    "planner.angle_quantization_bins": 66,
+    "planner.change_penalty": 0.1293,
+    "planner.cost_penalty": 7.2312,
+    "planner.cost_scaling_factor.global": 4.5256,
+    "planner.cost_scaling_factor.local": 2.3223,
+    "planner.inflation_radius.global": 0.4841,
+    "planner.inflation_radius.local": 0.511,
+    "planner.max_iterations": 1539,
+    "planner.max_planning_time": 3.0956,
+    "planner.non_straight_penalty": 1.2064,
+    "planner.reverse_penalty": 1.4012
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "run_ts": "20260628_104906",
+  "final_state": "DONE",
+  "exit_reason": "keyboard_interrupt",
+  "elapsed_total_s": 105.76,
+  "phase_times_s": {
+    "LAUNCH": 19.74,
+    "NAV_TO_QR": 12.05,
+    "BACKING_UP": 6.01,
+    "CRUISE_CHANNEL": 45.73,
+    "RETURN_P": 36.9
+  },
+  "last_position": {
+    "x": -1.79,
+    "y": -0.1287,
+    "yaw": 1.7988
+  },
+  "trajectory_stats": {
+    "n_points": 104,
+    "x_range": 5.099,
+    "y_range": 3.109,
+    "state_distribution": {
+      "CRUISE_CHANNEL": 45,
+      "RETURN_P": 38,
+      "NAV_TO_QR": 13,
+      "BACKING_UP": 7,
+      "DONE": 1
+    }
+  },
+  "qr_raw": "1584",
+  "qr_direction": "逆时针",
+  "vlm_received": false,
+  "vlm_result": null,
+  "params": {
+    "total_timeout": 180.0,
+    "backup_linear_x": -0.15,
+    "backup_angular_z": 0.8,
+    "nav2_config": {
+      "controller.desired_linear_vel": 0.5409,
+      "controller.lookahead_dist": 0.7697,
+      "controller.min_lookahead_dist": 0.3271,
+      "controller.max_lookahead_dist": 1.0223,
+      "controller.lookahead_time": 1.0128,
+      "controller.cost_scaling_gain": 0.7023,
+      "controller.cost_scaling_dist": 0.2495,
+      "controller.min_approach_linear_velocity": 0.2383,
+      "controller.approach_velocity_scaling_dist": 0.8346,
+      "controller.max_linear_vel": 0.6712,
+      "controller.max_angular_vel": 1.8811,
+      "controller.max_linear_accel": 1.6985,
+      "controller.regulated_linear_scaling_min_radius": 0.2785,
+      "controller.regulated_linear_scaling_min_speed": 0.0193,
+      "controller.xy_goal_tolerance": 0.3783,
+      "controller.yaw_goal_tolerance": 3.14,
+      "controller.required_movement_radius": 0.08,
+      "controller.movement_time_allowance": 12.0,
+      "planner.reverse_penalty": 3.959,
+      "planner.change_penalty": 0.2393,
+      "planner.non_straight_penalty": 1.6305,
+      "planner.analytic_expansion_ratio": 4.943,
+      "planner.max_iterations": 615,
+      "planner.max_planning_time": 3.2296,
+      "planner.angle_quantization_bins": 67,
+      "planner.cost_penalty": 7.5957,
+      "planner.minimum_turning_radius": 0.3,
+      "planner.inflation_radius.local": 0.354,
+      "planner.cost_scaling_factor.local": 1.1804,
+      "planner.inflation_radius.global": 0.4081,
+      "planner.cost_scaling_factor.global": 4.0783
+    }
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "run_ts": "20260628_165956",
+  "final_state": "RETURN_P",
+  "exit_reason": "keyboard_interrupt",
+  "elapsed_total_s": 77.05,
+  "phase_times_s": {
+    "LAUNCH": 18.26,
+    "NAV_TO_QR": 11.71,
+    "BACKING_UP": 6.06,
+    "CRUISE_CHANNEL": 33.54
+  },
+  "last_position": {
+    "x": 2.3571,
+    "y": 1.0562,
+    "yaw": 1.9946
+  },
+  "trajectory_stats": {
+    "n_points": 78,
+    "x_range": 5.268,
+    "y_range": 3.375,
+    "state_distribution": {
+      "CRUISE_CHANNEL": 50,
+      "NAV_TO_QR": 14,
+      "RETURN_P": 7,
+      "BACKING_UP": 6,
+      "INIT": 1
+    }
+  },
+  "qr_raw": "1584",
+  "qr_direction": "逆时针",
+  "vlm_received": true,
+  "vlm_result": "这张图片呈现了一个**室内防护/遮盖场景**，细节如下：  \n\n\n### 物体与布局  \n- **主体覆盖物**：画面中央（及右侧）是**深蓝色的光滑布料**（质感似化纤，带光泽，有自然褶皱），推测是覆盖在电子设备（如电视机）上的防尘/保护罩。布料形态规整，边缘有红色包边，由**黑色L形支架**支撑（支架底部接触地面）。  \n- **地面衬布**：设备下方的地面铺着一块**浅绿色、带褶皱的布**（或塑料防护垫），材质柔软，用于保护地面或承接掉落物。  \n- **背景墙面**：后方墙面为**浅米色（或白色）的瓷砖/类瓷砖材质**，纹理简洁，色调柔和，营造出整洁的基础环境。  \n\n\n### 颜色与",
+  "params": {
+    "total_timeout": 180.0,
+    "backup_linear_x": -0.15,
+    "backup_angular_z": 0.8,
+    "nav2_config": {
+      "controller.desired_linear_vel": 0.5,
+      "controller.lookahead_dist": 0.55,
+      "controller.min_lookahead_dist": 0.26,
+      "controller.max_lookahead_dist": 0.75,
+      "controller.lookahead_time": 1.0,
+      "controller.cost_scaling_gain": 2.7,
+      "controller.cost_scaling_dist": 0.09,
+      "controller.min_approach_linear_velocity": 0.3,
+      "controller.approach_velocity_scaling_dist": 0.55,
+      "controller.max_linear_vel": 0.7,
+      "controller.max_angular_vel": 1.5,
+      "controller.max_linear_accel": 2.0,
+      "controller.regulated_linear_scaling_min_radius": 0.3,
+      "controller.regulated_linear_scaling_min_speed": 0.18,
+      "controller.xy_goal_tolerance": 0.43,
+      "controller.yaw_goal_tolerance": 3.14,
+      "controller.required_movement_radius": 0.08,
+      "controller.movement_time_allowance": 12.0,
+      "planner.reverse_penalty": 1.21,
+      "planner.change_penalty": 0.034,
+      "planner.non_straight_penalty": 1.3,
+      "planner.analytic_expansion_ratio": 2.26,
+      "planner.max_iterations": 2027,
+      "planner.max_planning_time": 1.6,
+      "planner.angle_quantization_bins": 56,
+      "planner.cost_penalty": 6.33,
+      "planner.minimum_turning_radius": 0.3,
+      "planner.inflation_radius.local": 0.1234,
+      "planner.cost_scaling_factor.local": 5.634,
+      "planner.inflation_radius.global": 0.5955,
+      "planner.cost_scaling_factor.global": 2.864
+    }
+  }
+}

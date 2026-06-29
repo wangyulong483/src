@@ -11,7 +11,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 """
 base_minimal.launch.py — 最小系统集成启动（无管理层节点）
 
-启动: 底盘 + 激光雷达 + TF + Madgwick + BMI088(可选) + 双IMU EKF + cmd_vel_mux + velocity_pid
+启动: 底盘 + 激光雷达 + TF + Madgwick + BMI088(可选) + 双IMU EKF
 不启动: task_manager, mission_controller, competition_lifecycle_manager, pose_pid_corrector
 
 IMU 架构:
@@ -23,9 +23,7 @@ IMU 架构:
   use_bmi088:=true  (默认) — 双IMU, EKF 读取 /imu_data, 启动 BMI088 驱动
   use_bmi088:=false        — 仅 MPU6050 (向后兼容)
 
-PID/mux 参数集中管理: origincar_base/config/control_params.yaml
-
-Stage 1/2 使用此文件。
+不启动: task_manager, mission_controller, competition_lifecycle_manager, pose_pid_corrector
 """
 
 def generate_launch_description():
@@ -62,28 +60,6 @@ def generate_launch_description():
         executable='odom2tf',
         output='screen',
         condition=UnlessCondition(use_ekf),
-    )
-
-    # 共享控制参数 YAML (PID 增益 + mux 优先级)
-    control_params = Path(origincar_base_dir, 'config', 'control_params.yaml')
-
-    cmd_vel_mux = launch_ros.actions.Node(
-        package='origincar_bringup',
-        executable='cmd_vel_mux.py',
-        output='screen',
-        parameters=[control_params],
-        remappings=[
-            ('/nav_cmd_vel', '/cmd_vel'),
-        ],
-    )
-
-    velocity_pid = launch_ros.actions.Node(
-        package='origincar_bringup',
-        executable='velocity_pid.py',
-        output='screen',
-        parameters=[control_params],
-        respawn=True,
-        respawn_delay=2.0,
     )
 
     return launch.LaunchDescription([
@@ -167,6 +143,4 @@ def generate_launch_description():
             parameters=[Path(origincar_base_dir, 'config', 'ekf.yaml')],
         ),
 
-        cmd_vel_mux,
-        velocity_pid,
     ])

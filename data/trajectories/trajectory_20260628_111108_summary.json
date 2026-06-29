@@ -1,0 +1,71 @@
+{
+  "run_ts": "20260628_111108",
+  "final_state": "DONE",
+  "exit_reason": "keyboard_interrupt",
+  "elapsed_total_s": 97.13,
+  "phase_times_s": {
+    "LAUNCH": 18.02,
+    "NAV_TO_QR": 12.59,
+    "BACKING_UP": 6.02,
+    "CRUISE_CHANNEL": 33.44,
+    "RETURN_P": 37.85
+  },
+  "last_position": {
+    "x": -1.5219,
+    "y": -0.1427,
+    "yaw": 1.9664
+  },
+  "trajectory_stats": {
+    "n_points": 93,
+    "x_range": 5.064,
+    "y_range": 3.184,
+    "state_distribution": {
+      "RETURN_P": 41,
+      "CRUISE_CHANNEL": 34,
+      "NAV_TO_QR": 12,
+      "BACKING_UP": 6
+    }
+  },
+  "qr_raw": "1584",
+  "qr_direction": "逆时针",
+  "vlm_received": true,
+  "vlm_result": "这张图片呈现的是一个**临时感较强的室内场景**，结合物体、色彩与空间细节，可详细描述如下：  \n\n\n### 场景与空间  \n墙面由**浅米色（米黄色）的光滑瓷砖**铺成，瓷砖接缝清晰，表面反光（如左侧电子钟的倒影），显露出空间的整洁感。地面覆盖着**带有褶皱的塑料薄膜**，颜色以**浅黄色**和**蓝绿色**相间，铺放随意（褶皱明显），推测是临时防尘或保护地面的措施。  \n\n\n### 核心物体（中央纸箱）  \n画面中央是一个**打开的瓦楞纸箱**，箱内露出的产品包装（纸尿裤包装）十分醒目：  \n- 包装主色调为**蓝色**（主体）与**橙色**（底部/边缘），品牌标识为“**GOO.N**”",
+  "params": {
+    "total_timeout": 180.0,
+    "backup_linear_x": -0.15,
+    "backup_angular_z": 0.8,
+    "nav2_config": {
+      "controller.desired_linear_vel": 0.3924,
+      "controller.lookahead_dist": 0.7312,
+      "controller.min_lookahead_dist": 0.4598,
+      "controller.max_lookahead_dist": 0.9341,
+      "controller.lookahead_time": 1.6898,
+      "controller.cost_scaling_gain": 0.8607,
+      "controller.cost_scaling_dist": 0.1592,
+      "controller.min_approach_linear_velocity": 0.127,
+      "controller.approach_velocity_scaling_dist": 0.5251,
+      "controller.max_linear_vel": 0.527,
+      "controller.max_angular_vel": 2.3669,
+      "controller.max_linear_accel": 1.375,
+      "controller.regulated_linear_scaling_min_radius": 0.3884,
+      "controller.regulated_linear_scaling_min_speed": 0.0124,
+      "controller.xy_goal_tolerance": 0.4858,
+      "controller.yaw_goal_tolerance": 3.14,
+      "controller.required_movement_radius": 0.08,
+      "controller.movement_time_allowance": 12.0,
+      "planner.reverse_penalty": 2.4175,
+      "planner.change_penalty": 0.1604,
+      "planner.non_straight_penalty": 1.5438,
+      "planner.analytic_expansion_ratio": 3.733,
+      "planner.max_iterations": 1399,
+      "planner.max_planning_time": 1.2749,
+      "planner.angle_quantization_bins": 60,
+      "planner.cost_penalty": 2.0814,
+      "planner.minimum_turning_radius": 0.3,
+      "planner.inflation_radius.local": 0.4088,
+      "planner.cost_scaling_factor.local": 3.1365,
+      "planner.inflation_radius.global": 0.5438,
+      "planner.cost_scaling_factor.global": 3.9023
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "run_ts": "20260628_171448",
+  "final_state": "DONE",
+  "exit_reason": "done",
+  "elapsed_total_s": 108.58,
+  "phase_times_s": {
+    "LAUNCH": 22.09,
+    "NAV_TO_QR": 14.43,
+    "BACKING_UP": 6.02,
+    "CRUISE_CHANNEL": 35.34,
+    "RETURN_P": 52.72
+  },
+  "last_position": {
+    "x": -1.5892,
+    "y": -0.1515,
+    "yaw": -0.4886
+  },
+  "trajectory_stats": {
+    "n_points": 133,
+    "x_range": 5.108,
+    "y_range": 3.447,
+    "state_distribution": {
+      "RETURN_P": 67,
+      "CRUISE_CHANNEL": 43,
+      "NAV_TO_QR": 14,
+      "BACKING_UP": 8,
+      "INIT": 1
+    }
+  },
+  "qr_raw": "1584",
+  "qr_direction": "逆时针",
+  "vlm_received": true,
+  "vlm_result": "这张图片呈现了一个**室内临时场景**，墙面由**米黄色光滑瓷砖**铺成，地面覆盖着**黄绿相间的塑料布**（或防水布），整体环境随意自然，似是临时休息、堆放物品的区域。  \n\n\n### 核心物体与细节：  \n1. **右侧的纸尿裤包装箱**：  \n   这是**GOO.N（大王）品牌的纸尿裤箱**，视觉焦点突出。箱子主体以**蓝色**为底色，搭配**橙色**装饰区，印有**白色、红色的文字**（如“Premium”“XL”“28片”等），还带有**卡通婴儿图案**、纸尿裤产品图示及使用场景插画（如婴儿躺卧的动态）。箱子的纸板盖子部分展开，露出些许内部结构，整体设计色彩鲜明、信息清晰，传递出“",
+  "params": {
+    "total_timeout": 180.0,
+    "backup_linear_x": -0.15,
+    "backup_angular_z": 0.8,
+    "nav2_config": {
+      "controller.desired_linear_vel": 0.45,
+      "controller.lookahead_dist": 0.6,
+      "controller.min_lookahead_dist": 0.28,
+      "controller.max_lookahead_dist": 0.85,
+      "controller.lookahead_time": 1.1,
+      "controller.cost_scaling_gain": 1.5,
+      "controller.cost_scaling_dist": 0.1,
+      "controller.min_approach_linear_velocity": 0.28,
+      "controller.approach_velocity_scaling_dist": 0.5,
+      "controller.max_linear_vel": 0.65,
+      "controller.max_angular_vel": 2.0,
+      "controller.max_linear_accel": 1.8,
+      "controller.regulated_linear_scaling_min_radius": 0.25,
+      "controller.regulated_linear_scaling_min_speed": 0.2,
+      "controller.xy_goal_tolerance": 0.35,
+      "controller.yaw_goal_tolerance": 3.14,
+      "controller.required_movement_radius": 0.1,
+      "controller.movement_time_allowance": 15.0,
+      "planner.reverse_penalty": 0.8,
+      "planner.change_penalty": 0.02,
+      "planner.non_straight_penalty": 1.0,
+      "planner.analytic_expansion_ratio": 2.5,
+      "planner.max_iterations": 2500,
+      "planner.max_planning_time": 2.0,
+      "planner.angle_quantization_bins": 72,
+      "planner.cost_penalty": 2.0,
+      "planner.minimum_turning_radius": 0.3,
+      "planner.inflation_radius.local": 0.2,
+      "planner.cost_scaling_factor.local": 4.0,
+      "planner.inflation_radius.global": 0.55,
+      "planner.cost_scaling_factor.global": 3.0
+    }
+  }
+}

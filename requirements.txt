@@ -1,0 +1,19 @@
+# Nav2 Offline Auto Tuner — Core Dependencies
+# Install: pip install -r requirements.txt
+
+# Core (required)
+numpy>=1.24
+scipy>=1.10
+scikit-learn>=1.3
+optuna>=3.5
+matplotlib>=3.7
+PyYAML>=6.0
+joblib>=1.3
+
+# Optional — GPU acceleration
+numba>=0.58
+cupy-cuda12x>=13.0
+
+# Optional — ML model upgrade (30+ runs)
+lightgbm>=4.0
+xgboost>=2.0

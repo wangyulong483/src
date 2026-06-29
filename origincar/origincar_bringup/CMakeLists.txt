@@ -42,23 +42,11 @@ install(PROGRAMS src/task_manager.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
-install(PROGRAMS src/pose_pid_corrector.py
-  DESTINATION lib/${PROJECT_NAME}
-)
-
-install(PROGRAMS src/cmd_vel_mux.py
-  DESTINATION lib/${PROJECT_NAME}
-)
-
 install(PROGRAMS src/mission_controller.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
 install(PROGRAMS src/wait_for_odom.py
-  DESTINATION lib/${PROJECT_NAME}
-)
-
-install(PROGRAMS src/velocity_pid.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

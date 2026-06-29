@@ -42,7 +42,7 @@ class MissionController(Node):
             String, '/mission_cmd', self._on_cmd, 10)
 
         # ── 发布 ──────────────────────────────────────────
-        self._stop_pub = self.create_publisher(Twist, '/stop_cmd_vel', 10)
+        self._stop_pub = self.create_publisher(Twist, '/cmd_vel', 10)
         self._sign4return_pub = self.create_publisher(Int32, '/sign4return', 10)
         self._status_pub = self.create_publisher(String, '/mission_status', 10)
 

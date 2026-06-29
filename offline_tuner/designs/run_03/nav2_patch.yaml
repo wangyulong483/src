@@ -1,0 +1,48 @@
+# Nav2 Auto-Tuner ¡ª Recommended Parameter Patch
+# Generated: 2026-06-28 09:51:35
+# Changed parameters: 27
+# Load with: ros2 param load /path/to/node <this_file.yaml>
+# Or diff against: originbot_nav2_rpp.yaml
+
+controller_server:
+  ros__parameters:
+    FollowPath:
+      approach_velocity_scaling_dist: 0.7727
+      cost_scaling_dist: 0.17
+      cost_scaling_gain: 2.2343
+      desired_linear_vel: 0.4385
+      lookahead_dist: 0.705
+      lookahead_time: 0.9154
+      max_angular_vel: 2.3029
+      max_linear_accel: 1.1506
+      max_linear_vel: 0.5015
+      max_lookahead_dist: 1.4991
+      min_approach_linear_velocity: 0.1105
+      min_lookahead_dist: 0.2167
+      regulated_linear_scaling_min_radius: 0.2497
+      regulated_linear_scaling_min_speed: 0.2365
+    goal_checker:
+      xy_goal_tolerance: 0.4779
+planner_server:
+  ros__parameters:
+    GridBased:
+      analytic_expansion_ratio: 1.9291
+      angle_quantization_bins: 64
+      change_penalty: 0.0501
+      cost_penalty: 3.1944
+      max_iterations: 2449
+      max_planning_time: 1.9026
+      non_straight_penalty: 1.3681
+      reverse_penalty: 4.9759
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      inflation_layer:
+        cost_scaling_factor: 3.3264
+        inflation_radius: 0.4636
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      inflation_layer:
+        cost_scaling_factor: 1.5701
+        inflation_radius: 0.5031

@@ -68,7 +68,7 @@ class CompetitionMasterStage2(Node):
         self.qr_sub = self.create_subscription(String, '/sign', self.qr_callback, 10)
         self.qr_event_sub = self.create_subscription(
             String, '/qr_event', self._on_qr_event, 10)
-        self.stop_pub = self.create_publisher(Twist, '/stop_cmd_vel', 10)
+        self.stop_pub = self.create_publisher(Twist, '/cmd_vel', 10)
         self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel', 10)
 
         # ── 导航超时检测定时器 (1 Hz) ─────────────────────────

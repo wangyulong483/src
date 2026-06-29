@@ -3,7 +3,7 @@
 competition_master_stage1 — Stage 1 管理层节点
 单模块联调：P点→任务发布点导航 + QR 扫描监听 → 扫到码后停车打印成功
 
-绕过 task_manager/mission_controller，直接操控 Nav2 Action + /stop_cmd_vel。
+绕过 task_manager/mission_controller，直接操控 Nav2 Action + /cmd_vel。
 Stage 2~4 逐步迁移到标准 task_manager 架构。
 """
 
@@ -43,7 +43,7 @@ class CompetitionMasterStage1(Node):
         # ── ROS 接口 ──────────────────────────────────────────
         self.nav_client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
         self.qr_sub = self.create_subscription(String, '/sign', self.qr_callback, 10)
-        self.stop_pub = self.create_publisher(Twist, '/stop_cmd_vel', 10)
+        self.stop_pub = self.create_publisher(Twist, '/cmd_vel', 10)
 
         # ── 导航超时检测定时器 (1 Hz) ─────────────────────────
         self._timeout_timer = self.create_timer(1.0, self._check_nav_timeout)

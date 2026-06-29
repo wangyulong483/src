@@ -27,7 +27,7 @@ TF 发布策略（遵循 REP-105）:
   use_bmi088:=true  (默认) — 双IMU EKF
   use_bmi088:=false        — 仅 MPU6050
 
-PID/mux 参数集中管理: origincar_base/config/control_params.yaml
+不启动: task_manager, competition_lifecycle_manager, pose_pid_corrector
 """
 
 def generate_launch_description():
@@ -70,28 +70,6 @@ def generate_launch_description():
         package='origincar_bringup',
         executable='mission_controller.py',
         output='screen',
-    )
-
-    # 共享控制参数 YAML (PID 增益 + mux 优先级)
-    control_params = Path(origincar_base_dir, 'config', 'control_params.yaml')
-
-    cmd_vel_mux = launch_ros.actions.Node(
-        package='origincar_bringup',
-        executable='cmd_vel_mux.py',
-        output='screen',
-        parameters=[control_params],
-        remappings=[
-            ('/nav_cmd_vel', '/cmd_vel'),
-        ],
-    )
-
-    velocity_pid = launch_ros.actions.Node(
-        package='origincar_bringup',
-        executable='velocity_pid.py',
-        output='screen',
-        parameters=[control_params],
-        respawn=True,
-        respawn_delay=2.0,
     )
 
     return launch.LaunchDescription([
@@ -159,6 +137,4 @@ def generate_launch_description():
         ),
 
         mission_controller,
-        cmd_vel_mux,
-        velocity_pid,
     ])

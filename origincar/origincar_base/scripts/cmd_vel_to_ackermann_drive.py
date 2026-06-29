@@ -4,7 +4,7 @@
 """
 @file cmd_vel_to_ackermann_drive.py
 @brief 将标准速度指令 (cmd_vel) 转换为阿克曼转向模型指令
-@details 该节点订阅 /cmd_vel_corrected (经 velocity_pid 校正),
+@details 该节点订阅 /cmd_vel,
          将其转换为 ackermann_msgs/msg/AckermannDriveStamped 类型发布
 
 工作原理：
@@ -36,7 +36,7 @@ class CmdVel2AckermannDriveNode(Node):
         self.publisher = self.create_publisher(
             AckermannDriveStamped, '/ackermann_cmd', QoSProfile(depth=10))
         self.subscription = self.create_subscription(
-            Twist, 'cmd_vel_corrected', self.cmd_callback, QoSProfile(depth=10))
+            Twist, 'cmd_vel', self.cmd_callback, QoSProfile(depth=10))
         self.frame_id = 'odom_combined'
 
         self.get_logger().info(
