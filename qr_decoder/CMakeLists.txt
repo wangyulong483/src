@@ -53,4 +53,9 @@ install(DIRECTORY
   DESTINATION share/${PROJECT_NAME}
 )
 
+install(PROGRAMS
+  qr_decision.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 ament_package()

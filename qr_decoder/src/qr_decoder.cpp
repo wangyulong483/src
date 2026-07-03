@@ -109,13 +109,16 @@ private:
     frame_count_++;
     zbar::Image zbar_orig(gray.cols, gray.rows, "Y800", (uchar*)gray.data, gray.cols*gray.rows);
     int n = scanner_.scan(zbar_orig);
+    cv::Mat half;
+    zbar::Image* zbar_result = &zbar_orig;
+    double half_scale = 1.0;
 
     if (n == 0) {
-      cv::Mat half;
       cv::resize(gray, half, cv::Size(), 0.5, 0.5, cv::INTER_AREA);
-      zbar::Image zbar_half(half.cols, half.rows, "Y800", (uchar*)half.data, half.cols*half.rows);
-      n = scanner_.scan(zbar_half);
-      zbar_half.set_data(NULL, 0);
+      // zbar_result stays valid because half (cv::Mat) is in outer scope
+      zbar_result = new zbar::Image(half.cols, half.rows, "Y800", (uchar*)half.data, half.cols*half.rows);
+      n = scanner_.scan(*zbar_result);
+      half_scale = 0.5;
     }
 
     if (n > 0) {
@@ -125,8 +128,8 @@ private:
           frame_count_, n, last_qr_frame_ < 0 ? -1 : frame_count_ - last_qr_frame_ - 1);
       }
       last_qr_frame_ = frame_count_;
-      for (zbar::Image::SymbolIterator symbol = zbar_orig.symbol_begin();
-           symbol != zbar_orig.symbol_end(); ++symbol) {
+      for (zbar::Image::SymbolIterator symbol = zbar_result->symbol_begin();
+           symbol != zbar_result->symbol_end(); ++symbol) {
 
         std::string qr_data = symbol->get_data();
 
@@ -148,6 +151,12 @@ private:
         }
         cx /= loc_size;
         cy /= loc_size;
+
+        // Scale back coordinates for half-scale detections
+        if (half_scale != 1.0) {
+          cx = static_cast<int>(cx / half_scale);
+          cy = static_cast<int>(cy / half_scale);
+        }
 
         int depth_mm = 0;
         bool depth_valid = false;
@@ -194,6 +203,10 @@ private:
         RCLCPP_INFO(this->get_logger(),
           "[QR] %s | robot_pos: (%.2f, %.2f, yaw=%.2f)",
           qr_data.c_str(), odom_x_, odom_y_, odom_yaw_);
+      }
+      // Clean up half-scale image if created
+      if (zbar_result != &zbar_orig) {
+        delete zbar_result;
       }
     }
 

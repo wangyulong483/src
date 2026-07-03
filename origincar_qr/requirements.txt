@@ -1,2 +1,0 @@
-pip install pyzbar
-sudo apt install libzbar0

@@ -53,7 +53,7 @@ CCW_PATH = [
 # CW (顺时针, odd QR): P→QR→entry→cw_wps→VLM→return_wp→P
 CW_PATH = [
     P_POINT, QR_POINT, ENTRY_POINT,
-    (0.93, 0.11), (2.19, 0.77), VLM_CW,
+    (0.93, 0.11), (2.17, 0.69), VLM_CW,
     (1.07, -0.73), P_POINT,
 ]
 

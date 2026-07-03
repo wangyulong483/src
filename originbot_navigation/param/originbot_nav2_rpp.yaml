@@ -21,7 +21,7 @@ amcl:
     lambda_short: 0.1
     laser_likelihood_max_dist: 2.0
     laser_max_range: 100.0
-    laser_min_range: -1.0
+    laser_min_range: 0.1
     laser_model_type: likelihood_field_prob
     max_beams: 60
     max_particles: 1500
@@ -118,10 +118,15 @@ controller_server:
       max_angular_vel: 1.1715
       min_angular_vel: -2.0
       max_linear_accel: 1.7993
-      max_linear_decel: -2.2
+      max_linear_decel: 2.2
       max_angular_accel: 2.5
-      max_angular_decel: -2.0
+      max_angular_decel: 2.0
+      # desired_linear_vel is the base speed; speed_profile_node publishes
+      # /speed_limit to dynamically adjust based on upcoming curvature.
+      # The speed_profile_node computes v(κ) = v_max/(1+β*|κ|^λ) and
+      # publishes the recommended speed at the lookahead point.
       desired_linear_vel: 0.398
+      speed_limit_topic: /speed_limit
       lookahead_dist: 0.6776
       min_lookahead_dist: 0.2628
       max_lookahead_dist: 0.8067
@@ -180,24 +185,23 @@ local_costmap:
       obstacle_layer:
         plugin: nav2_costmap_2d::ObstacleLayer
         enabled: true
-        observation_sources: scan aurora_points
+        observation_sources: scan tracked_obstacles
         scan:
           topic: /scan
           max_obstacle_height: 2.0
           clearing: true
           marking: true
           data_type: LaserScan
-        aurora_points:
-          topic: /aurora/points2
+        tracked_obstacles:
+          topic: /tracked_obstacles_cloud
           sensor_frame: depth_camera_link
           data_type: PointCloud2
           marking: true
           clearing: true
           obstacle_range: 3.5
-          raytrace_range: 4.5
-          max_obstacle_height: 0.35
+          max_obstacle_height: 0.5
           min_obstacle_height: 0.05
-          observation_persistence: 0.5
+          observation_persistence: 1.0
           expected_update_rate: 0.0
       always_send_full_costmap: true
   local_costmap_client:
@@ -227,24 +231,23 @@ global_costmap:
       obstacle_layer:
         plugin: nav2_costmap_2d::ObstacleLayer
         enabled: true
-        observation_sources: scan aurora_points
+        observation_sources: scan tracked_obstacles
         scan:
           topic: /scan
           max_obstacle_height: 2.0
           clearing: true
           marking: true
           data_type: LaserScan
-        aurora_points:
-          topic: /aurora/points2
+        tracked_obstacles:
+          topic: /tracked_obstacles_cloud
           sensor_frame: depth_camera_link
           data_type: PointCloud2
           marking: true
           clearing: true
           obstacle_range: 3.5
-          raytrace_range: 4.5
-          max_obstacle_height: 0.35
+          max_obstacle_height: 0.5
           min_obstacle_height: 0.05
-          observation_persistence: 0.5
+          observation_persistence: 1.0
           expected_update_rate: 0.0
       static_layer:
         plugin: nav2_costmap_2d::StaticLayer
@@ -287,7 +290,7 @@ planner_server:
       analytic_expansion_max_length: 1.5
       analytic_expansion_max_cost: 150.0
       analytic_expansion_max_cost_override: false
-      reverse_penalty: 1.2114
+      reverse_penalty: 4.0
       change_penalty: 0.0343
       non_straight_penalty: 1.8469
       cost_penalty: 6.33
@@ -339,9 +342,12 @@ smoother_server:
       keep_goal_orientation: true
       path_downsampling_factor: 2
       path_upsampling_factor: 1
-      w_smooth: 2000000.0
-      w_cost: 0.015
-      w_curve: 20.0
+      # Racing tune: stronger curvature minimization for higher cornering speeds
+      # w_smooth reduced from 2e6 → path can deviate more from original to reduce curvature
+      # w_curve increased 20→50 → stricter minimum_turning_radius enforcement
+      w_smooth: 500000.0
+      w_cost: 0.03
+      w_curve: 50.0
       w_dist: 0.0
       w_cost_cusp_multiplier: 3.0
       cusp_zone_length: 2.5
@@ -396,7 +402,7 @@ velocity_smoother:
     - -1.8
     - 0.0
     - -2.5
-    odom_topic: odom
+    odom_topic: /odom
     odom_duration: 0.1
     deadband_velocity:
     - 0.0

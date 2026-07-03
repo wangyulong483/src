@@ -8,7 +8,7 @@ HERE = Path(__file__).parent
 PROJECT_ROOT = HERE.parent
 
 # Shared output root (metrics_database.json lives here)
-OUT_DIR = PROJECT_ROOT / "tuning_results"
+OUT_DIR = PROJECT_ROOT / "offline_tuner" / "tuning_results"
 
 # Per-run output directory (set by _analyze_plans.py at startup)
 # Each run gets tuning_results/out1/, out2/, out3/, ...

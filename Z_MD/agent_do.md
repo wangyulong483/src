@@ -2,6 +2,319 @@
 
 ---
 
+## 2026-07-01 13:30 — ★ 深度障碍物检测：DBSCAN→CCL + 地面分割 + 中值滤波
+
+> **用户**: "DBSCAN → 更快聚类。自适应深度切片+连通域标记。地面分割预处理。深度图边缘滤波。"
+
+### EXA MCP 研究关键发现
+
+| 来源 | 关键发现 |
+|------|----------|
+| [MDPI CCL Embedded](https://www.mdpi.com/2079-9268/8/1/7) | CCL 可实现 >700fps @ 640×480 (FPGA), ARM 纯软件 ~6fps |
+| [depth_nav_tools](https://github.com/mdrwiega/depth_nav_tools) | ROS2 深度地面移除：已知 sensor_height + tilt_angle → 解析法，无需 RANSAC |
+| [Luxonis ToF Filter Guide](https://docs.luxonis.com/software-v3/depthai/depthai-components/nodes/tof) | EMA 时序滤波 + 3×3 中值：alpha 低→平滑/延迟，delta 控制跳变阈值 |
+| [Autoware RANSAC Ground](https://autowarefoundation.github.io/autoware_universe/main/perception/autoware_ground_segmentation/docs/ransac-ground-filter/) | RANSAC 对 ARM 太重，高度阈值法等效且 O(n) |
+| [Liu et al. 2023](https://mdpi-res.com/d_attachment/electronics/electronics-12-02316/article_deploy/electronics-12-02316.pdf) | RGB-D 快速障碍物检测：feature 提取 + 深度连续性分段 → 嵌入式 >20FPS |
+
+### v1→v2 核心变更
+
+| 项目 | v1 (DBSCAN) | v2 (CCL) |
+|------|------------|----------|
+| 聚类算法 | sklearn DBSCAN O(n²) | 自定义 CCL O(n) |
+| 输入数据 | 单行 (row 200, 640点) | **全图** 2× 降采样 (320×200 = 64K点) |
+| 聚类维度 | 2D (X_forward, Z_depth) | **3D** (X,Y,Z) 4-连通域 |
+| 地面处理 | 无 | **高度阈值** (sensor_height=0.35m) |
+| 噪声处理 | 无 | **3×3 中值滤波** |
+| 距离自适应 | 固定 eps=0.10m | **分段 eps**: 近场 0.08m / 远场 0.15m |
+| 依赖 | scikit-learn (~30MB) | **numpy only** |
+| 输出 | /detected_obstacles (Marker) | 同 + **/depth_detector_runtime_ms** |
+
+### 算法详解
+
+**1. 3×3 中值滤波** (59行)
+```
+padded → 9个偏移视图stack → np.median(axis=0)
+完全向量化, O(n), ~2ms @ 640×400
+```
+
+**2. 2× Block-average 降采样**
+```
+640×400 → reshape(200,2,320,2) → mean(axis=(1,3)) → 320×200
+保留信号 (平均), 不丢信息, O(n)
+```
+
+**3. 地面移除**
+```
+project to 3D → Y_world = (v - CY) * Z / FY
+ground if Y_world < -(sensor_height - margin) = -0.30m
+→ 预处理阶段移除, 不进入 CCL
+also filter: Y_world > 0.5m (天花板/头顶)
+```
+
+**4. 网格 CCL (Two-pass + Union-Find)**
+```
+First pass:  扫描 → 4邻域 (上/左) → 3D距离 < eps → 同标签 or union
+Second pass: flatten union-find → 紧凑标签 1..N
+O(n) per pass, 纯 numpy 无外部依赖
+```
+
+**5. 自适应 eps**
+```
+depth < 1.5m → eps = 0.08m (近场精度高)
+depth > 1.5m → eps = 0.15m (远场噪声大, 放宽)
+匹配 ToF 传感器噪声特性 (噪声随距离增大)
+```
+
+### 修改文件
+
+| # | 文件 | 改动 |
+|---|------|------|
+| 1 | `object_tracker/object_tracker/depth_detector.py` | 重写: 173→290行, sklearn→numpy-only |
+| 2 | `object_tracker/setup.py` | 删除 scikit-learn 依赖 (~30MB 节省) |
+
+### 待验证
+
+- [ ] CCL 在 ARM 上的实际耗时？对比 DBSCAN 旧版
+- [ ] 地面移除是否误删低矮障碍物 (margin=0.05m 是否合适)
+- [ ] 2× 降采样是否丢失小障碍物 (4px 最小cluster → 相当于 16px 原始)
+- [ ] 自适应 eps 在近/远场切换处是否有断裂
+
+### SSH
+
+- `depth_detector.py` + `setup.py` → CRLF fix → `colcon build` → 成功 (8.17s)
+
+---
+
+## 2026-07-01 13:10 — ★ 路径规划：从"可达路径"升级为"快速路径"（MCT + Racing Apex + Centerline）
+
+> **用户**: "路径规划：从'可达路径'到'快速路径'。MCT 最小曲率路径 + Racing-line 优化 + 中心线约束平滑"
+
+### EXA MCP 研究关键发现
+
+| 来源 | 关键发现 |
+|------|----------|
+| [TUMFTM/global_racetrajectory_optimization](https://github.com/TUMFTM/global_racetrajectory_optimization) | 最权威 MCT 实现：QP 最小化 Σκ² + 迭代优化，用于 Roborace/Formula E |
+| [Xue et al. 2023 (B-spline MCT)](https://arxiv.org/abs/2309.09186) | B-spline 替换离散点 → 优化变量从 1932→204，C² 连续性 |
+| [Autoware QP Smoother](https://github.com/autowarefoundation/autoware_universe/blob/main/planning/autoware_trajectory_optimizer/docs/qp_smoother.md) | ROS2 原生 OSQP 路径平滑器，最小化 2nd derivative |
+| [MPCC (Model Predictive Contouring Control)](https://github.com/nirajbasnet/Nonlinear_MPCC_for_autonomous_racing) | 标准 racing 方法：中心线 + track bounds + 速度优化 |
+| [CiMPCC (Li et al. 2025)](https://arxiv.org/html/2502.03695) | 曲率集成 MPCC，11.4-12.5% lap time 改善 |
+| [Voronoi centerline (F1TENTH)](https://stevengong.co/notes/Raceline-Optimization) | EDT → skeletonize → centerline，标准管线 |
+| [raceline-studio](https://github.com/a2ngerer/raceline-studio) | 交互式 racing line 编辑器，IQP optimizer <1s |
+| [Nav2 ConstrainedSmoother](https://www.ncnynl.com/ros2docs/en/nav2/configuration/packages/configuring-constrained-smoother.html) | 已有 Ceres 优化器：w_smooth(平滑)/w_curve(曲率)/w_cost(障碍物) |
+
+### 架构设计
+
+```
+Planner (SmacPlannerHybrid)
+       │ /plan
+       ▼
+┌──────────────────────────────────┐
+│  path_optimizer_node.py    🆕    │
+│                                  │
+│  ① MCT: min Σ||p_{i+1}-2p_i+p_{i│
+│     -1}||² + λ·||p-p_orig||²    │
+│     → 闭式带状求解 (O(n))       │
+│  ② Racing Apex: Δ_i = α·κ_i·n_i│
+│     → 高曲率点沿内法线切入      │
+│  ③ Clamp: max 横向位移 0.30m   │
+└──────────────┬───────────────────┘
+               │ /optimized_plan
+               ▼
+┌──────────────────────────────────┐
+│  speed_profile_node.py (修改)    │
+│  改为订阅 /optimized_plan        │
+│  → 基于优化路径计算曲率+速度     │
+└──────────────┬───────────────────┘
+               │ /speed_limit
+               ▼
+┌──────────────────────────────────┐
+│  RPP Controller (不改)           │
+│  ConstrainedSmoother 重调:       │
+│  w_smooth: 2e6→500k, w_curve: 20→50 │
+└──────────────────────────────────┘
+
+Offline: centerline_extractor.py
+  room.pgm → EDT → skeletonize → centerline.csv
+```
+
+### 设计决策
+
+**为什么不用完整 QP (TUMFTM 方法)**：
+- 需要 OSQP/CVXOPT 求解器
+- ARM Cortex-A55 上 200 点 QP 可能 100-500ms
+- 闭式带状线性系统 O(n) ≈ 1-5ms
+
+**为什么不用 MPCC/iLQR**：
+- 需要车辆动力学模型 + CasADi/Ipopt
+- ARM 上优化耗时 >100ms，不适合在线
+- 属于 controller 替代方案（不是 path post-processing）
+
+**集成策略**：
+- RPP controller 管线不改（避免 C++ 交叉编译）
+- ConstrainedSmoother 保留但重调参数增强曲率最小化
+- speed_profile_node 改为订阅 /optimized_plan → 更好的曲率估计
+
+### 实现 (2 Agent 并行 + 手动集成)
+
+**Agent 1 — centerline_extractor.py**
+
+| 步骤 | 算法 |
+|------|------|
+| 加载地图 | P5 PGM + YAML metadata, 0=free, 205/254/255=obstacle |
+| 叠加禁区 | keepout_mask.pgm (inverted: 0=lethal, 255=free) |
+| 膨胀 | robot_radius/resolution px disk dilation |
+| EDT | scipy.ndimage.distance_transform_edt |
+| 骨架化 | skimage.morphology.skeletonize → 1px 宽中心线 |
+| 路径提取 | 最大连通分量 + 最远端点贪心行走 |
+| 平滑 | 3点移动平均 → 世界坐标 → CSV |
+
+**Agent 2 — path_optimizer_node.py**
+
+| 功能 | 算法 | 复杂度 |
+|------|------|--------|
+| MCT 闭式 | `solve_banded(D^T·D + λ·I)` — pentadiagonal Cholesky | O(n) |
+| MCT 降级 | 迭代 Laplacian 梯度下降 (scipy 不可用时) | O(n·iters) |
+| Apex shift | `Δ_i = α·κ_i·n_i`，signed Menger curvature + left-normal | O(n) |
+| Clamp | 统一缩放至 max_shift (0.30m) | O(n) |
+
+### 修改文件清单
+
+| # | 文件 | 改动 |
+|---|------|------|
+| 1 | `origincar_bringup/src/path_optimizer_node.py` | 🆕 新建: MCT + apex + clamp |
+| 2 | `originbot_navigation/tools/centerline_extractor.py` | 🆕 新建: offline 中心线提取 |
+| 3 | `origincar_bringup/src/speed_profile_node.py` | 改: /plan → /optimized_plan |
+| 4 | `origincar_bringup/CMakeLists.txt` | + path_optimizer install |
+| 5 | `origincar_bringup/launch/stage3_bringup.launch.py` | + path_optimizer @ t+4.5s |
+| 6 | `originbot_navigation/param/originbot_nav2_rpp.yaml` | ConstrainedSmoother racing tune |
+
+### 管线时序
+
+```
+t=0s:  底盘 + 传感器
+t=1s:  Nav2 全栈 (planner, controller, smoother)
+t=3s:  Object tracker
+t=4s:  competition_master (状态机启动)
+t=4.5s: path_optimizer_node (MCT + apex, 订阅 /plan → /optimized_plan)
+t=5s:  speed_profile_node (订阅 /optimized_plan → /speed_limit)
+t=8s:  RViz2
+```
+
+### 待验证
+
+- [ ] path_optimizer 在 ARM 上 scipy 是否可用？若否，梯度降级模式速度如何？
+- [ ] MCT 平滑是否减少 max|κ| >20%？
+- [ ] Apex shift 是否在窄通道中引起碰撞？max_shift=0.30m 是否安全？
+- [ ] speed_profile_node 基于优化路径的曲率是否更准确？
+- [ ] ConstrainedSmoother 新参数 (w_curve=50) 是否改善弯道平滑度？
+
+### SSH
+
+- 5 文件上传 → CRLF fix → `colcon build` → 成功 (5.41s)
+
+---
+
+## 2026-07-01 12:53 — ★ 速度规划：从 RPP 被动减速升级为路径曲率预规划速度剖面
+
+> **用户**: "速度规划：从'RPP 自带减速'升级为'基于路径曲率的预规划速度曲线'"
+
+### EXA MCP 研究关键发现
+
+| 来源 | 关键发现 |
+|------|----------|
+| [Nav2 GracefulController](https://api.nav2.org/nav2-jazzy/html/smooth__control__law_8cpp_source.html) | 曲率公式：`v = v_max / (1 + β·|κ|^λ)` — 直接用于速度剖面生成 |
+| [ros2/common_interfaces#296](https://github.com/ros2/common_interfaces/issues/296) | `nav_msgs/Trajectory` 已加入 Kilted/Jazzy（Humble 没有），含 pose+velocity+accel |
+| [DWPP (IAS-19 2025)](https://docs.nav2.org/configuration/packages/configuring-regulated-pp.html) | Dynamic Window Pure Pursuit 自动弯道降速，但仍是响应式、Humble 不支持 |
+| [Heilmeier et al. 2019](https://doi.org/10.1080/00423114.2019.1631455) | Forward-backward solver: 基于加速/减速极限的速度剖面平滑 |
+| [Becker et al. 2022 (MAP)](https://arxiv.org/pdf/2209.04346) | 几何控制器+轮胎模型可达 11m/s，跟踪误差仅 0.055m |
+| [ROS Answers](https://robotics.stackexchange.com/questions/91235/path-message-with-velocity) | "Path with velocities = trajectory" — 确认速度剖面应作为轨迹属性传递 |
+
+### 架构设计
+
+```
+全局路径 /plan (nav_msgs/Path)
+       │
+       ▼
+┌─────────────────────────────┐
+│  speed_profile_node.py  🆕  │
+│                             │
+│  1. 订阅 /plan              │
+│  2. Menger 三点法逐点曲率 κ  │
+│  3. v(κ)=v_max/(1+β·|κ|^λ) │
+│  4. Forward-backward 平滑   │
+│  5. 发布 /speed_limit       │
+│  6. 发布 /speed_profile_debug│
+└──────────────┬──────────────┘
+               │ /speed_limit (Float32, m/s)
+               ▼
+┌─────────────────────────────┐
+│  RPP Controller (现有)       │
+│  speed_limit_topic 参数     │
+│  → 根据前方曲率动态调速     │
+└─────────────────────────────┘
+```
+
+为何不直接改 controller plugin:
+- C++ 需交叉编译工具链 (ARM) — 90s build
+- Python 节点 → `colcon build` 3s，迭代快
+- `/speed_limit` 话题是 Nav2 标准接口
+
+### 实现 (4 Agent 并行)
+
+**Agent 1 — speed_profile_node.py (395行)**
+
+| 功能 | 算法 |
+|------|------|
+| 曲率计算 | Menger curvature: κ = 4·Area/(a·b·c)，3点法 + 移动平均平滑 |
+| 速度剖面 | `v(κ) = v_max / (1 + β·\|κ\|^λ)`，clamp [v_min, v_max] |
+| 加速平滑 | Forward pass: v[i] ← min(v[i], v[i-1] + max_accel·dt) |
+| 减速平滑 | Backward pass: v[i] ← min(v[i], v[i+1] + \|max_decel\|·dt) |
+| 机器人追踪 | 最近路径点 + lookahead_idx 前瞻 |
+| 路径变化检测 | 任一点位移 >0.1m 或有新点数 → 重新计算 |
+
+**Agent 2 — 历史数据参数拟合 (17 CSV, 1736点)**
+
+| 参数 | 拟合值 | 说明 |
+|------|--------|------|
+| `v_max` | 0.50 m/s | 直道(κ<0.1) 有 87 点，max v=0.541, median=0.398 |
+| `v_min` | 0.15 m/s | 安全下限 |
+| `beta` | **0.47** | 曲率敏感度 (grid search) |
+| `lambda` | **1.32** | 降速形状参数 (grid search) |
+| `max_accel` | **1.01** m/s² | p95 正 dv/dt |
+| `max_decel` | **-1.57** m/s² | p05 负 dv/dt |
+
+注意: 当前机器人不随曲率变速（弱相关），速度剖面会引入**新**弯道降速行为。
+
+**Agent 3 — Nav2 集成了 3 文件**
+
+| 文件 | 改动 |
+|------|------|
+| `CMakeLists.txt` | + `install(PROGRAMS src/speed_profile_node.py ...)` |
+| `stage3_bringup.launch.py` | + TimerAction(5.0s) 启动 speed_profile_node |
+| `originbot_nav2_rpp.yaml` | + `speed_limit_topic: /speed_limit` 参数 |
+
+### 修改文件清单
+
+| # | 文件 | 改动 |
+|---|------|------|
+| 1 | `origincar_bringup/src/speed_profile_node.py` | 🆕 新建: 395行核心节点 |
+| 2 | `origincar_bringup/CMakeLists.txt` | + install 规则 |
+| 3 | `origincar_bringup/launch/stage3_bringup.launch.py` | + speed_profile_node @ t+5s |
+| 4 | `originbot_navigation/param/originbot_nav2_rpp.yaml` | + speed_limit_topic 参数 |
+
+### 待验证
+
+- [ ] Humble RPP 是否消费 `/speed_limit` (Float32)？若否，需改为动态 parameter 方式
+- [ ] 弯道降速是否改善轨迹质量 (减少 lethal space / recovery 触发)
+- [ ] CRUISE 阶段能否在 >=0.40m/s 基线速度下有更好通过性
+- [ ] RETURN_P 窄通道是否会因降速改善狭窄段通过能力
+
+### SSH
+
+- 4 文件上传 → CRLF fix → `colcon build --packages-select origincar_bringup originbot_navigation` → 成功 (6.54s)
+
+---
+
 ## 2026-06-25 15:45 — ★ 全量回退到 70.1s 黄金配置
 
 > **用户**: "小车原来走这一段路都不会犹豫的，现在一到这就走不来了。进黄色通道直接就进来了，出去一样的路口就出不去了。"

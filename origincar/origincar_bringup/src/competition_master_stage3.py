@@ -65,8 +65,9 @@ class CompetitionMasterStage3(Node):
         # cruise_cw: 顺时针 (odd QR) — 途经点 + VLM 停靠点
         #            仅最后一个路点 (VLM 停靠点) 用于 NavigateToPose
         # 2026-06-28: 手动驾驶重标定 (stage2 RViz 逐点导航)
+        # 第2环路点=CCW的VLM位置 (2.17,0.69) — CW/CCW共用同一VLM停靠点
         self.declare_parameter('cruise_cw', [
-            0.93, 0.11, 0.0,   2.19, 0.77, 0.0,   3.01, -1.16, 0.0,
+            0.93, 0.11, 0.0,   2.17, 0.69, 0.0,   3.01, -1.16, 0.0,
         ])
         # cruise_ccw: 逆时针 (even QR) — 途经点 + VLM 停靠点
         #             仅最后一个路点 (VLM 停靠点) 用于 NavigateToPose
@@ -603,6 +604,10 @@ class CompetitionMasterStage3(Node):
         topics = '/tf /tf_static /scan /odom /amcl_pose /plan /local_plan ' \
                  '/cmd_vel ' \
                  '/global_costmap/costmap /local_costmap/costmap ' \
+                 '/aurora/depth/image_raw ' \
+                 '/aurora/rgb/image_jpeg ' \
+                 '/racing_obstacle_detection /tracked_obstacles_cloud ' \
+                 '/speed_limit /speed_profile_debug ' \
                  '/sign /qr_event /vlm_result /robotvel'
         try:
             self._bag_process = subprocess.Popen(
@@ -1109,19 +1114,27 @@ class CompetitionMasterStage3(Node):
 
     def _start_return(self):
         """从 VLM 路点 NavigateThroughPoses 经通道入口回 P 点.
-        复用通道入口 (entry_point) 作为中间路点: 进得来就出得去."""
+        使用从15条历史DONE轨迹提取的共识中间路点引导planner穿过窄通道."""
         self._state_transition('RETURN_P')
 
         if not self.through_client.wait_for_server(timeout_sec=3.0):
             self.get_logger().error("navigate_through_poses server 未就绪!")
             return
 
-        # 构造路点: VLM→第3环路点→P点
-        goal = NavigateThroughPoses.Goal()
-        for (wx, wy, wyaw) in [
-            (1.07, -0.73, 0.0),                                    # 第3环路点
+        # 共识路点 (从15条DONE轨迹RETURN_P段提取, mean_std=0.19m):
+        # VLM区→窄通道顶→通道拐弯→通道底→接近P→P点
+        return_waypoints = [
+            (2.20, 0.59, 2.85),    # WP0: VLM触发区 (返回通道入口)
+            (1.00, 0.95, -1.45),   # WP1: 窄通道顶部
+            (1.14, -0.22, -2.00),  # WP2: 通道中间拐弯
+            (0.80, -0.97, 2.02),   # WP3: 通道底部转向
+            (-0.45, -0.81, 2.67),  # WP4: 接近P点区域
+            (-1.66, -0.20, 2.67),  # WP5: P点前方
             (self.p_point_x, self.p_point_y, self.p_point_yaw),
-        ]:
+        ]
+
+        goal = NavigateThroughPoses.Goal()
+        for (wx, wy, wyaw) in return_waypoints:
             pose = PoseStamped()
             pose.header.frame_id = 'map'
             pose.header.stamp = self.get_clock().now().to_msg()
@@ -1132,9 +1145,10 @@ class CompetitionMasterStage3(Node):
             goal.poses.append(pose)
 
         self.get_logger().info(
-            f"[RETURN] NavigateThroughPoses: 通道入口→P点 "
-            f"({self.entry_point_x:.2f},{self.entry_point_y:.2f})→"
-            f"({self.p_point_x:.2f},{self.p_point_y:.2f})")
+            f"[RETURN] NavigateThroughPoses: {len(return_waypoints)}路点 "
+            f"({return_waypoints[0][0]:.2f},{return_waypoints[0][1]:.2f})→"
+            f"({self.p_point_x:.2f},{self.p_point_y:.2f}) "
+            f"(共识中心线, std=0.19m)")
         self._nav_start_time = self.get_clock().now()
         self._through_future = self.through_client.send_goal_async(goal)
         self._through_future.add_done_callback(self._through_response_cb)

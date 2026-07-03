@@ -1,1533 +1,670 @@
 root@ubuntu:/userdata/dev_ws# ros2 launch origincar_bringup stage3_bringup.launch.py
-[INFO] [launch]: All log files can be found below /root/.ros/log/2026-06-28-17-44-01-483178-ubuntu-37133
+[INFO] [launch]: All log files can be found below /root/.ros/log/2026-07-03-13-42-10-871938-ubuntu-22505
 [INFO] [launch]: Default logging verbosity is set to INFO
-[INFO] [origincar_base_node-1]: process started with pid [37147]
-[INFO] [lslidar_driver_node-2]: process started with pid [37149]
-[INFO] [robot_state_publisher-3]: process started with pid [37151]
-[INFO] [imu_madgwick_filter.py-4]: process started with pid [37153]
-[INFO] [bmi088_iio_bridge.py-5]: process started with pid [37155]
-[INFO] [imu_madgwick_filter.py-6]: process started with pid [37157]
-[INFO] [ekf_node-7]: process started with pid [37159]
-[INFO] [static_transform_publisher-8]: process started with pid [37205]
-[INFO] [aurora930_node-9]: process started with pid [37207]
-[INFO] [qr_decoder-10]: process started with pid [37209]
-[INFO] [qr_decision-11]: process started with pid [37211]
-[INFO] [vision_ai_node-12]: process started with pid [37213]
-[origincar_base_node-1] [INFO] [1782639842.143417245] [origincar_base]: origincar_base serial port opened
-[lslidar_driver_node-2] [INFO] [1782639842.198004861] [lslidar_driver_node]: Lidar is N10
-[lslidar_driver_node-2] [INFO] [1782639842.209849418] [lslidar_driver_node]: Initialised lslidar without error
-[lslidar_driver_node-2] [INFO] [1782639842.210022127] [lslidar_driver_node]: Successfully initialize driver...
-[robot_state_publisher-3] [INFO] [1782639842.185048135] [robot_state_publisher]: got segment base_footprint
-[robot_state_publisher-3] [INFO] [1782639842.185426885] [robot_state_publisher]: got segment base_link
-[robot_state_publisher-3] [INFO] [1782639842.185545302] [robot_state_publisher]: got segment gyro_link
-[robot_state_publisher-3] [INFO] [1782639842.185613219] [robot_state_publisher]: got segment laser_link
+[INFO] [origincar_base_node-1]: process started with pid [22519]
+[INFO] [lslidar_driver_node-2]: process started with pid [22521]
+[INFO] [robot_state_publisher-3]: process started with pid [22523]
+[INFO] [imu_madgwick_filter.py-4]: process started with pid [22525]
+[INFO] [bmi088_iio_bridge.py-5]: process started with pid [22527]
+[INFO] [imu_madgwick_filter.py-6]: process started with pid [22529]
+[INFO] [ekf_node-7]: process started with pid [22531]
+[INFO] [static_transform_publisher-8]: process started with pid [22571]
+[INFO] [aurora930_node-9]: process started with pid [22573]
+[INFO] [qr_decoder-10]: process started with pid [22575]
+[INFO] [qr_decision-11]: process started with pid [22577]
+[INFO] [vision_ai_node-12]: process started with pid [22579]
+[INFO] [hobot_codec_republish-13]: process started with pid [22581]
+[origincar_base_node-1] [INFO] [1783057331.579236484] [origincar_base]: origincar_base serial port opened
+[lslidar_driver_node-2] [INFO] [1783057331.585689318] [lslidar_driver_node]: Lidar is N10
+[lslidar_driver_node-2] [INFO] [1783057331.603160404] [lslidar_driver_node]: Initialised lslidar without error
+[lslidar_driver_node-2] [INFO] [1783057331.603342321] [lslidar_driver_node]: Successfully initialize driver...
+[robot_state_publisher-3] [INFO] [1783057331.599228403] [robot_state_publisher]: got segment base_footprint
+[robot_state_publisher-3] [INFO] [1783057331.599605029] [robot_state_publisher]: got segment base_link
+[robot_state_publisher-3] [INFO] [1783057331.599697945] [robot_state_publisher]: got segment gyro_link
+[robot_state_publisher-3] [INFO] [1783057331.599747737] [robot_state_publisher]: got segment laser_link
 [ekf_node-7] Both imu1_differential and imu1_relative were set to true. Using differential mode.
-[static_transform_publisher-8] [INFO] [1782639842.400728218] [depth_camera_tf]: Spinning until stopped - publishing transform
+[hobot_codec_republish-13] [WARN] [1783057331.863969109] [vlm_jpeg_encoder]: Parameters:
+[hobot_codec_republish-13]              sub_topic: /aurora/rgb/image_raw
+[hobot_codec_republish-13]              pub_topic: /aurora/rgb/image_jpeg
+[hobot_codec_republish-13]                channel: 0
+[hobot_codec_republish-13]                in_mode: ros
+[hobot_codec_republish-13]               out_mode: ros
+[hobot_codec_republish-13]              in_format: bgr8
+[hobot_codec_republish-13]             out_format: jpeg
+[hobot_codec_republish-13]            jpg_quality: 85.00
+[hobot_codec_republish-13]        input_framerate: 30
+[hobot_codec_republish-13]       output_framerate: -1
+[hobot_codec_republish-13]            dump_output: false
+[hobot_codec_republish-13]       dump_file_prefix: ./dump_codec_output
+[hobot_codec_republish-13]       dump_frame_count: -1 (unlimited)
+[static_transform_publisher-8] [INFO] [1783057331.878385986] [depth_camera_tf]: Spinning until stopped - publishing transform
 [static_transform_publisher-8] translation: ('0.140000', '0.000000', '0.050000')
 [static_transform_publisher-8] rotation: ('0.000000', '0.000000', '0.000000', '1.000000')
 [static_transform_publisher-8] from 'base_link' to 'depth_camera_link'
-[aurora930_node-9] W0628 17:44:02.784319 37207 ros2_node.cc:35] hello aurora 900/930
-[qr_decoder-10] [INFO] [1782639842.892020758] [qr_decoder_zbar]: QR decoder (ZBar) started: rgb=/aurora/rgb/image_raw, depth=/aurora/depth/image_raw, filter=on, range=[50, 4000]mm, min_qr_len=1, intrinsics: fx=421.3 fy=422.3 cx=320.3 cy=197.0
-[aurora930_node-9] 2026-06-28 17:44:02.918 (   0.269s) [        992C4020] device_manager_impl.cc:89    INFO| hotplug has registed by user
+[hobot_codec_republish-13] [WARN] [1783057331.902245823] [HobotCodecImpl]: platform x5
+[qr_decoder-10] [INFO] [1783057332.350793556] [qr_decoder_zbar]: QR decoder (ZBar) started: rgb=/aurora/rgb/image_raw, depth=/aurora/depth/image_raw, filter=on, range=[50, 4000]mm, min_qr_len=1, intrinsics: fx=421.3 fy=422.3 cx=320.3 cy=197.0
+[aurora930_node-9] W0703 13:42:12.407672 22573 ros2_node.cc:35] hello aurora 900/930
+[aurora930_node-9] 2026-07-03 13:42:12.485 (   0.209s) [        90794020] device_manager_impl.cc:89    INFO| hotplug has registed by user
 [aurora930_node-9] device_count==========1
-[aurora930_node-9] I0628 17:44:02.977300 37207 aurora900_ros2_device.cc:153] BOOT_ORDER_1::Found 1 deptrum device
-[aurora930_node-9] I0628 17:44:02.977804 37207 aurora900_ros2_device.cc:162] BOOT_ORDER_1::No serial number provided: picking first device
-[aurora930_node-9] 2026-06-28 17:44:02.977 (   0.328s) [        992C4020] device_manager_impl.cc:318   INFO| Device information:
+[aurora930_node-9] I0703 13:42:12.516427 22573 aurora900_ros2_device.cc:153] BOOT_ORDER_1::Found 1 deptrum device
+[aurora930_node-9] I0703 13:42:12.516943 22573 aurora900_ros2_device.cc:162] BOOT_ORDER_1::No serial number provided: picking first device
+[aurora930_node-9] 2026-07-03 13:42:12.517 (   0.241s) [        90794020] device_manager_impl.cc:318   INFO| Device information:
 [aurora930_node-9]      ir_pid:0x1930, rgb_pid:0x0
 [aurora930_node-9]      serial number:HY400529001015314G00248
-[aurora930_node-9] I0628 17:44:02.977970 37207 aurora900_ros2_device.cc:206] BOOT_ORDER_1::0:device start opening
-[aurora930_node-9] 2026-06-28 17:44:02.980 (   0.330s) [        992C4020]   custom_usb_device.cc:101   INFO| bulk in endpoint addr:129
-[aurora930_node-9] 2026-06-28 17:44:02.980 (   0.330s) [        992C4020]   custom_usb_device.cc:98    INFO| bulk out endpoint addr:2
-[aurora930_node-9] 2026-06-28 17:44:03.012 (   0.362s) [        992C4020]deptrum_camera_aurora93:53    INFO| doe_broken:0 ito_support:1 crash_count:0 wdt_count:0 hard_reset_count:2 heart_boot_count:0 boot_total:121 last_crash_time:N
-[aurora930_node-9] I0628 17:44:03.012571 37207 aurora900_ros2_device.cc:247] device supported frame_mode:
-[aurora930_node-9] I0628 17:44:03.012676 37207 aurora900_ros2_device.cc:252] [0]:ir_mode:=13 kRes320x200Ir8Bit rgb_mode:=31 kRes320x200RgbYuv depth_mode:=0 kInvalid
-[aurora930_node-9] I0628 17:44:03.012723 37207 aurora900_ros2_device.cc:252] [1]:ir_mode:=17 kRes480x300Depth16Bit rgb_mode:=32 kRes480x300RgbYuv depth_mode:=0 kInvalid
-[aurora930_node-9] I0628 17:44:03.012758 37207 aurora900_ros2_device.cc:252] [2]:ir_mode:=20 kRes640x400Ir8Bit rgb_mode:=33 kRes640x400RgbYuv depth_mode:=0 kInvalid
-[aurora930_node-9] I0628 17:44:03.012790 37207 aurora900_ros2_device.cc:266] current set mode ir_mode:20:kRes640x400Ir8Bit,rgb_mode:33:kRes640x400RgbYuv
-[INFO] [map_server-13]: process started with pid [37308]
-[INFO] [costmap_filter_info_server-14]: process started with pid [37310]
-[INFO] [lifecycle_manager-15]: process started with pid [37319]
-[aurora930_node-9] I0628 17:44:03.527514 37207 aurora900_ros2_device.cc:387] Switch Auto Exposure
-[costmap_filter_info_server-14] [INFO] [1782639843.587572908] [costmap_filter_info_server]: This is costmap filter info publisher
-[aurora930_node-9] 2026-06-28 17:44:03.588 (   0.938s) [        992C4020]      aurora900_impl.cc:1106  INFO| SetHeartbeat user set heartbeat enable: 0
-[lifecycle_manager-15] [INFO] [1782639843.653001705] [lifecycle_manager_keepout]: Creating
-[lifecycle_manager-15] [INFO] [1782639843.708700655] [lifecycle_manager_keepout]: Creating and initializing lifecycle service clients
-[map_server-13] [INFO] [1782639843.722353882] [keepout_mask_server]:
-[map_server-13]         keepout_mask_server lifecycle node launched.
-[map_server-13]         Waiting on external lifecycle transitions to activate
-[map_server-13]         See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[map_server-13] [INFO] [1782639843.722920633] [keepout_mask_server]: Creating
-[costmap_filter_info_server-14] [INFO] [1782639843.729215808] [keepout_filter_info_server]:
-[costmap_filter_info_server-14]         keepout_filter_info_server lifecycle node launched.
-[costmap_filter_info_server-14]         Waiting on external lifecycle transitions to activate
-[costmap_filter_info_server-14]         See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[lifecycle_manager-15] [INFO] [1782639843.767020109] [lifecycle_manager_keepout]: Starting managed nodes bringup...
-[lifecycle_manager-15] [INFO] [1782639843.767952235] [lifecycle_manager_keepout]: Configuring keepout_mask_server
-[map_server-13] [INFO] [1782639843.785337175] [keepout_mask_server]: Configuring
-[map_server-13] [INFO] [1782639843.785622926] [map_io]: Loading yaml file: /userdata/dev_ws/install/originbot_navigation/share/originbot_navigation/maps/keepout_mask.yaml
-[map_server-13] [INFO] [1782639843.786664552] [map_io]: resolution: 0.05
-[map_server-13] [INFO] [1782639843.787979887] [map_io]: origin[0]: -2.65
-[map_server-13] [INFO] [1782639843.788041721] [map_io]: origin[1]: -4.5
-[map_server-13] [INFO] [1782639843.788071637] [map_io]: origin[2]: 0
-[map_server-13] [INFO] [1782639843.788102637] [map_io]: free_thresh: 0.5
-[map_server-13] [INFO] [1782639843.788131596] [map_io]: occupied_thresh: 0.5
-[map_server-13] [INFO] [1782639843.788197596] [map_io]: mode: scale
-[map_server-13] [INFO] [1782639843.788233221] [map_io]: negate: 0
-[map_server-13] [INFO] [1782639843.790195432] [map_io]: Loading image_file: /userdata/dev_ws/install/originbot_navigation/share/originbot_navigation/maps/keepout_mask.pgm
-[map_server-13] [INFO] [1782639843.813958464] [map_io]: Read map /userdata/dev_ws/install/originbot_navigation/share/originbot_navigation/maps/keepout_mask.pgm: 163 X 141 map @ 0.05 m/cell
-[lifecycle_manager-15] [INFO] [1782639843.841380751] [lifecycle_manager_keepout]: Configuring keepout_filter_info_server
-[costmap_filter_info_server-14] [INFO] [1782639843.842624128] [keepout_filter_info_server]: Configuring
-[lifecycle_manager-15] [INFO] [1782639843.864356324] [lifecycle_manager_keepout]: Activating keepout_mask_server
-[map_server-13] [INFO] [1782639843.865184408] [keepout_mask_server]: Activating
-[map_server-13] [INFO] [1782639843.865558826] [keepout_mask_server]: Creating bond (keepout_mask_server) to lifecycle manager.
-[lifecycle_manager-15] [INFO] [1782639843.973554347] [lifecycle_manager_keepout]: Server keepout_mask_server connected with bond.
-[lifecycle_manager-15] [INFO] [1782639843.973726889] [lifecycle_manager_keepout]: Activating keepout_filter_info_server
-[costmap_filter_info_server-14] [INFO] [1782639843.974656306] [keepout_filter_info_server]: Activating
-[costmap_filter_info_server-14] [INFO] [1782639843.974868807] [keepout_filter_info_server]: Creating bond (keepout_filter_info_server) to lifecycle manager.
-[bmi088_iio_bridge.py-5] [INFO] [1782639843.981367857] [bmi088_iio_bridge]: =================================================================
-[bmi088_iio_bridge.py-5] [INFO] [1782639843.984355695] [bmi088_iio_bridge]:   DIAGNOSTIC: Scanning IIO devices under /sys/bus/iio/devices/
-[bmi088_iio_bridge.py-5] [INFO] [1782639843.987395407] [bmi088_iio_bridge]:   Equivalent to: ls /sys/bus/iio/devices/*/name
-[bmi088_iio_bridge.py-5] [INFO] [1782639843.990283661] [bmi088_iio_bridge]: =================================================================
-[bmi088_iio_bridge.py-5] [INFO] [1782639843.992926456] [bmi088_iio_bridge]:   iio:device0/name = "34190000.adc"
-[bmi088_iio_bridge.py-5] [INFO] [1782639843.995300793] [bmi088_iio_bridge]:   iio:device1/name = "bmi08x"
-[bmi088_iio_bridge.py-5] [INFO] [1782639843.997658171] [bmi088_iio_bridge]:   trigger0/name = "34190000.adc-dev0"
-[bmi088_iio_bridge.py-5] [INFO] [1782639844.000061216] [bmi088_iio_bridge]:   Total IIO devices found: 3
-[bmi088_iio_bridge.py-5] [INFO] [1782639844.002650969] [bmi088_iio_bridge]:   BMI088 kernel module APPEARS LOADED: 1 BMI device(s) detected
-[bmi088_iio_bridge.py-5] [INFO] [1782639844.005208723] [bmi088_iio_bridge]:   BMI device names: ['bmi08x']
-[imu_madgwick_filter.py-6] [INFO] [1782639844.006003974] [imu_madgwick_bmi088]: [imu_madgwick] init: beta=0.0030, gyro_noise=0.0002, accel_noise=0.010
-[bmi088_iio_bridge.py-5] [INFO] [1782639844.008307435] [bmi088_iio_bridge]:   gyro:  /sys/bus/iio/devices/iio:device1 (name=="bmi08x") attr=in_anglvel is_si=False scale_override=0.00053
-[aurora930_node-9] I0628 17:44:04.008658 37207 aurora900_ros2_device.cc:304] BOOT_ORDER_1::Device information:
-[aurora930_node-9] I0628 17:44:04.008821 37207 aurora900_ros2_device.cc:305]     sdk version: 1.1.22
-[aurora930_node-9] I0628 17:44:04.008862 37207 aurora900_ros2_device.cc:306]     device name: Aurora 930
-[aurora930_node-9] I0628 17:44:04.008889 37207 aurora900_ros2_device.cc:307]     serial number: HY400529001015314G00248
-[aurora930_node-9] I0628 17:44:04.008914 37207 aurora900_ros2_device.cc:308]     firmware version: 1.7.2
-[aurora930_node-9] I0628 17:44:04.008966 37207 camera_parameters.cc:134] BOOT_ORDER_1::Camera Parameters:
-[aurora930_node-9] I0628 17:44:04.008996 37207 camera_parameters.cc:135] BOOT_ORDER_1::  Ir Intrinsics:
-[aurora930_node-9] I0628 17:44:04.009022 37207 camera_parameters.cc:146]                 Resolution:
-[aurora930_node-9] I0628 17:44:04.009047 37207 camera_parameters.cc:147]                         Rows:400
-[aurora930_node-9] I0628 17:44:04.009073 37207 camera_parameters.cc:148]                         Cols:640
-[aurora930_node-9] I0628 17:44:04.009099 37207 camera_parameters.cc:149]                 Intrinsics:
-[aurora930_node-9] I0628 17:44:04.009122 37207 camera_parameters.cc:150]                         fx: 421.307
-[aurora930_node-9] I0628 17:44:04.009219 37207 camera_parameters.cc:151]                         fy: 422.254
-[aurora930_node-9] I0628 17:44:04.009253 37207 camera_parameters.cc:152]                         cx: 320.27
-[aurora930_node-9] I0628 17:44:04.009286 37207 camera_parameters.cc:153]                         cy: 197.01
-[aurora930_node-9] I0628 17:44:04.009318 37207 camera_parameters.cc:154]                         k1: 0.0606853
-[aurora930_node-9] I0628 17:44:04.009351 37207 camera_parameters.cc:155]                         k2: -0.10961
-[aurora930_node-9] I0628 17:44:04.009382 37207 camera_parameters.cc:156]                         p1: 0.00126689
-[aurora930_node-9] I0628 17:44:04.009413 37207 camera_parameters.cc:157]                         p2: -0.00120539
-[aurora930_node-9] I0628 17:44:04.009445 37207 camera_parameters.cc:158]                         k3: 0.0522281
-[aurora930_node-9] I0628 17:44:04.009476 37207 camera_parameters.cc:138] BOOT_ORDER_1::  Rgb Intrinsics:
-[aurora930_node-9] I0628 17:44:04.009502 37207 camera_parameters.cc:146]                 Resolution:
-[aurora930_node-9] I0628 17:44:04.009527 37207 camera_parameters.cc:147]                         Rows:400
-[aurora930_node-9] I0628 17:44:04.009552 37207 camera_parameters.cc:148]                         Cols:640
-[aurora930_node-9] I0628 17:44:04.009577 37207 camera_parameters.cc:149]                 Intrinsics:
-[aurora930_node-9] I0628 17:44:04.009629 37207 camera_parameters.cc:150]                         fx: 416.49
-[aurora930_node-9] I0628 17:44:04.009672 37207 camera_parameters.cc:151]                         fy: 417.383
-[aurora930_node-9] I0628 17:44:04.009706 37207 camera_parameters.cc:152]                         cx: 316.832
-[aurora930_node-9] I0628 17:44:04.009737 37207 camera_parameters.cc:153]                         cy: 188.753
-[aurora930_node-9] I0628 17:44:04.009768 37207 camera_parameters.cc:154]                         k1: 0.00611878
-[aurora930_node-9] I0628 17:44:04.009799 37207 camera_parameters.cc:155]                         k2: -0.0490436
-[aurora930_node-9] I0628 17:44:04.009891 37207 camera_parameters.cc:156]                         p1: 0.000399548
-[aurora930_node-9] I0628 17:44:04.009925 37207 camera_parameters.cc:157]                         p2: 0.000563892
-[aurora930_node-9] I0628 17:44:04.009958 37207 camera_parameters.cc:158]                         k3: 0.0308458
-[aurora930_node-9] I0628 17:44:04.009989 37207 camera_parameters.cc:141] BOOT_ORDER_1::  Ir to Rgb Extrinsic:
-[aurora930_node-9] I0628 17:44:04.010022 37207 camera_parameters.cc:162]                 Extrinsics:
-[aurora930_node-9] I0628 17:44:04.010048 37207 camera_parameters.cc:163]                         Rotation[0]: 0.999973, 0.00724076, -0.00112023
-[aurora930_node-9] I0628 17:44:04.010085 37207 camera_parameters.cc:165]                         Rotation[1]: -0.00724006, 0.999973, 0.000633162
-[aurora930_node-9] I0628 17:44:04.010129 37207 camera_parameters.cc:167]                         Rotation[2]: 0.00112478, -0.000625033, 0.999999
-[aurora930_node-9] I0628 17:44:04.010223 37207 camera_parameters.cc:169]                         Translation: -9.88662, 0.117748, 0.603513
-[aurora930_node-9] 2026-06-28 17:44:04.010 (   1.361s) [        992C4020]      aurora900_impl.cc:578   INFO| stream_mask_:0, rgb_stream_count_:1
-[bmi088_iio_bridge.py-5] [INFO] [1782639844.011361939] [bmi088_iio_bridge]:   accel: /sys/bus/iio/devices/iio:device1 (name=="bmi08x") attr=in_accel is_si=False scale_override=0.00341
-[imu_madgwick_filter.py-4] [INFO] [1782639844.069267268] [imu_madgwick_filter]: [imu_madgwick] init: beta=0.0330, gyro_noise=0.0010, accel_noise=0.050
-[imu_madgwick_filter.py-4] [INFO] [1782639844.075082734] [imu_madgwick_filter]: [imu_madgwick] FIRST_MSG received from /imu/data_raw, starting filter pipeline
-[imu_madgwick_filter.py-4] [INFO] [1782639844.077704654] [imu_madgwick_filter]: [imu_madgwick] accel init: roll=-1.5deg, pitch=0.2deg
-[lifecycle_manager-15] [INFO] [1782639844.086775083] [lifecycle_manager_keepout]: Server keepout_filter_info_server connected with bond.
-[lifecycle_manager-15] [INFO] [1782639844.086971125] [lifecycle_manager_keepout]: Managed nodes are active
-[lifecycle_manager-15] [INFO] [1782639844.087048083] [lifecycle_manager_keepout]: Creating bond timer...
-[bmi088_iio_bridge.py-5] [INFO] [1782639844.120388337] [bmi088_iio_bridge]: BMI088 IIO Bridge 启动 @ 100Hz -> /imu_data  [OK]
-[imu_madgwick_filter.py-6] [INFO] [1782639844.148925792] [imu_madgwick_bmi088]: [imu_madgwick] FIRST_MSG received from /imu/data_raw, starting filter pipeline
-[imu_madgwick_filter.py-6] [INFO] [1782639844.151613254] [imu_madgwick_bmi088]: [imu_madgwick] accel init: roll=-2.3deg, pitch=-3.4deg
-[qr_decision-11] [INFO] [1782639844.275164296] [qr_decision]: qr_decision started: cooldown=3.0s, awaiting /sign from qr_decoder
-[aurora930_node-9] 2026-06-28 17:44:04.336 (   1.686s) [        699E37E0]deptrum_camera_aurora93:407    ERR| recv first frame time is 1782639844336
+[aurora930_node-9] I0703 13:42:12.517127 22573 aurora900_ros2_device.cc:206] BOOT_ORDER_1::0:device start opening
+[aurora930_node-9] 2026-07-03 13:42:12.519 (   0.243s) [        90794020]   custom_usb_device.cc:101   INFO| bulk in endpoint addr:129
+[aurora930_node-9] 2026-07-03 13:42:12.519 (   0.243s) [        90794020]   custom_usb_device.cc:98    INFO| bulk out endpoint addr:2
+[aurora930_node-9] 2026-07-03 13:42:12.533 (   0.258s) [        90794020]deptrum_camera_aurora93:53    INFO| doe_broken:0 ito_support:1 crash_count:0 wdt_count:0 hard_reset_count:2 heart_boot_count:0 boot_total:127 last_crash_time:N
+[aurora930_node-9] I0703 13:42:12.534076 22573 aurora900_ros2_device.cc:247] device supported frame_mode:
+[aurora930_node-9] I0703 13:42:12.534175 22573 aurora900_ros2_device.cc:252] [0]:ir_mode:=13 kRes320x200Ir8Bit rgb_mode:=31 kRes320x200RgbYuv depth_mode:=0 kInvalid
+[aurora930_node-9] I0703 13:42:12.534219 22573 aurora900_ros2_device.cc:252] [1]:ir_mode:=17 kRes480x300Depth16Bit rgb_mode:=32 kRes480x300RgbYuv depth_mode:=0 kInvalid
+[aurora930_node-9] I0703 13:42:12.534252 22573 aurora900_ros2_device.cc:252] [2]:ir_mode:=20 kRes640x400Ir8Bit rgb_mode:=33 kRes640x400RgbYuv depth_mode:=0 kInvalid
+[aurora930_node-9] I0703 13:42:12.534284 22573 aurora900_ros2_device.cc:266] current set mode ir_mode:20:kRes640x400Ir8Bit,rgb_mode:33:kRes640x400RgbYuv
+[INFO] [map_server-14]: process started with pid [22678]
+[INFO] [costmap_filter_info_server-15]: process started with pid [22680]
+[INFO] [lifecycle_manager-16]: process started with pid [22687]
+[costmap_filter_info_server-15] [INFO] [1783057332.894134887] [costmap_filter_info_server]: This is costmap filter info publisher
+[lifecycle_manager-16] [INFO] [1783057332.909267181] [lifecycle_manager_keepout]: Creating
+[lifecycle_manager-16] [INFO] [1783057332.965198064] [lifecycle_manager_keepout]: Creating and initializing lifecycle service clients
+[map_server-14] [INFO] [1783057332.980556483] [keepout_mask_server]:
+[map_server-14]         keepout_mask_server lifecycle node launched.
+[map_server-14]         Waiting on external lifecycle transitions to activate
+[map_server-14]         See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[map_server-14] [INFO] [1783057332.981241316] [keepout_mask_server]: Creating
+[costmap_filter_info_server-15] [INFO] [1783057333.056713202] [keepout_filter_info_server]:
+[costmap_filter_info_server-15]         keepout_filter_info_server lifecycle node launched.
+[costmap_filter_info_server-15]         Waiting on external lifecycle transitions to activate
+[costmap_filter_info_server-15]         See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[aurora930_node-9] I0703 13:42:13.072992 22573 aurora900_ros2_device.cc:387] Switch Auto Exposure
+[aurora930_node-9] 2026-07-03 13:42:13.132 (   0.856s) [        90794020]      aurora900_impl.cc:1106  INFO| SetHeartbeat user set heartbeat enable: 0
+[lifecycle_manager-16] [INFO] [1783057333.169135469] [lifecycle_manager_keepout]: Starting managed nodes bringup...
+[lifecycle_manager-16] [INFO] [1783057333.191482139] [lifecycle_manager_keepout]: Configuring keepout_mask_server
+[map_server-14] [INFO] [1783057333.195783348] [keepout_mask_server]: Configuring
+[map_server-14] [INFO] [1783057333.196067431] [map_io]: Loading yaml file: /userdata/dev_ws/install/originbot_navigation/share/originbot_navigation/maps/keepout_mask.yaml
+[map_server-14] [INFO] [1783057333.197146640] [map_io]: resolution: 0.05
+[map_server-14] [INFO] [1783057333.197213057] [map_io]: origin[0]: -2.65
+[map_server-14] [INFO] [1783057333.197243682] [map_io]: origin[1]: -4.5
+[map_server-14] [INFO] [1783057333.197270890] [map_io]: origin[2]: 0
+[map_server-14] [INFO] [1783057333.197298515] [map_io]: free_thresh: 0.5
+[map_server-14] [INFO] [1783057333.197326515] [map_io]: occupied_thresh: 0.5
+[map_server-14] [INFO] [1783057333.197359473] [map_io]: mode: scale
+[map_server-14] [INFO] [1783057333.197388265] [map_io]: negate: 0
+[map_server-14] [INFO] [1783057333.198032932] [map_io]: Loading image_file: /userdata/dev_ws/install/originbot_navigation/share/originbot_navigation/maps/keepout_mask.pgm
+[map_server-14] [INFO] [1783057333.225274686] [map_io]: Read map /userdata/dev_ws/install/originbot_navigation/share/originbot_navigation/maps/keepout_mask.pgm: 163 X 141 map @ 0.05 m/cell
+[lifecycle_manager-16] [INFO] [1783057333.259397316] [lifecycle_manager_keepout]: Configuring keepout_filter_info_server
+[costmap_filter_info_server-15] [INFO] [1783057333.260438274] [keepout_filter_info_server]: Configuring
+[lifecycle_manager-16] [INFO] [1783057333.284464236] [lifecycle_manager_keepout]: Activating keepout_mask_server
+[map_server-14] [INFO] [1783057333.285371653] [keepout_mask_server]: Activating
+[map_server-14] [INFO] [1783057333.285767070] [keepout_mask_server]: Creating bond (keepout_mask_server) to lifecycle manager.
+[bmi088_iio_bridge.py-5] [INFO] [1783057333.298518613] [bmi088_iio_bridge]: =================================================================
+[bmi088_iio_bridge.py-5] [INFO] [1783057333.303625781] [bmi088_iio_bridge]:   DIAGNOSTIC: Scanning IIO devices under /sys/bus/iio/devices/
+[bmi088_iio_bridge.py-5] [INFO] [1783057333.307493115] [bmi088_iio_bridge]:   Equivalent to: ls /sys/bus/iio/devices/*/name
+[bmi088_iio_bridge.py-5] [INFO] [1783057333.310502782] [bmi088_iio_bridge]: =================================================================
+[bmi088_iio_bridge.py-5] [INFO] [1783057333.313610532] [bmi088_iio_bridge]:   iio:device0/name = "34190000.adc"
+[bmi088_iio_bridge.py-5] [INFO] [1783057333.316836949] [bmi088_iio_bridge]:   iio:device1/name = "bmi08x"
+[bmi088_iio_bridge.py-5] [INFO] [1783057333.319600117] [bmi088_iio_bridge]:   trigger0/name = "34190000.adc-dev0"
+[bmi088_iio_bridge.py-5] [INFO] [1783057333.322958617] [bmi088_iio_bridge]:   Total IIO devices found: 3
+[bmi088_iio_bridge.py-5] [INFO] [1783057333.325865201] [bmi088_iio_bridge]:   BMI088 kernel module APPEARS LOADED: 1 BMI device(s) detected
+[bmi088_iio_bridge.py-5] [INFO] [1783057333.329260368] [bmi088_iio_bridge]:   BMI device names: ['bmi08x']
+[bmi088_iio_bridge.py-5] [INFO] [1783057333.333016619] [bmi088_iio_bridge]:   gyro:  /sys/bus/iio/devices/iio:device1 (name=="bmi08x") attr=in_anglvel is_si=False scale_override=0.00053
+[bmi088_iio_bridge.py-5] [INFO] [1783057333.337074286] [bmi088_iio_bridge]:   accel: /sys/bus/iio/devices/iio:device1 (name=="bmi08x") attr=in_accel is_si=False scale_override=0.00341
+[lifecycle_manager-16] [INFO] [1783057333.398232295] [lifecycle_manager_keepout]: Server keepout_mask_server connected with bond.
+[lifecycle_manager-16] [INFO] [1783057333.398483670] [lifecycle_manager_keepout]: Activating keepout_filter_info_server
+[costmap_filter_info_server-15] [INFO] [1783057333.400368504] [keepout_filter_info_server]: Activating
+[costmap_filter_info_server-15] [INFO] [1783057333.400623045] [keepout_filter_info_server]: Creating bond (keepout_filter_info_server) to lifecycle manager.
+[bmi088_iio_bridge.py-5] [INFO] [1783057333.463994013] [bmi088_iio_bridge]: BMI088 IIO Bridge 启动 @ 100Hz -> /imu_data  [OK]
+[lifecycle_manager-16] [INFO] [1783057333.518752271] [lifecycle_manager_keepout]: Server keepout_filter_info_server connected with bond.
+[lifecycle_manager-16] [INFO] [1783057333.518923146] [lifecycle_manager_keepout]: Managed nodes are active
+[lifecycle_manager-16] [INFO] [1783057333.518992604] [lifecycle_manager_keepout]: Creating bond timer...
+[aurora930_node-9] I0703 13:42:13.542342 22573 aurora900_ros2_device.cc:304] BOOT_ORDER_1::Device information:
+[aurora930_node-9] I0703 13:42:13.542492 22573 aurora900_ros2_device.cc:305]     sdk version: 1.1.22
+[aurora930_node-9] I0703 13:42:13.542531 22573 aurora900_ros2_device.cc:306]     device name: Aurora 930
+[aurora930_node-9] I0703 13:42:13.542559 22573 aurora900_ros2_device.cc:307]     serial number: HY400529001015314G00248
+[aurora930_node-9] I0703 13:42:13.542585 22573 aurora900_ros2_device.cc:308]     firmware version: 1.7.2
+[aurora930_node-9] I0703 13:42:13.542635 22573 camera_parameters.cc:134] BOOT_ORDER_1::Camera Parameters:
+[aurora930_node-9] I0703 13:42:13.542665 22573 camera_parameters.cc:135] BOOT_ORDER_1::  Ir Intrinsics:
+[aurora930_node-9] I0703 13:42:13.542691 22573 camera_parameters.cc:146]                 Resolution:
+[aurora930_node-9] I0703 13:42:13.542716 22573 camera_parameters.cc:147]                         Rows:400
+[aurora930_node-9] I0703 13:42:13.542742 22573 camera_parameters.cc:148]                         Cols:640
+[aurora930_node-9] I0703 13:42:13.542766 22573 camera_parameters.cc:149]                 Intrinsics:
+[aurora930_node-9] I0703 13:42:13.542791 22573 camera_parameters.cc:150]                         fx: 421.307
+[aurora930_node-9] I0703 13:42:13.542887 22573 camera_parameters.cc:151]                         fy: 422.254
+[aurora930_node-9] I0703 13:42:13.542920 22573 camera_parameters.cc:152]                         cx: 320.27
+[aurora930_node-9] I0703 13:42:13.542953 22573 camera_parameters.cc:153]                         cy: 197.01
+[aurora930_node-9] I0703 13:42:13.542985 22573 camera_parameters.cc:154]                         k1: 0.0606853
+[aurora930_node-9] I0703 13:42:13.543016 22573 camera_parameters.cc:155]                         k2: -0.10961
+[aurora930_node-9] I0703 13:42:13.543047 22573 camera_parameters.cc:156]                         p1: 0.00126689
+[aurora930_node-9] I0703 13:42:13.543079 22573 camera_parameters.cc:157]                         p2: -0.00120539
+[aurora930_node-9] I0703 13:42:13.543110 22573 camera_parameters.cc:158]                         k3: 0.0522281
+[aurora930_node-9] I0703 13:42:13.543156 22573 camera_parameters.cc:138] BOOT_ORDER_1::  Rgb Intrinsics:
+[aurora930_node-9] I0703 13:42:13.543183 22573 camera_parameters.cc:146]                 Resolution:
+[aurora930_node-9] I0703 13:42:13.543208 22573 camera_parameters.cc:147]                         Rows:400
+[aurora930_node-9] I0703 13:42:13.543233 22573 camera_parameters.cc:148]                         Cols:640
+[aurora930_node-9] I0703 13:42:13.543258 22573 camera_parameters.cc:149]                 Intrinsics:
+[aurora930_node-9] I0703 13:42:13.543283 22573 camera_parameters.cc:150]                         fx: 416.49
+[aurora930_node-9] I0703 13:42:13.543314 22573 camera_parameters.cc:151]                         fy: 417.383
+[aurora930_node-9] I0703 13:42:13.543345 22573 camera_parameters.cc:152]                         cx: 316.832
+[aurora930_node-9] I0703 13:42:13.543377 22573 camera_parameters.cc:153]                         cy: 188.753
+[aurora930_node-9] I0703 13:42:13.543408 22573 camera_parameters.cc:154]                         k1: 0.00611878
+[aurora930_node-9] I0703 13:42:13.543439 22573 camera_parameters.cc:155]                         k2: -0.0490436
+[aurora930_node-9] I0703 13:42:13.543470 22573 camera_parameters.cc:156]                         p1: 0.000399548
+[aurora930_node-9] I0703 13:42:13.543501 22573 camera_parameters.cc:157]                         p2: 0.000563892
+[aurora930_node-9] I0703 13:42:13.543532 22573 camera_parameters.cc:158]                         k3: 0.0308458
+[aurora930_node-9] I0703 13:42:13.543563 22573 camera_parameters.cc:141] BOOT_ORDER_1::  Ir to Rgb Extrinsic:
+[aurora930_node-9] I0703 13:42:13.543589 22573 camera_parameters.cc:162]                 Extrinsics:
+[aurora930_node-9] I0703 13:42:13.543614 22573 camera_parameters.cc:163]                         Rotation[0]: 0.999973, 0.00724076, -0.00112023
+[aurora930_node-9] I0703 13:42:13.543651 22573 camera_parameters.cc:165]                         Rotation[1]: -0.00724006, 0.999973, 0.000633162
+[aurora930_node-9] I0703 13:42:13.543687 22573 camera_parameters.cc:167]                         Rotation[2]: 0.00112478, -0.000625033, 0.999999
+[aurora930_node-9] I0703 13:42:13.543767 22573 camera_parameters.cc:169]                         Translation: -9.88662, 0.117748, 0.603513
+[aurora930_node-9] 2026-07-03 13:42:13.544 (   1.268s) [        90794020]      aurora900_impl.cc:578   INFO| stream_mask_:0, rgb_stream_count_:1
+[imu_madgwick_filter.py-6] [INFO] [1783057333.565425695] [imu_madgwick_bmi088]: [imu_madgwick] init: beta=0.0030, gyro_noise=0.0002, accel_noise=0.010
+[imu_madgwick_filter.py-4] [INFO] [1783057333.566055195] [imu_madgwick_filter]: [imu_madgwick] init: beta=0.0330, gyro_noise=0.0010, accel_noise=0.050
+[imu_madgwick_filter.py-4] [INFO] [1783057333.571588071] [imu_madgwick_filter]: [imu_madgwick] FIRST_MSG received from /imu/data_raw, starting filter pipeline
+[imu_madgwick_filter.py-6] [INFO] [1783057333.572570029] [imu_madgwick_bmi088]: [imu_madgwick] FIRST_MSG received from /imu/data_raw, starting filter pipeline
+[imu_madgwick_filter.py-4] [INFO] [1783057333.574262321] [imu_madgwick_filter]: [imu_madgwick] accel init: roll=-0.7deg, pitch=-0.6deg
+[imu_madgwick_filter.py-6] [INFO] [1783057333.575887863] [imu_madgwick_bmi088]: [imu_madgwick] accel init: roll=-2.1deg, pitch=-3.6deg
+[qr_decision-11] [INFO] [1783057333.723144343] [qr_decision]: qr_decision started: cooldown=3.0s, awaiting /sign from qr_decoder
+[hobot_codec_republish-13] [WARN] [1783057333.837907277] [HobotVenc]: init_pic_w_: 640, init_pic_h_: 400, alined_pic_w_: 640, alined_pic_h_: 400, aline_w_: 16, aline_h_: 16
+[hobot_codec_republish-13] [WARN] [1783057336.963681870] [vlm_jpeg_encoder]: Sub imgRaw fps [8.71]
+[hobot_codec_republish-13] [WARN] [1783057336.965870495] [vlm_jpeg_encoder]: Pub img fps [8.70]
+[aurora930_node-9] 2026-07-03 13:42:13.866 (   1.590s) [        611D37E0]deptrum_camera_aurora93:407    ERR| recv first frame time is 1783057333866
 [lslidar_driver_node-2] port = /dev/ttyACM1, baud_rate = 230400
 [lslidar_driver_node-2] open_port /dev/ttyACM1 OK !
-[vision_ai_node-12] [INFO] [1782639848.013708013] [vision_ai_node]: 成功加载配置文件: /userdata/dev_ws/install/racing_vision_ai/share/racing_vision_ai/config/vision_ai_config.yaml
-[vision_ai_node-12] [INFO] [1782639848.375461626] [vision_ai_node]: Volcengine Ark client initialized successfully
-[vision_ai_node-12] [INFO] [1782639848.395270944] [vision_ai_node]: Vision AI Node initialized
-[vision_ai_node-12] [INFO] [1782639848.397468447] [vision_ai_node]: Waiting for sign4return=100 signal...
-[vision_ai_node-12] [INFO] [1782639848.399639450] [vision_ai_node]: Results will be published to vlm_result
-[bmi088_iio_bridge.py-5] [INFO] [1782639849.581184586] [bmi088_iio_bridge]:   gyro bias calibrated: (0.002480, 0.001431, -0.002671) rad/s
-[INFO] [component_container_isolated-16]: process started with pid [37466]
-[INFO] [competition_master_stage3.py-17]: process started with pid [37468]
-[INFO] [rviz2-18]: process started with pid [37470]
-[component_container_isolated-16] [INFO] [1782639850.441578204] [nav2_container]: Load Library: /opt/ros/humble/lib/libcontroller_server_core.so
-[component_container_isolated-16] [INFO] [1782639850.470832576] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_controller::ControllerServer>
-[component_container_isolated-16] [INFO] [1782639850.471061868] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_controller::ControllerServer>
-[component_container_isolated-16] [INFO] [1782639850.541721255] [controller_server]:
-[component_container_isolated-16]       controller_server lifecycle node launched.
-[component_container_isolated-16]       Waiting on external lifecycle transitions to activate
-[component_container_isolated-16]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[component_container_isolated-16] [INFO] [1782639850.567430123] [controller_server]: Creating controller server
-[component_container_isolated-16] [INFO] [1782639850.649398859] [local_costmap.local_costmap]:
-[component_container_isolated-16]       local_costmap lifecycle node launched.
-[component_container_isolated-16]       Waiting on external lifecycle transitions to activate
-[component_container_isolated-16]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[component_container_isolated-16] [INFO] [1782639850.652601030] [local_costmap.local_costmap]: Creating Costmap
-[component_container_isolated-16] [INFO] [1782639850.670042636] [nav2_container]: Load Library: /opt/ros/humble/lib/libmap_server_core.so
-[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/controller_server' in container '/nav2_container'
-[component_container_isolated-16] [INFO] [1782639850.730648676] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_map_server::CostmapFilterInfoServer>
-[component_container_isolated-16] [INFO] [1782639850.730815052] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_map_server::MapSaver>
-[component_container_isolated-16] [INFO] [1782639850.730905760] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_map_server::MapServer>
-[component_container_isolated-16] [INFO] [1782639850.731048469] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_map_server::MapServer>
-[component_container_isolated-16] [INFO] [1782639850.798643101] [map_server]:
-[component_container_isolated-16]       map_server lifecycle node launched.
-[component_container_isolated-16]       Waiting on external lifecycle transitions to activate
-[component_container_isolated-16]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[INFO] [component_container_isolated-17]: process started with pid [22846]
+[vision_ai_node-12] [INFO] [1783057336.937866158] [vision_ai_node]: Loaded config: /userdata/dev_ws/install/racing_vision_ai/share/racing_vision_ai/config/vision_ai_config.yaml
+[vision_ai_node-12] [INFO] [1783057337.314035006] [vision_ai_node]: Volcengine Ark client initialized
+[vision_ai_node-12] [INFO] [1783057337.328818842] [vision_ai_node]: Vision AI Node initialized (JPU JPEG mode)
+[vision_ai_node-12] [INFO] [1783057337.331290550] [vision_ai_node]: Waiting for sign4return=9
+[vision_ai_node-12] [INFO] [1783057337.333706842] [vision_ai_node]: Image topic: /aurora/rgb/image_jpeg
+[bmi088_iio_bridge.py-5] [INFO] [1783057338.891853370] [bmi088_iio_bridge]:   gyro bias calibrated: (0.002589, 0.001577, -0.002785) rad/s
+[INFO] [competition_master_stage3.py-21]: process started with pid [22863]
+[INFO] [depth_detector-18]: process started with pid [22850]
+[INFO] [tracker_node-19]: process started with pid [22852]
+[INFO] [costmap_publisher-20]: process started with pid [22856]
+[INFO] [path_optimizer_node.py-22]: process started with pid [22868]
+[INFO] [speed_profile_node.py-23]: process started with pid [22873]
+[INFO] [rviz2-24]: process started with pid [22875]
+[component_container_isolated-17] [INFO] [1783057340.002688913] [nav2_container]: Load Library: /opt/ros/humble/lib/libmap_server_core.so
+[component_container_isolated-17] [INFO] [1783057340.092800594] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_map_server::CostmapFilterInfoServer>
+[component_container_isolated-17] [INFO] [1783057340.092994677] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_map_server::MapSaver>
+[component_container_isolated-17] [INFO] [1783057340.093079177] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_map_server::MapServer>
+[component_container_isolated-17] [INFO] [1783057340.093143969] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_map_server::MapServer>
+[component_container_isolated-17] [INFO] [1783057340.357707718] [map_server]:
+[component_container_isolated-17]       map_server lifecycle node launched.
+[component_container_isolated-17]       Waiting on external lifecycle transitions to activate
+[component_container_isolated-17]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-17] [INFO] [1783057340.358709093] [map_server]: Creating
 [INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/map_server' in container '/nav2_container'
-[component_container_isolated-16] [INFO] [1782639850.798947185] [map_server]: Creating
-[component_container_isolated-16] [INFO] [1782639850.805987445] [nav2_container]: Load Library: /opt/ros/humble/lib/libsmoother_server_core.so
-[component_container_isolated-16] [INFO] [1782639850.812329037] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_smoother::SmootherServer>
-[component_container_isolated-16] [INFO] [1782639850.812502328] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_smoother::SmootherServer>
-[component_container_isolated-16] [INFO] [1782639850.896036608] [smoother_server]:
-[component_container_isolated-16]       smoother_server lifecycle node launched.
-[component_container_isolated-16]       Waiting on external lifecycle transitions to activate
-[component_container_isolated-16]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[component_container_isolated-16] [INFO] [1782639850.905690662] [smoother_server]: Creating smoother server
-[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/smoother_server' in container '/nav2_container'
-[component_container_isolated-16] [INFO] [1782639850.911995296] [nav2_container]: Load Library: /opt/ros/humble/lib/libamcl_core.so
-[component_container_isolated-16] [INFO] [1782639850.920784849] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_amcl::AmclNode>
-[component_container_isolated-16] [INFO] [1782639850.920980475] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_amcl::AmclNode>
-[component_container_isolated-16] [INFO] [1782639851.001383250] [amcl]:
-[component_container_isolated-16]       amcl lifecycle node launched.
-[component_container_isolated-16]       Waiting on external lifecycle transitions to activate
-[component_container_isolated-16]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[component_container_isolated-16] [INFO] [1782639851.003482127] [amcl]: Creating
-[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/amcl' in container '/nav2_container'
-[component_container_isolated-16] [INFO] [1782639851.122683330] [nav2_container]: Load Library: /opt/ros/humble/lib/libplanner_server_core.so
-[component_container_isolated-16] [INFO] [1782639851.126360751] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_planner::PlannerServer>
-[component_container_isolated-16] [INFO] [1782639851.126523877] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_planner::PlannerServer>
-[component_container_isolated-16] [INFO] [1782639851.183976787] [planner_server]:
-[component_container_isolated-16]       planner_server lifecycle node launched.
-[component_container_isolated-16]       Waiting on external lifecycle transitions to activate
-[component_container_isolated-16]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[component_container_isolated-16] [INFO] [1782639851.193235050] [planner_server]: Creating
-[component_container_isolated-16] [INFO] [1782639851.286318050] [global_costmap.global_costmap]:
-[component_container_isolated-16]       global_costmap lifecycle node launched.
-[component_container_isolated-16]       Waiting on external lifecycle transitions to activate
-[component_container_isolated-16]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[component_container_isolated-16] [INFO] [1782639851.289837763] [global_costmap.global_costmap]: Creating Costmap
-[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/planner_server' in container '/nav2_container'
-[component_container_isolated-16] [INFO] [1782639851.307495412] [nav2_container]: Load Library: /opt/ros/humble/lib/libnav2_lifecycle_manager_core.so
-[component_container_isolated-16] [INFO] [1782639851.310892625] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_lifecycle_manager::LifecycleManager>
-[component_container_isolated-16] [INFO] [1782639851.311134625] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_lifecycle_manager::LifecycleManager>
-[component_container_isolated-16] [INFO] [1782639851.384586432] [lifecycle_manager_localization]: Creating
-[component_container_isolated-16] [INFO] [1782639851.412855762] [nav2_container]: Load Library: /opt/ros/humble/lib/libbehavior_server_core.so
-[component_container_isolated-16] [INFO] [1782639851.418445020] [lifecycle_manager_localization]: Creating and initializing lifecycle service clients
-[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/lifecycle_manager_localization' in container '/nav2_container'
-[component_container_isolated-16] [INFO] [1782639851.445281681] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<behavior_server::BehaviorServer>
-[component_container_isolated-16] [INFO] [1782639851.449370270] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<behavior_server::BehaviorServer>
-[component_container_isolated-16] [INFO] [1782639851.485342068] [lifecycle_manager_localization]: Starting managed nodes bringup...
-[component_container_isolated-16] [INFO] [1782639851.492370161] [lifecycle_manager_localization]: Configuring map_server
-[component_container_isolated-16] [INFO] [1782639851.494100205] [map_server]: Configuring
-[component_container_isolated-16] [INFO] [1782639851.494425247] [map_io]: Loading yaml file: /userdata/dev_ws/install/originbot_navigation/share/originbot_navigation/maps/room.yaml
-[component_container_isolated-16] [INFO] [1782639851.497998294] [map_io]: resolution: 0.05
-[component_container_isolated-16] [INFO] [1782639851.498123544] [map_io]: origin[0]: -2.65
-[component_container_isolated-16] [INFO] [1782639851.498156794] [map_io]: origin[1]: -4.5
-[component_container_isolated-16] [INFO] [1782639851.498185085] [map_io]: origin[2]: 0
-[component_container_isolated-16] [INFO] [1782639851.498214377] [map_io]: free_thresh: 0.25
-[component_container_isolated-16] [INFO] [1782639851.498243002] [map_io]: occupied_thresh: 0.65
-[component_container_isolated-16] [INFO] [1782639851.498288294] [map_io]: mode: trinary
-[component_container_isolated-16] [INFO] [1782639851.498319377] [map_io]: negate: 0
-[component_container_isolated-16] [INFO] [1782639851.499077878] [map_io]: Loading image_file: /userdata/dev_ws/install/originbot_navigation/share/originbot_navigation/maps/room.pgm
-[component_container_isolated-16] [INFO] [1782639851.529244586] [behavior_server]:
-[component_container_isolated-16]       behavior_server lifecycle node launched.
-[component_container_isolated-16]       Waiting on external lifecycle transitions to activate
-[component_container_isolated-16]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[component_container_isolated-16] [INFO] [1782639851.540196392] [map_io]: Read map /userdata/dev_ws/install/originbot_navigation/share/originbot_navigation/maps/room.pgm: 163 X 141 map @ 0.05 m/cell
-[component_container_isolated-16] [INFO] [1782639851.566517552] [lifecycle_manager_localization]: Configuring amcl
-[component_container_isolated-16] [INFO] [1782639851.567520762] [amcl]: Configuring
-[component_container_isolated-16] [INFO] [1782639851.568006013] [amcl]: initTransforms
-[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/behavior_server' in container '/nav2_container'
-[component_container_isolated-16] [INFO] [1782639851.592410379] [nav2_container]: Load Library: /opt/ros/humble/lib/libbt_navigator_core.so
-[component_container_isolated-16] [INFO] [1782639851.602400601] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_bt_navigator::BtNavigator>
-[component_container_isolated-16] [INFO] [1782639851.602587018] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_bt_navigator::BtNavigator>
-[component_container_isolated-16] [INFO] [1782639851.659344094] [amcl]: initPubSub
-[component_container_isolated-16] [INFO] [1782639851.692322930] [amcl]: Subscribed to map topic.
-[component_container_isolated-16] [INFO] [1782639851.729256772] [lifecycle_manager_localization]: Activating map_server
-[component_container_isolated-16] [INFO] [1782639851.730111106] [map_server]: Activating
-[component_container_isolated-16] [INFO] [1782639851.730526315] [map_server]: Creating bond (map_server) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782639851.730705440] [amcl]: Received a 163 X 141 map @ 0.050 m/pix
-[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/bt_navigator' in container '/nav2_container'
-[component_container_isolated-16] [INFO] [1782639851.738035617] [bt_navigator]:
-[component_container_isolated-16]       bt_navigator lifecycle node launched.
-[component_container_isolated-16]       Waiting on external lifecycle transitions to activate
-[component_container_isolated-16]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[component_container_isolated-16] [INFO] [1782639851.738341617] [bt_navigator]: Creating
-[component_container_isolated-16] [INFO] [1782639851.763700401] [nav2_container]: Load Library: /opt/ros/humble/lib/libwaypoint_follower_core.so
-[component_container_isolated-16] [INFO] [1782639851.768043199] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_waypoint_follower::WaypointFollower>
-[component_container_isolated-16] [INFO] [1782639851.768224741] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_waypoint_follower::WaypointFollower>
-[component_container_isolated-16] [INFO] [1782639851.841267672] [lifecycle_manager_localization]: Server map_server connected with bond.
-[component_container_isolated-16] [INFO] [1782639851.841455756] [lifecycle_manager_localization]: Activating amcl
-[component_container_isolated-16] [INFO] [1782639851.842476924] [amcl]: Activating
-[component_container_isolated-16] [INFO] [1782639851.842731966] [amcl]: initialPoseReceived
-[component_container_isolated-16] [INFO] [1782639851.843624842] [amcl]: Setting pose (1782639851.843615): -1.985 -0.014 0.262
-[component_container_isolated-16] [INFO] [1782639851.845597428] [amcl]: Creating bond (amcl) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782639851.877746763] [waypoint_follower]:
-[component_container_isolated-16]       waypoint_follower lifecycle node launched.
-[component_container_isolated-16]       Waiting on external lifecycle transitions to activate
-[component_container_isolated-16]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[component_container_isolated-16] [INFO] [1782639851.882581936] [waypoint_follower]: Creating
-[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/waypoint_follower' in container '/nav2_container'
-[component_container_isolated-16] [INFO] [1782639851.904716133] [nav2_container]: Load Library: /opt/ros/humble/lib/libvelocity_smoother_core.so
-[component_container_isolated-16] [INFO] [1782639851.908241971] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_velocity_smoother::VelocitySmoother>
-[component_container_isolated-16] [INFO] [1782639851.908610597] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_velocity_smoother::VelocitySmoother>
-[component_container_isolated-16] [INFO] [1782639851.911188433] [amcl]: createLaserObject
-[component_container_isolated-16] [INFO] [1782639851.966840425] [lifecycle_manager_localization]: Server amcl connected with bond.
-[component_container_isolated-16] [INFO] [1782639851.967027009] [lifecycle_manager_localization]: Managed nodes are active
-[component_container_isolated-16] [INFO] [1782639851.967146134] [lifecycle_manager_localization]: Creating bond timer...
-[component_container_isolated-16] [INFO] [1782639852.011727235] [velocity_smoother]:
-[component_container_isolated-16]       velocity_smoother lifecycle node launched.
-[component_container_isolated-16]       Waiting on external lifecycle transitions to activate
-[component_container_isolated-16]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/velocity_smoother' in container '/nav2_container'
-[component_container_isolated-16] [INFO] [1782639852.029595009] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_lifecycle_manager::LifecycleManager>
-[component_container_isolated-16] [INFO] [1782639852.029818593] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_lifecycle_manager::LifecycleManager>
-[component_container_isolated-16] [INFO] [1782639852.116204126] [lifecycle_manager_navigation]: Creating
-[component_container_isolated-16] [INFO] [1782639852.138261072] [lifecycle_manager_navigation]: Creating and initializing lifecycle service clients
-[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/lifecycle_manager_navigation' in container '/nav2_container'
-[component_container_isolated-16] [INFO] [1782639852.211999922] [lifecycle_manager_navigation]: Starting managed nodes bringup...
-[component_container_isolated-16] [INFO] [1782639852.212749964] [lifecycle_manager_navigation]: Configuring controller_server
-[component_container_isolated-16] [INFO] [1782639852.213672466] [controller_server]: Configuring controller interface
-[component_container_isolated-16] [INFO] [1782639852.214676175] [controller_server]: getting goal checker plugins..
-[component_container_isolated-16] [INFO] [1782639852.215899177] [controller_server]: Controller frequency set to 10.0000Hz
-[component_container_isolated-16] [INFO] [1782639852.216204636] [local_costmap.local_costmap]: Configuring
-[component_container_isolated-16] [INFO] [1782639852.249578889] [local_costmap.local_costmap]: Using plugin "obstacle_layer"
-[component_container_isolated-16] [INFO] [1782639852.289761985] [local_costmap.local_costmap]: Subscribed to Topics: scan aurora_points
-[component_container_isolated-16] [INFO] [1782639852.405589349] [local_costmap.local_costmap]: Initialized plugin "obstacle_layer"
-[component_container_isolated-16] [INFO] [1782639852.409836605] [local_costmap.local_costmap]: Using plugin "keepout_filter"
-[component_container_isolated-16] [INFO] [1782639852.437319225] [local_costmap.local_costmap]: Initialized plugin "keepout_filter"
-[component_container_isolated-16] [INFO] [1782639852.437513100] [local_costmap.local_costmap]: Using plugin "inflation_layer"
-[component_container_isolated-16] [INFO] [1782639852.454985957] [local_costmap.local_costmap]: Initialized plugin "inflation_layer"
-[component_container_isolated-16] [INFO] [1782639852.508436071] [controller_server]: Created progress_checker : progress_checker of type nav2_controller::SimpleProgressChecker
-[component_container_isolated-16] [INFO] [1782639852.515143246] [controller_server]: Created goal checker : goal_checker of type nav2_controller::SimpleGoalChecker
-[component_container_isolated-16] [INFO] [1782639852.526680345] [controller_server]: Controller Server has goal_checker  goal checkers available.
-[component_container_isolated-16] [INFO] [1782639852.532142936] [controller_server]: Created controller : FollowPath of type nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController
-[component_container_isolated-16] [INFO] [1782639852.614011004] [controller_server]: Controller Server has FollowPath  controllers available.
-[component_container_isolated-16] [INFO] [1782639852.671158748] [lifecycle_manager_navigation]: Configuring smoother_server
-[component_container_isolated-16] [INFO] [1782639852.672203208] [smoother_server]: Configuring smoother server
-[component_container_isolated-16] [INFO] [1782639852.741947218] [smoother_server]: Created smoother : SmoothPath of type nav2_constrained_smoother/ConstrainedSmoother
-[component_container_isolated-16] [INFO] [1782639852.808615058] [smoother_server]: Smoother Server has SmoothPath  smoothers available.
-[component_container_isolated-16] [INFO] [1782639852.851911741] [lifecycle_manager_navigation]: Configuring planner_server
-[component_container_isolated-16] [INFO] [1782639852.854248286] [planner_server]: Configuring
-[component_container_isolated-16] [INFO] [1782639852.854924745] [global_costmap.global_costmap]: Configuring
-[component_container_isolated-16] [INFO] [1782639852.888312415] [global_costmap.global_costmap]: Using plugin "static_layer"
-[component_container_isolated-16] [INFO] [1782639852.900754890] [global_costmap.global_costmap]: Subscribing to the map topic (/map) with transient local durability
-[component_container_isolated-16] [INFO] [1782639852.905397063] [global_costmap.global_costmap]: Initialized plugin "static_layer"
-[component_container_isolated-16] [INFO] [1782639852.905567772] [global_costmap.global_costmap]: Using plugin "obstacle_layer"
-[component_container_isolated-16] [INFO] [1782639852.927832010] [global_costmap.global_costmap]: Subscribed to Topics: scan aurora_points
-[component_container_isolated-16] [INFO] [1782639853.017562089] [global_costmap.global_costmap]: Initialized plugin "obstacle_layer"
-[component_container_isolated-16] [INFO] [1782639853.017751590] [global_costmap.global_costmap]: Using plugin "keepout_filter"
-[component_container_isolated-16] [INFO] [1782639853.030796524] [global_costmap.global_costmap]: Initialized plugin "keepout_filter"
-[component_container_isolated-16] [INFO] [1782639853.031008566] [global_costmap.global_costmap]: Using plugin "inflation_layer"
-[component_container_isolated-16] [INFO] [1782639853.041819914] [global_costmap.global_costmap]: Initialized plugin "inflation_layer"
-[component_container_isolated-16] [INFO] [1782639853.086535224] [global_costmap.global_costmap]: StaticLayer: Resizing costmap to 163 X 141 at 0.050000 m/pix
-[competition_master_stage3.py-17] [INFO] [1782639853.093060899] [competition_master_stage3]: ============================================================
-[competition_master_stage3.py-17] [INFO] [1782639853.096396820] [competition_master_stage3]: === [Stage 3] 总控节点初始化 ===
-[competition_master_stage3.py-17] [INFO] [1782639853.099584575] [competition_master_stage3]:   QR点:    (0.41, -3.17, yaw=0.00)
-[competition_master_stage3.py-17] [INFO] [1782639853.102462829] [competition_master_stage3]:   通道入口: (0.38, -1.10, yaw=0.00)
-[competition_master_stage3.py-17] [INFO] [1782639853.105219291] [competition_master_stage3]:   P点:     (-1.99, -0.01, yaw=0.26)
-[competition_master_stage3.py-17] [INFO] [1782639853.108202003] [competition_master_stage3]:   cruise_cw: 3 路点 → VLM=(3.01, -1.16)
-[competition_master_stage3.py-17] [INFO] [1782639853.111315799] [competition_master_stage3]:   cruise_ccw: 4 路点 → VLM=(2.17, 0.69)
-[component_container_isolated-16] [INFO] [1782639853.114059011] [planner_server]: Created global planner plugin GridBased of type nav2_smac_planner/SmacPlannerHybrid
-[competition_master_stage3.py-17] [INFO] [1782639853.114322886] [competition_master_stage3]:   超时: total=180.0s QR=90.0s entry=60.0s cruise=180.0s vlm=30.0s return=120.0s
-[component_container_isolated-16] [INFO] [1782639853.114237928] [planner_server]: Configuring GridBased of type SmacPlannerHybrid
-[competition_master_stage3.py-17] [INFO] [1782639853.117141598] [competition_master_stage3]:   回退QR方向: 逆时针
-[competition_master_stage3.py-17] [INFO] [1782639853.120330353] [competition_master_stage3]:   VLM结果话题: vlm_result
-[competition_master_stage3.py-17] [INFO] [1782639853.123407190] [competition_master_stage3]: ============================================================
-[component_container_isolated-16] [INFO] [1782639853.149037808] [planner_server]: Even sized heuristic lookup table size set 200.000000, increasing size by 1 to make odd
-[rviz2-18] [INFO] [1782639853.383988582] [rviz2]: Stereo is NOT SUPPORTED
-[rviz2-18] [INFO] [1782639853.384762625] [rviz2]: OpenGl version: 4.5 (GLSL 4.5)
-[rviz2-18] [INFO] [1782639853.688576575] [rviz2]: Stereo is NOT SUPPORTED
-[imu_madgwick_filter.py-6] [INFO] [1782639853.864445145] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=462 q_w=0.9993 angle=4.1deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782639853.938587578] [imu_madgwick_filter]: [imu_madgwick ->] msgs=200 q_w=0.9965 angle=9.6deg beta=0.0330
-[rviz2-18] [INFO] [1782639855.985561122] [rviz2]: Trying to create a map of size 163 x 141 using 1 swatches
-[rviz2-18] [ERROR] [1782639856.352127739] [rviz2]: Vertex Program:rviz/glsl120/indexed_8bit_image.vert Fragment Program:rviz/glsl120/indexed_8bit_image.frag GLSL link result :
-[rviz2-18] active samplers with a different type refer to the same texture image unit
-[qr_decoder-10] [INFO] [1782639860.568114854] [qr_decoder_zbar]: [qr_decoder] SCAN_STATUS frame=200 last_qr_frame=-1 gap=-1 frames rejects=0
-[imu_madgwick_filter.py-6] [INFO] [1782639863.864509059] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=1021 q_w=0.9993 angle=4.1deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782639863.938320824] [imu_madgwick_filter]: [imu_madgwick ->] msgs=399 q_w=0.9861 angle=19.1deg beta=0.0330
-[component_container_isolated-16] Reallocing temp weights 301 - 60
-[component_container_isolated-16] [INFO] [1782639869.028138872] [planner_server]: Configured plugin GridBased of type SmacPlannerHybrid with maximum iterations 2027, max on approach iterations 300, and not allowing unknown traversal. Tolerance 0.50.Using motion model: Reeds-Shepp.
-[component_container_isolated-16] [INFO] [1782639869.028377498] [planner_server]: Planner Server has GridBased  planners available.
-[component_container_isolated-16] [INFO] [1782639869.084641531] [lifecycle_manager_navigation]: Configuring behavior_server
-[component_container_isolated-16] [INFO] [1782639869.085744991] [behavior_server]: Configuring
-[component_container_isolated-16] [INFO] [1782639869.125368919] [behavior_server]: Creating behavior plugin spin of type nav2_behaviors/Spin
-[component_container_isolated-16] [INFO] [1782639869.129312507] [behavior_server]: Configuring spin
-[component_container_isolated-16] [INFO] [1782639869.173092982] [behavior_server]: Creating behavior plugin backup of type nav2_behaviors/BackUp
-[component_container_isolated-16] [INFO] [1782639869.176872987] [behavior_server]: Configuring backup
-[component_container_isolated-16] [INFO] [1782639869.225405677] [behavior_server]: Creating behavior plugin drive_on_heading of type nav2_behaviors/DriveOnHeading
-[component_container_isolated-16] [INFO] [1782639869.229683849] [behavior_server]: Configuring drive_on_heading
-[component_container_isolated-16] [INFO] [1782639869.269858736] [behavior_server]: Creating behavior plugin wait of type nav2_behaviors/Wait
-[component_container_isolated-16] [INFO] [1782639869.274098492] [behavior_server]: Configuring wait
-[component_container_isolated-16] [INFO] [1782639869.302114863] [lifecycle_manager_navigation]: Configuring bt_navigator
-[component_container_isolated-16] [INFO] [1782639869.303122447] [bt_navigator]: Configuring
-[competition_master_stage3.py-17] [INFO] [1782639869.396132821] [competition_master_stage3]: [DIAG] state=INIT pos=(-1.99,-0.02) yaw=20deg cmd=(vx=0.00 wz=0.00) elapsed=0.0s cpuFreq=1500MHz cpuT=77C cpu=88% mem=17%
-[competition_master_stage3.py-17] [INFO] [1782639869.656597877] [competition_master_stage3]: [LAUNCH] 发车阶段: 16.8s
-[competition_master_stage3.py-17] [INFO] [1782639869.676259653] [competition_master_stage3]: >>> 系统就绪, 开始 Stage 3 导航
-[competition_master_stage3.py-17] [INFO] [1782639869.690491922] [competition_master_stage3]: [BAG] 录制开始: stage3_20260628_174429
-[competition_master_stage3.py-17] [INFO] [1782639869.696001888] [competition_master_stage3]: [状态机] INIT → NAV_TO_QR
-[competition_master_stage3.py-17] [INFO] [1782639869.705726109] [competition_master_stage3]: [DIAG] nav目标距离: 3.96m, robot=(-1.99,-0.02) → target=(0.41,-3.17)
-[competition_master_stage3.py-17] [INFO] [1782639869.709540364] [competition_master_stage3]: >>> 发送导航目标 [任务发布点]: (0.41, -3.17, yaw=0.00)
-[component_container_isolated-16] [INFO] [1782639869.748097207] [lifecycle_manager_navigation]: Configuring waypoint_follower
-[component_container_isolated-16] [INFO] [1782639869.749299709] [waypoint_follower]: Configuring
-[competition_master_stage3.py-17] [WARN] [1782639869.765517356] [competition_master_stage3]: 导航目标被拒绝, 3s 后重试...
-[component_container_isolated-16] [INFO] [1782639869.844071919] [waypoint_follower]: Created waypoint_task_executor : wait_at_waypoint of type nav2_waypoint_follower::WaitAtWaypoint
-[component_container_isolated-16] [INFO] [1782639869.852773055] [lifecycle_manager_navigation]: Configuring velocity_smoother
-[component_container_isolated-16] [INFO] [1782639869.854293891] [velocity_smoother]: Configuring velocity smoother
-[component_container_isolated-16] [INFO] [1782639869.883765680] [lifecycle_manager_navigation]: Activating controller_server
-[component_container_isolated-16] [INFO] [1782639869.884657181] [controller_server]: Activating
-[component_container_isolated-16] [INFO] [1782639869.884931765] [local_costmap.local_costmap]: Activating
-[component_container_isolated-16] [INFO] [1782639869.885097348] [local_costmap.local_costmap]: Checking transform
-[component_container_isolated-16] [INFO] [1782639869.885524516] [local_costmap.local_costmap]: start
-[component_container_isolated-16] [INFO] [1782639869.905440334] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782639869.914062345] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782639869.914254804] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782639870.034428089] [local_costmap.local_costmap]: KeepoutFilter: Received filter mask from /keepout_mask topic.
-[component_container_isolated-16] [INFO] [1782639870.114015279] [controller_server]: Activating controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
-[component_container_isolated-16] [INFO] [1782639870.114304196] [controller_server]: Creating bond (controller_server) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782639870.241427865] [lifecycle_manager_navigation]: Server controller_server connected with bond.
-[component_container_isolated-16] [INFO] [1782639870.241665824] [lifecycle_manager_navigation]: Activating smoother_server
-[component_container_isolated-16] [INFO] [1782639870.242728283] [smoother_server]: Activating
-[component_container_isolated-16] [INFO] [1782639870.242958742] [smoother_server]: Activating smoother: SmoothPath of type nav2_constrained_smoother::ConstrainedSmoother
-[component_container_isolated-16] [INFO] [1782639870.243052617] [smoother_server]: Creating bond (smoother_server) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782639870.365844697] [lifecycle_manager_navigation]: Server smoother_server connected with bond.
-[component_container_isolated-16] [INFO] [1782639870.366004406] [lifecycle_manager_navigation]: Activating planner_server
-[component_container_isolated-16] [INFO] [1782639870.367342408] [planner_server]: Activating
-[component_container_isolated-16] [INFO] [1782639870.367657825] [global_costmap.global_costmap]: Activating
-[component_container_isolated-16] [INFO] [1782639870.367747033] [global_costmap.global_costmap]: Checking transform
-[component_container_isolated-16] [INFO] [1782639870.368033200] [global_costmap.global_costmap]: start
-[component_container_isolated-16] [INFO] [1782639870.384338764] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782639870.392689275] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782639870.392866317] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782639870.398901908] [global_costmap.global_costmap]: KeepoutFilter: Received filter mask from /keepout_mask topic.
-[rviz2-18] [INFO] [1782639870.721762339] [rviz2]: Trying to create a map of size 60 x 60 using 1 swatches
-[competition_master_stage3.py-17] [INFO] [1782639870.945940512] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-2.02,-0.03) yaw=21deg cmd=(vx=0.00 wz=0.00) elapsed=1.2s cpuFreq=1500MHz cpuT=78C cpu=75% mem=18%
-[component_container_isolated-16] [INFO] [1782639871.391509147] [planner_server]: Activating plugin GridBased of type SmacPlannerHybrid
-[component_container_isolated-16] [INFO] [1782639871.399946492] [planner_server]: Creating bond (planner_server) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782639871.523568448] [lifecycle_manager_navigation]: Server planner_server connected with bond.
-[component_container_isolated-16] [INFO] [1782639871.523732574] [lifecycle_manager_navigation]: Activating behavior_server
-[component_container_isolated-16] [INFO] [1782639871.525129367] [behavior_server]: Activating
-[component_container_isolated-16] [INFO] [1782639871.525263659] [behavior_server]: Activating spin
-[component_container_isolated-16] [INFO] [1782639871.525428451] [behavior_server]: Activating backup
-[component_container_isolated-16] [INFO] [1782639871.525528451] [behavior_server]: Activating drive_on_heading
-[component_container_isolated-16] [INFO] [1782639871.525606826] [behavior_server]: Activating wait
-[component_container_isolated-16] [INFO] [1782639871.525690493] [behavior_server]: Creating bond (behavior_server) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782639871.639490394] [lifecycle_manager_navigation]: Server behavior_server connected with bond.
-[component_container_isolated-16] [INFO] [1782639871.639665395] [lifecycle_manager_navigation]: Activating bt_navigator
-[component_container_isolated-16] [INFO] [1782639871.640787646] [bt_navigator]: Activating
-[component_container_isolated-16] [WARN] [1782639871.710920156] [bt_navigator_navigate_through_poses_rclcpp_node]: Wait duration is negative or zero (0). Setting to positive.
-[rviz2-18] [INFO] [1782639871.778115412] [rviz2]: Trying to create a map of size 163 x 141 using 1 swatches
-[component_container_isolated-16] [WARN] [1782639871.833739070] [bt_navigator_navigate_through_poses_rclcpp_node]: Wait duration is negative or zero (0). Setting to positive.
-[component_container_isolated-16] [WARN] [1782639871.902549911] [bt_navigator_navigate_through_poses_rclcpp_node]: Wait duration is negative or zero (0). Setting to positive.
-[component_container_isolated-16] [WARN] [1782639872.026828827] [bt_navigator_navigate_through_poses_rclcpp_node]: Wait duration is negative or zero (0). Setting to positive.
-[component_container_isolated-16] [WARN] [1782639872.241717571] [bt_navigator_navigate_to_pose_rclcpp_node]: Wait duration is negative or zero (0). Setting to positive.
-[component_container_isolated-16] [INFO] [1782639872.448277221] [bt_navigator]: Creating bond (bt_navigator) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782639872.565828920] [lifecycle_manager_navigation]: Server bt_navigator connected with bond.
-[component_container_isolated-16] [INFO] [1782639872.566015253] [lifecycle_manager_navigation]: Activating waypoint_follower
-[component_container_isolated-16] [INFO] [1782639872.567450338] [waypoint_follower]: Activating
-[component_container_isolated-16] [INFO] [1782639872.567705089] [waypoint_follower]: Creating bond (waypoint_follower) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782639872.696417885] [lifecycle_manager_navigation]: Server waypoint_follower connected with bond.
-[component_container_isolated-16] [INFO] [1782639872.696590219] [lifecycle_manager_navigation]: Activating velocity_smoother
-[component_container_isolated-16] [INFO] [1782639872.698129262] [velocity_smoother]: Activating
-[component_container_isolated-16] [INFO] [1782639872.698651596] [velocity_smoother]: Creating bond (velocity_smoother) to lifecycle manager.
-[competition_master_stage3.py-17] [INFO] [1782639872.773867696] [competition_master_stage3]: 重试发送导航目标 (QR点)...
-[competition_master_stage3.py-17] [INFO] [1782639872.782674208] [competition_master_stage3]: [DIAG] nav目标距离: 3.97m, robot=(-2.02,-0.03) → target=(0.41,-3.17)
-[competition_master_stage3.py-17] [INFO] [1782639872.790749511] [competition_master_stage3]: >>> 发送导航目标 [任务发布点]: (0.41, -3.17, yaw=0.00)
-[component_container_isolated-16] [INFO] [1782639872.795224475] [bt_navigator]: Begin navigating from current location (-2.02, -0.03) to (0.41, -3.17)
-[competition_master_stage3.py-17] [INFO] [1782639872.809443161] [competition_master_stage3]: 导航目标已接受，车辆出发...
-[component_container_isolated-16] [INFO] [1782639872.822961429] [lifecycle_manager_navigation]: Server velocity_smoother connected with bond.
-[component_container_isolated-16] [INFO] [1782639872.823311471] [lifecycle_manager_navigation]: Managed nodes are active
-[component_container_isolated-16] [INFO] [1782639872.823422137] [lifecycle_manager_navigation]: Creating bond timer...
-[competition_master_stage3.py-17] [INFO] [1782639872.948049637] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-2.02,-0.03) yaw=21deg cmd=(vx=0.00 wz=0.00) elapsed=3.2s cpuFreq=1500MHz cpuT=78C cpu=88% mem=18%
-[component_container_isolated-16] [WARN] [1782639873.394433772] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.7025 Hz
-[component_container_isolated-16] [INFO] [1782639873.497386659] [controller_server]: Received a goal, begin computing control effort.
-[component_container_isolated-16] [WARN] [1782639873.497719660] [controller_server]: No goal checker was specified in parameter 'current_goal_checker'. Server will use only plugin loaded goal_checker . This warning will appear once.
-[imu_madgwick_filter.py-6] [INFO] [1782639873.863813689] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=1539 q_w=0.9993 angle=4.2deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782639873.939678164] [imu_madgwick_filter]: [imu_madgwick ->] msgs=598 q_w=0.9694 angle=28.4deg beta=0.0330
-[competition_master_stage3.py-17] [INFO] [1782639874.947193296] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-1.87,0.01) yaw=5deg cmd=(vx=0.25 wz=-0.97) elapsed=5.2s plan[29pts 4.2m] (-2.00,-0.05)→(0.40,-3.15) cpuFreq=1500MHz cpuT=78C cpu=66% mem=18%
-[component_container_isolated-16] [WARN] [1782639875.378621578] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2846 Hz
-[component_container_isolated-16] [INFO] [1782639875.497988236] [controller_server]: Passing new path to controller.
-[qr_decoder-10] [INFO] [1782639875.937191570] [qr_decoder_zbar]: [qr_decoder] SCAN_STATUS frame=400 last_qr_frame=-1 gap=-1 frames rejects=0
-[imu_madgwick_filter.py-4] [WARN] [1782639876.672041213] [imu_madgwick_filter]: [imu_madgwick] dt outlier: 0.2000s > 0.15s, capping
-[competition_master_stage3.py-17] [INFO] [1782639876.949726748] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-1.46,-0.29) yaw=-55deg cmd=(vx=0.40 wz=0.29) elapsed=7.2s plan[26pts 3.9m] (-1.70,-0.05)→(0.40,-3.15) cpuFreq=1500MHz cpuT=78C cpu=81% mem=18%
-[component_container_isolated-16] [WARN] [1782639877.379800111] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2795 Hz
-[component_container_isolated-16] [INFO] [1782639877.498011643] [controller_server]: Passing new path to controller.
-[component_container_isolated-16] Reallocing temp weights 798 - 60
-[competition_master_stage3.py-17] [INFO] [1782639878.949458194] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-1.11,-0.72) yaw=-60deg cmd=(vx=0.40 wz=0.10) elapsed=9.2s plan[23pts 3.2m] (-1.30,-0.45)→(0.40,-3.15) cpuFreq=1500MHz cpuT=78C cpu=63% mem=19%
-[component_container_isolated-16] [WARN] [1782639879.376140927] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2847 Hz
-[component_container_isolated-16] [INFO] [1782639879.498114672] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639880.946378800] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-0.80,-1.22) yaw=-58deg cmd=(vx=-0.05 wz=0.05) elapsed=11.2s plan[20pts 2.7m] (-1.00,-0.85)→(0.40,-3.15) cpuFreq=1500MHz cpuT=78C cpu=58% mem=19%
-[component_container_isolated-16] [WARN] [1782639881.380608167] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2770 Hz
-[component_container_isolated-16] [INFO] [1782639881.498004697] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639882.950670746] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-0.63,-1.49) yaw=-64deg cmd=(vx=0.40 wz=-0.06) elapsed=13.2s plan[14pts 1.9m] (-0.60,-1.55)→(0.40,-3.15) cpuFreq=1500MHz cpuT=78C cpu=69% mem=18%
-[component_container_isolated-16] [WARN] [1782639883.379752647] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2782 Hz
-[component_container_isolated-16] [INFO] [1782639883.497979679] [controller_server]: Passing new path to controller.
-[imu_madgwick_filter.py-6] [INFO] [1782639883.863228870] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=2061 q_w=0.7091 angle=89.7deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782639883.937896552] [imu_madgwick_filter]: [imu_madgwick ->] msgs=785 q_w=0.9014 angle=51.3deg beta=0.0330
-[qr_decoder-10] [INFO] [1782639884.623854960] [qr_decoder_zbar]: [qr_decoder] QR DETECTED frame=515 symbols=1 (gap=-1 frames)
-[qr_decoder-10] [INFO] [1782639884.624097460] [qr_decoder_zbar]: [QR] 1585 | 3D:(-0.638, +0.157, 1.543)m | px(146,240) D:1543mm
-[qr_decoder-10] [INFO] [1782639884.624598336] [qr_decoder_zbar]: [QR] 1585 | robot_pos: (0.35, -2.67, yaw=-1.84)
-[qr_decision-11] [INFO] [1782639884.630133718] [qr_decision]: [QR] 1585 CW @ (x=0.35, y=-2.67, yaw=-1.84) → /qr_event
-[qr_decision-11] [INFO] [1782639884.633617848] [qr_decision]: [检查点] qr_decision 发布 /qr_event (由 task_manager 决定停车)
-[competition_master_stage3.py-17] [INFO] [1782639884.642825776] [competition_master_stage3]: [QR检测] 内容: 1585
-[competition_master_stage3.py-17] [INFO] [1782639884.677930531] [competition_master_stage3]: [KILL] 已发送终止信号: qr_decoder_zbar
-[competition_master_stage3.py-17] [INFO] [1782639884.694481761] [competition_master_stage3]: >>> QR 解码已关闭, 等待方向判断 (/qr_event)...
-[competition_master_stage3.py-17] [INFO] [1782639884.707765029] [competition_master_stage3]: [QR检测] 取消当前导航目标, 等待BT完成 cancel/halt 清理...
-[competition_master_stage3.py-17] [INFO] [1782639884.723428883] [competition_master_stage3]: [QR事件] 方向: 顺时针 (通道巡航阶段使用)
-[qr_decoder-10] [INFO] [1782639884.724819552] [rclcpp]: signal_handler(SIGINT/SIGTERM)
-[competition_master_stage3.py-17] [INFO] [1782639884.733098854] [competition_master_stage3]: [KILL] 已发送终止信号: qr_decision
-[competition_master_stage3.py-17] [INFO] [1782639884.949305682] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-0.38,-1.99) yaw=-67deg cmd=(vx=0.31 wz=0.02) elapsed=15.2s plan[13pts 1.7m] (-0.50,-1.75)→(0.40,-3.15) cpuFreq=1500MHz cpuT=79C cpu=100% mem=18%
-[INFO] [qr_decoder-10]: process has finished cleanly [pid 37209]
-[component_container_isolated-16] [ERROR] [1782639885.297827184] [bt_navigator_navigate_to_pose_rclcpp_node]: Failed to get result for compute_path_to_pose in node halt!
-[component_container_isolated-16] Reallocing temp weights 1068 - 60
-[component_container_isolated-16] [WARN] [1782639885.380048418] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2779 Hz
-[component_container_isolated-16] [INFO] [1782639885.398010567] [controller_server]: Goal was canceled. Stopping the robot.
-[component_container_isolated-16] [INFO] [1782639885.398194275] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
-[component_container_isolated-16] [INFO] [1782639885.400118403] [bt_navigator]: [navigate_to_pose] [ActionServer] Client requested to cancel the goal. Cancelling.
-[component_container_isolated-16] [INFO] [1782639885.401028029] [bt_navigator]: Goal canceled
-[competition_master_stage3.py-17] [INFO] [1782639885.414549172] [competition_master_stage3]: [结果回调] BT取消确认完成 (STATUS_CANCELED), 准备发送通道入口目标...
-[competition_master_stage3.py-17] [INFO] [1782639885.419576637] [competition_master_stage3]: [状态机] NAV_TO_QR → BACKING_UP
-[competition_master_stage3.py-17] [INFO] [1782639885.423615475] [competition_master_stage3]: >>> BT取消完成, 右后退摆正车头→前进进通道...
-[competition_master_stage3.py-17] [INFO] [1782639885.432612987] [competition_master_stage3]: [BACKUP] 右后退中: vx=-0.15 wz=0.80, 持续 6.0s...
-[INFO] [qr_decision-11]: process has finished cleanly [pid 37211]
-[competition_master_stage3.py-17] [INFO] [1782639886.948428782] [competition_master_stage3]: [DIAG] state=BACKING_UP pos=(-0.24,-2.25) yaw=-66deg cmd=(vx=-0.15 wz=0.80) elapsed=17.2s plan[7pts 1.0m] (-0.20,-2.45)→(0.40,-3.15) cpuFreq=1500MHz cpuT=78C cpu=63% mem=18%
-[competition_master_stage3.py-17] [INFO] [1782639888.958001268] [competition_master_stage3]: [DIAG] state=BACKING_UP pos=(-0.23,-2.30) yaw=-36deg cmd=(vx=-0.15 wz=0.80) elapsed=19.2s plan[7pts 1.0m] (-0.20,-2.45)→(0.40,-3.15) cpuFreq=1500MHz cpuT=78C cpu=78% mem=18%
-[competition_master_stage3.py-17] [INFO] [1782639890.946021222] [competition_master_stage3]: [DIAG] state=BACKING_UP pos=(-0.54,-2.22) yaw=20deg cmd=(vx=-0.15 wz=0.80) elapsed=21.2s plan[7pts 1.0m] (-0.20,-2.45)→(0.40,-3.15) cpuFreq=1200MHz cpuT=78C cpu=61% mem=18%
-[competition_master_stage3.py-17] [INFO] [1782639891.435262742] [competition_master_stage3]: [状态机] BACKING_UP → CRUISE_CHANNEL
-[competition_master_stage3.py-17] [INFO] [1782639891.437569787] [competition_master_stage3]: [CRUISE] 方向: CW (顺时针, odd QR), 路点: (0.93,0.11), (2.19,0.77), (3.01,-1.16)
-[competition_master_stage3.py-17] [INFO] [1782639891.442909544] [competition_master_stage3]: [CRUISE] NavigateThroughPoses: (0.38,-1.10), (0.93,0.11), (2.19,0.77), (3.01,-1.16)
-[component_container_isolated-16] [INFO] [1782639891.446171840] [bt_navigator]: Begin navigating from current location through 4 poses to (3.01, -1.16)
-[competition_master_stage3.py-17] [INFO] [1782639891.456352811] [competition_master_stage3]: NavigateThroughPoses 已接受, 巡航中...
-[component_container_isolated-16] [WARN] [1782639892.396391175] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.0552 Hz
-[component_container_isolated-16] [INFO] [1782639892.548351875] [controller_server]: Received a goal, begin computing control effort.
-[competition_master_stage3.py-17] [INFO] [1782639892.947016566] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(-0.64,-2.27) yaw=33deg cmd=(vx=0.40 wz=0.02) elapsed=23.2s plan[61pts 8.7m] (-0.70,-2.35)→(3.00,-1.15) cpuFreq=1500MHz cpuT=78C cpu=58% mem=18%
-[imu_madgwick_filter.py-6] [INFO] [1782639893.863148355] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=2601 q_w=0.9767 angle=24.8deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782639893.937253911] [imu_madgwick_filter]: [imu_madgwick ->] msgs=983 q_w=0.8100 angle=71.8deg beta=0.0330
-[component_container_isolated-16] [WARN] [1782639894.391118800] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3470 Hz
-[component_container_isolated-16] [INFO] [1782639894.548717590] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639894.947138573] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(-0.37,-1.96) yaw=48deg cmd=(vx=0.40 wz=0.13) elapsed=25.2s plan[59pts 8.3m] (-0.50,-2.05)→(3.00,-1.15) cpuFreq=1500MHz cpuT=78C cpu=69% mem=18%
-[component_container_isolated-16] [WARN] [1782639896.388610092] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3507 Hz
-[component_container_isolated-16] [INFO] [1782639896.548692261] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639896.947485577] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(-0.08,-1.55) yaw=54deg cmd=(vx=0.21 wz=0.11) elapsed=27.2s plan[53pts 7.5m] (-0.00,-1.45)→(3.00,-1.15) cpuFreq=1500MHz cpuT=78C cpu=80% mem=18%
-[component_container_isolated-16] [WARN] [1782639898.389781595] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3488 Hz
-[component_container_isolated-16] [INFO] [1782639898.548675471] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639898.946892368] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(0.24,-1.19) yaw=34deg cmd=(vx=0.40 wz=-0.17) elapsed=29.2s plan[52pts 7.4m] (0.10,-1.35)→(3.00,-1.15) cpuFreq=1500MHz cpuT=78C cpu=72% mem=18%
-[component_container_isolated-16] [WARN] [1782639900.385049921] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3584 Hz
-[component_container_isolated-16] [INFO] [1782639900.548698594] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639900.946271282] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(0.64,-0.97) yaw=36deg cmd=(vx=0.21 wz=-0.96) elapsed=31.2s plan[50pts 7.0m] (0.70,-0.85)→(3.00,-1.15) cpuFreq=1500MHz cpuT=78C cpu=61% mem=18%
-[component_container_isolated-16] Reallocing temp weights 1500 - 60
-[component_container_isolated-16] [WARN] [1782639902.389207339] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3495 Hz
-[component_container_isolated-16] [INFO] [1782639902.548677464] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639902.946103151] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.08,-0.71) yaw=1deg cmd=(vx=-0.00 wz=-0.69) elapsed=33.2s plan[45pts 6.5m] (0.90,-0.75)→(3.00,-1.15) cpuFreq=1500MHz cpuT=78C cpu=58% mem=18%
-[imu_madgwick_filter.py-6] [INFO] [1782639903.862923643] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=3142 q_w=0.9474 angle=37.3deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782639903.937556199] [imu_madgwick_filter]: [imu_madgwick ->] msgs=1174 q_w=0.9842 angle=20.4deg beta=0.0330
-[component_container_isolated-16] [WARN] [1782639904.391818585] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3503 Hz
-[component_container_isolated-16] [INFO] [1782639904.548701124] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639904.946030018] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.00,-0.70) yaw=14deg cmd=(vx=0.35 wz=0.97) elapsed=35.2s plan[45pts 6.3m] (1.10,-0.65)→(3.00,-1.15) cpuFreq=1500MHz cpuT=78C cpu=45% mem=18%
-[component_container_isolated-16] [WARN] [1782639906.390268823] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3478 Hz
-[component_container_isolated-16] [INFO] [1782639906.548719780] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639906.945862174] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.23,-0.60) yaw=8deg cmd=(vx=-0.17 wz=0.04) elapsed=37.2s plan[45pts 6.3m] (1.20,-0.65)→(3.00,-1.15) cpuFreq=1500MHz cpuT=78C cpu=54% mem=18%
-[component_container_isolated-16] [WARN] [1782639908.383496593] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3629 Hz
-[component_container_isolated-16] [INFO] [1782639908.548699059] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639908.946415661] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.17,-0.62) yaw=18deg cmd=(vx=0.18 wz=-0.46) elapsed=39.2s plan[45pts 6.4m] (1.20,-0.65)→(3.00,-1.15) cpuFreq=1500MHz cpuT=78C cpu=61% mem=18%
-[component_container_isolated-16] [WARN] [1782639910.389246377] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3495 Hz
-[component_container_isolated-16] [INFO] [1782639910.548698334] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639910.946830270] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.30,-0.59) yaw=4deg cmd=(vx=-0.17 wz=-0.97) elapsed=41.2s plan[44pts 6.2m] (1.40,-0.55)→(3.00,-1.15) cpuFreq=1500MHz cpuT=78C cpu=61% mem=18%
-[component_container_isolated-16] [WARN] [1782639912.384018018] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3611 Hz
-[component_container_isolated-16] [INFO] [1782639912.548696566] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639912.948550753] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.18,-0.55) yaw=-24deg cmd=(vx=-0.19 wz=-0.97) elapsed=43.2s plan[43pts 6.1m] (1.20,-0.55)→(3.00,-1.15) cpuFreq=1500MHz cpuT=78C cpu=72% mem=18%
-[imu_madgwick_filter.py-6] [INFO] [1782639913.863763403] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=3692 q_w=0.7583 angle=81.4deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782639913.937445416] [imu_madgwick_filter]: [imu_madgwick ->] msgs=1372 q_w=0.9891 angle=16.9deg beta=0.0330
-[component_container_isolated-16] [WARN] [1782639914.388108294] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3522 Hz
-[component_container_isolated-16] [INFO] [1782639914.548702711] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639914.950732317] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.00,-0.41) yaw=-53deg cmd=(vx=0.40 wz=0.06) elapsed=45.2s plan[43pts 6.2m] (1.00,-0.35)→(3.00,-1.15) cpuFreq=1500MHz cpuT=78C cpu=80% mem=18%
-[component_container_isolated-16] [WARN] [1782639916.389545355] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3547 Hz
-[component_container_isolated-16] [INFO] [1782639916.548697103] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639916.951012376] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.09,-0.58) yaw=-62deg cmd=(vx=-0.30 wz=-0.97) elapsed=47.2s plan[43pts 6.1m] (1.10,-0.55)→(3.00,-1.15) cpuFreq=1500MHz cpuT=78C cpu=63% mem=18%
-[component_container_isolated-16] [WARN] [1782639918.388237909] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3511 Hz
-[component_container_isolated-16] [INFO] [1782639918.548839618] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639918.946270384] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.00,-0.18) yaw=-95deg cmd=(vx=-0.13 wz=0.53) elapsed=49.2s plan[35pts 4.9m] (1.00,-0.15)→(3.00,-1.15) cpuFreq=1500MHz cpuT=78C cpu=58% mem=18%
-[component_container_isolated-16] [WARN] [1782639920.382016371] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3847 Hz
-[component_container_isolated-16] [INFO] [1782639920.548707296] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639920.950117233] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.00,-0.21) yaw=-84deg cmd=(vx=-0.30 wz=0.04) elapsed=51.2s plan[35pts 5.1m] (1.00,-0.05)→(3.00,-1.15) cpuFreq=1500MHz cpuT=78C cpu=69% mem=18%
-[component_container_isolated-16] [WARN] [1782639922.377379750] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782639922.377628167] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (2.19, 0.77)
-[component_container_isolated-16] [WARN] [1782639922.377730000] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782639922.547096469] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782639922.562426864] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782639922.572081335] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782639922.575082547] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782639922.573606254] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782639922.575929132] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [WARN] [1782639922.587713939] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[competition_master_stage3.py-17] [INFO] [1782639922.948065864] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(0.97,0.42) yaw=-90deg cmd=(vx=0.40 wz=0.10) elapsed=53.2s plan[35pts 5.1m] (1.00,-0.05)→(3.00,-1.15) cpuFreq=1500MHz cpuT=78C cpu=61% mem=18%
-[component_container_isolated-16] [WARN] [1782639923.390384270] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.8472 Hz
-[component_container_isolated-16] [INFO] [1782639923.548709392] [controller_server]: Passing new path to controller.
-[imu_madgwick_filter.py-6] [INFO] [1782639923.864092758] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=4238 q_w=0.5192 angle=117.4deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782639923.937244895] [imu_madgwick_filter]: [imu_madgwick ->] msgs=1570 q_w=0.9313 angle=42.7deg beta=0.0330
-[competition_master_stage3.py-17] [INFO] [1782639924.955148170] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(0.96,0.19) yaw=-97deg cmd=(vx=-0.30 wz=0.27) elapsed=55.2s plan[32pts 4.6m] (1.00,0.25)→(3.00,-1.15) cpuFreq=1500MHz cpuT=78C cpu=70% mem=18%
-[component_container_isolated-16] [WARN] [1782639925.376131423] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782639925.376346423] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (2.19, 0.77)
-[component_container_isolated-16] [WARN] [1782639925.376472048] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782639925.547026936] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782639925.561493579] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782639925.577617475] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782639925.578862935] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782639925.578925685] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782639925.580923771] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [WARN] [1782639925.594134205] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [WARN] [1782639926.387146980] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.8703 Hz
-[component_container_isolated-16] [INFO] [1782639926.548695398] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639926.959232178] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(0.94,0.66) yaw=-91deg cmd=(vx=-0.13 wz=-0.43) elapsed=57.2s plan[29pts 4.4m] (1.00,0.75)→(3.00,-1.15) cpuFreq=1500MHz cpuT=78C cpu=81% mem=18%
-[component_container_isolated-16] [WARN] [1782639928.383635018] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3645 Hz
-[component_container_isolated-16] [INFO] [1782639928.548708523] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639928.954068546] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(0.95,0.83) yaw=-107deg cmd=(vx=-0.30 wz=-0.97) elapsed=59.2s plan[28pts 3.9m] (1.00,0.85)→(3.00,-1.15) cpuFreq=1500MHz cpuT=78C cpu=72% mem=18%
-[component_container_isolated-16] [WARN] [1782639930.385684311] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3564 Hz
-[component_container_isolated-16] [INFO] [1782639930.548689812] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639930.946821743] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.32,1.18) yaw=-172deg cmd=(vx=-0.28 wz=0.09) elapsed=61.2s plan[27pts 3.8m] (1.30,1.15)→(3.00,-1.15) cpuFreq=1500MHz cpuT=78C cpu=69% mem=18%
-[component_container_isolated-16] [WARN] [1782639932.387263016] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3538 Hz
-[component_container_isolated-16] [INFO] [1782639932.548697099] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639932.961762423] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.60,1.25) yaw=159deg cmd=(vx=0.24 wz=0.97) elapsed=63.2s plan[25pts 3.4m] (1.70,1.15)→(3.00,-1.15) cpuFreq=1500MHz cpuT=78C cpu=88% mem=18%
-[imu_madgwick_filter.py-6] [INFO] [1782639933.863308709] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=4766 q_w=-0.3916 angle=226.1deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782639933.937648763] [imu_madgwick_filter]: [imu_madgwick ->] msgs=1769 q_w=0.3342 angle=141.0deg beta=0.0330
-[component_container_isolated-16] [WARN] [1782639934.381369418] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3660 Hz
-[component_container_isolated-16] [INFO] [1782639934.548697383] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639934.946956354] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.62,1.24) yaw=154deg cmd=(vx=-0.30 wz=0.01) elapsed=65.2s plan[25pts 3.4m] (1.50,1.25)→(3.00,-1.15) cpuFreq=1500MHz cpuT=78C cpu=87% mem=18%
-[component_container_isolated-16] [WARN] [1782639936.381505241] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3638 Hz
-[component_container_isolated-16] [INFO] [1782639936.548765039] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639936.948424386] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.99,1.10) yaw=140deg cmd=(vx=-0.13 wz=-0.21) elapsed=67.2s plan[22pts 2.9m] (2.00,1.05)→(3.00,-1.15) cpuFreq=1500MHz cpuT=79C cpu=61% mem=18%
-[component_container_isolated-16] [WARN] [1782639938.376710096] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3729 Hz
-[component_container_isolated-16] [INFO] [1782639938.648704196] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639938.947763163] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(2.12,0.98) yaw=117deg cmd=(vx=-0.30 wz=-0.47) elapsed=69.2s plan[19pts 2.6m] (2.10,0.95)→(3.00,-1.15) cpuFreq=1500MHz cpuT=79C cpu=75% mem=18%
-[component_container_isolated-16] [WARN] [1782639940.376024496] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3774 Hz
-[component_container_isolated-16] [INFO] [1782639940.548906552] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639940.947176646] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(2.33,0.58) yaw=122deg cmd=(vx=-0.28 wz=-0.25) elapsed=71.2s plan[15pts 2.1m] (2.30,0.55)→(3.00,-1.15) cpuFreq=1500MHz cpuT=79C cpu=88% mem=18%
-[component_container_isolated-16] [WARN] [1782639942.376857354] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3729 Hz
-[component_container_isolated-16] [INFO] [1782639942.548711491] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639942.950697131] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(2.51,0.21) yaw=109deg cmd=(vx=-0.28 wz=-0.03) elapsed=73.2s plan[12pts 1.6m] (2.50,0.15)→(3.00,-1.15) cpuFreq=1500MHz cpuT=79C cpu=80% mem=18%
-[imu_madgwick_filter.py-6] [INFO] [1782639943.869279349] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=5280 q_w=-0.7487 angle=276.9deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782639943.940581274] [imu_madgwick_filter]: [imu_madgwick ->] msgs=1967 q_w=-0.0408 angle=184.7deg beta=0.0330
-[component_container_isolated-16] [WARN] [1782639944.379144294] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3976 Hz
-[component_container_isolated-16] [INFO] [1782639944.548797594] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639944.955332073] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(2.71,-0.25) yaw=106deg cmd=(vx=-0.16 wz=0.50) elapsed=75.2s plan[9pts 1.2m] (2.70,-0.25)→(3.00,-1.15) cpuFreq=1500MHz cpuT=79C cpu=87% mem=18%
-[component_container_isolated-16] [WARN] [1782639946.375760932] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3767 Hz
-[component_container_isolated-16] [INFO] [1782639946.548711445] [controller_server]: Passing new path to controller.
-[component_container_isolated-16] [INFO] [1782639946.849615580] [controller_server]: Reached the goal!
-[competition_master_stage3.py-17] [INFO] [1782639946.947855289] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(2.92,-0.68) yaw=116deg cmd=(vx=-0.30 wz=-0.66) elapsed=77.2s plan[7pts 0.8m] (2.90,-0.55)→(3.00,-1.15) cpuFreq=1500MHz cpuT=79C cpu=63% mem=18%
-[component_container_isolated-16] [INFO] [1782639947.347085091] [bt_navigator]: Goal succeeded
-[competition_master_stage3.py-17] [INFO] [1782639947.357244687] [competition_master_stage3]: [结果回调] 巡航完成, 触发VLM推理...
-[competition_master_stage3.py-17] [INFO] [1782639947.363366737] [competition_master_stage3]: [VLM] 发布 sign4return=100, 拍照推理中...
-[vision_ai_node-12] [INFO] [1782639947.378593881] [vision_ai_node]: Received sign4return: 100
-[competition_master_stage3.py-17] [INFO] [1782639947.378965673] [competition_master_stage3]: [状态机] CRUISE_CHANNEL → RETURN_P
-[vision_ai_node-12] [INFO] [1782639947.382571761] [vision_ai_node]: Received trigger signal (sign4return=100), subscribing to image topic...
-[competition_master_stage3.py-17] [INFO] [1782639947.388006643] [competition_master_stage3]: [RETURN] NavigateThroughPoses: 通道入口→P点 (0.38,-1.10)→(-1.99,-0.01)
-[component_container_isolated-16] [INFO] [1782639947.394171568] [bt_navigator]: Begin navigating from current location through 2 poses to (-1.99, -0.01)
-[competition_master_stage3.py-17] [INFO] [1782639947.402195161] [competition_master_stage3]: NavigateThroughPoses 已接受, 巡航中...
-[vision_ai_node-12] [INFO] [1782639947.407202126] [vision_ai_node]: Subscribed to /aurora/rgb/image_raw topic
-[vision_ai_node-12] [INFO] [1782639947.469423789] [vision_ai_node]: Received compressed image, processing with AI model...
-[component_container_isolated-16] [WARN] [1782639948.391281925] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.0085 Hz
-[component_container_isolated-16] [INFO] [1782639948.497783561] [controller_server]: Received a goal, begin computing control effort.
-[competition_master_stage3.py-17] [INFO] [1782639948.950037889] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(3.00,-0.88) yaw=101deg cmd=(vx=-0.30 wz=-0.45) elapsed=79.2s plan[50pts 6.8m] (3.00,-0.95)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=72% mem=18%
-[component_container_isolated-16] [WARN] [1782639950.387150140] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2698 Hz
-[component_container_isolated-16] [INFO] [1782639950.498113949] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639950.948223190] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(3.02,-1.19) yaw=82deg cmd=(vx=-0.30 wz=0.17) elapsed=81.2s plan[46pts 6.4m] (3.00,-1.35)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=79C cpu=63% mem=18%
-[component_container_isolated-16] [WARN] [1782639952.382008018] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2784 Hz
-[component_container_isolated-16] [INFO] [1782639952.498113291] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639952.955195665] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.97,-1.84) yaw=64deg cmd=(vx=-0.17 wz=-0.76) elapsed=83.2s plan[42pts 5.8m] (3.00,-1.75)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=79C cpu=87% mem=18%
-[imu_madgwick_filter.py-6] [INFO] [1782639953.864344907] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=5786 q_w=-0.9762 angle=334.9deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782639953.938128126] [imu_madgwick_filter]: [imu_madgwick ->] msgs=2167 q_w=-0.4625 angle=235.1deg beta=0.0330
-[component_container_isolated-16] [WARN] [1782639954.388282033] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2707 Hz
-[component_container_isolated-16] [INFO] [1782639954.498095423] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639954.960380386] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.93,-1.98) yaw=53deg cmd=(vx=-0.20 wz=-0.42) elapsed=85.2s plan[41pts 5.7m] (2.80,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=71% mem=18%
-[component_container_isolated-16] [WARN] [1782639956.384121948] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2777 Hz
-[component_container_isolated-16] [INFO] [1782639956.498096677] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639956.948372041] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.72,-2.15) yaw=6deg cmd=(vx=-0.30 wz=-0.30) elapsed=87.2s plan[43pts 6.0m] (2.80,-2.15)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=79C cpu=66% mem=18%
-[component_container_isolated-16] [WARN] [1782639958.381841988] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2794 Hz
-[component_container_isolated-16] [INFO] [1782639958.498135636] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639958.952168213] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.38,-2.14) yaw=-5deg cmd=(vx=-0.20 wz=-0.67) elapsed=89.2s plan[38pts 5.2m] (2.40,-2.15)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=79C cpu=90% mem=18%
-[component_container_isolated-16] [WARN] [1782639960.390110831] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2724 Hz
-[component_container_isolated-16] [INFO] [1782639960.498104259] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639960.947266371] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.30,-2.10) yaw=-30deg cmd=(vx=-0.30 wz=-0.93) elapsed=91.2s plan[38pts 5.2m] (2.40,-2.15)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=79C cpu=72% mem=18%
-[component_container_isolated-16] [WARN] [1782639962.376441768] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782639962.376731935] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.07, -0.73)
-[component_container_isolated-16] [WARN] [1782639962.381398232] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782639962.496606795] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782639962.513511858] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782639962.523239412] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782639962.523553621] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [INFO] [1782639962.523985705] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782639962.524137663] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782639962.537210846] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[competition_master_stage3.py-17] [INFO] [1782639962.947404825] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.06,-1.85) yaw=-63deg cmd=(vx=0.40 wz=0.42) elapsed=93.2s plan[38pts 5.2m] (2.40,-2.15)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=57% mem=18%
-[component_container_isolated-16] [WARN] [1782639963.389763469] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.7329 Hz
-[component_container_isolated-16] [INFO] [1782639963.498103356] [controller_server]: Passing new path to controller.
-[imu_madgwick_filter.py-6] [INFO] [1782639963.863361569] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=6298 q_w=-0.8024 angle=286.7deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782639963.937745663] [imu_madgwick_filter]: [imu_madgwick ->] msgs=2362 q_w=-0.9435 angle=321.3deg beta=0.0330
-[competition_master_stage3.py-17] [INFO] [1782639964.947640568] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.16,-2.01) yaw=-53deg cmd=(vx=-0.30 wz=-0.15) elapsed=95.2s plan[37pts 5.0m] (2.20,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=61% mem=18%
-[component_container_isolated-16] [WARN] [1782639965.375622193] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782639965.375912693] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.07, -0.73)
-[component_container_isolated-16] [WARN] [1782639965.376031985] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782639965.496670888] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782639965.505042398] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782639965.511391656] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782639965.511553032] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782639965.512899450] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782639965.513160909] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [WARN] [1782639965.521332502] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [WARN] [1782639966.386183472] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.7025 Hz
-[vision_ai_node-12] [INFO] [1782639966.447083466] [vision_ai_node]: AI Analysis Result: 这张图片呈现了一个**临时布置的室内场景**，细节如下：
-[vision_ai_node-12]
-[vision_ai_node-12] ### 场景与地面
-[vision_ai_node-12] 地面铺着**带有褶皱的浅色塑料布**（米黄与浅灰交织的色调），布料略显凌乱，似用于防护或临时施工/活动筹备。
-[vision_ai_node-12]
-[vision_ai_node-12]
-[vision_ai_node-12] ### 主要物体与位置
-[vision_ai_node-12] - **右侧遮挡物**：画面右侧是一块**深蓝色的厚实布料**（如帐篷布或大型遮挡布），布料垂落且带自然褶皱，占据右侧大部分区域，边缘隐约露出黑色支撑结构（可能是帐篷支架）。
-[vision_ai_node-12] - **左侧纸箱**：左侧靠墙（墙面下半部米黄、上半部白色，中间有深色分隔线）放置一个**彩色纸箱**，箱身以蓝、红、白为主色调（疑似产品包装），顶部开口、边缘略微展开。 
-[vision_ai_node-12] - **墙面设施**：
-[vision_ai_node-12]   - 墙上方挂有一台**黑色的电视（或显示器）**；
-[vision_ai_node-12]   - 电视下方有一个**白色小型装置**（如开关、插座）；
-[vision_ai_node-12]   - 装置旁贴有一张**白色告示牌**，再右侧露出部分**红色消防标识牌**（带白色文字）。
-[vision_ai_node-12]
-[vision_ai_node-12]
-[vision_ai_node-12] ### 色调与氛围
-[vision_ai_node-12] 整体色调以**蓝（遮挡布）、白（墙面、告示）、米黄（墙面下半部、地面塑料布）**为主，氛围简洁却略带“临时感”（地面塑料布褶皱、遮挡布自然垂落），似为活动筹备、施工过渡或临时空间布置的场景。
-[vision_ai_node-12]
-[vision_ai_node-12]
-[vision_ai_node-12] 物体分布清晰：深蓝色遮挡布（右）、彩色纸箱（左中）、墙面设施（上）与浅色塑料布地面（下），共同构成“临时布置”的视觉效果。
-[competition_master_stage3.py-17] [INFO] [1782639966.471664538] [competition_master_stage3]: [VLM] 后台收到推理结果: 这张图片呈现了一个**临时布置的室内场景**，细节如下：
-[competition_master_stage3.py-17]
-[competition_master_stage3.py-17] ### 场景与地面
-[competition_master_stage3.py-17] 地面铺着**带有褶皱的浅色塑料布**（米黄与浅灰交织的色调），布料略显凌乱，似用于防护或临时施工/活动筹备。
-[competition_master_stage3.py-17]
-[competition_master_stage3.py-17]
-[competition_master_stage3.py-17] ### 主要物体与位置
-[competition_master_stage3.py-17] - *...
-[vision_ai_node-12] [INFO] [1782639966.471999039] [vision_ai_node]: Unsubscribed from image topic
-[component_container_isolated-16] [INFO] [1782639966.498118114] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639966.946733598] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(1.90,-1.65) yaw=-57deg cmd=(vx=-0.20 wz=0.14) elapsed=97.2s plan[33pts 4.5m] (1.90,-1.65)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=66% mem=18%
-[component_container_isolated-16] [WARN] [1782639968.381857954] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2775 Hz
-[component_container_isolated-16] [INFO] [1782639968.498252351] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639968.966390735] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(1.70,-1.40) yaw=-56deg cmd=(vx=-0.30 wz=-0.07) elapsed=99.2s plan[32pts 4.3m] (1.80,-1.45)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=79C cpu=87% mem=18%
-[component_container_isolated-16] [WARN] [1782639970.383433317] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.1621 Hz
-[component_container_isolated-16] [INFO] [1782639970.498096295] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639970.953895495] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(1.54,-1.18) yaw=-59deg cmd=(vx=-0.20 wz=0.20) elapsed=101.2s plan[29pts 3.8m] (1.40,-1.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=79C cpu=80% mem=18%
-[component_container_isolated-16] [WARN] [1782639972.383564008] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2754 Hz
-[component_container_isolated-16] [INFO] [1782639972.498108194] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639972.947639427] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(1.32,-0.90) yaw=-46deg cmd=(vx=-0.30 wz=0.97) elapsed=103.2s plan[28pts 3.8m] (1.40,-0.95)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=79C cpu=72% mem=18%
-[imu_madgwick_filter.py-6] [INFO] [1782639973.864266333] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=6813 q_w=-0.9826 angle=338.6deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782639973.937550675] [imu_madgwick_filter]: [imu_madgwick ->] msgs=2559 q_w=-0.6225 angle=257.0deg beta=0.0330
-[component_container_isolated-16] [WARN] [1782639974.377969814] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2861 Hz
-[component_container_isolated-16] [INFO] [1782639974.498109090] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639974.953978039] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(0.94,-0.79) yaw=5deg cmd=(vx=-0.20 wz=-0.89) elapsed=105.2s plan[22pts 3.0m] (0.90,-0.75)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=79C cpu=64% mem=18%
-[component_container_isolated-16] [WARN] [1782639976.379264876] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2842 Hz
-[component_container_isolated-16] [INFO] [1782639976.498103442] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639976.946430381] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(0.71,-0.82) yaw=-5deg cmd=(vx=-0.30 wz=-0.24) elapsed=107.2s plan[20pts 2.8m] (0.70,-0.85)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=79C cpu=61% mem=18%
-[component_container_isolated-16] [WARN] [1782639978.380656727] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2776 Hz
-[component_container_isolated-16] [INFO] [1782639978.498099791] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639978.946805897] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(0.20,-0.70) yaw=-22deg cmd=(vx=-0.20 wz=0.50) elapsed=109.2s plan[17pts 2.3m] (0.20,-0.75)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=63% mem=18%
-[component_container_isolated-16] [WARN] [1782639980.377211445] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2844 Hz
-[component_container_isolated-16] [INFO] [1782639980.498101596] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639980.952627084] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(0.13,-0.68) yaw=-13deg cmd=(vx=-0.30 wz=-0.51) elapsed=111.2s plan[16pts 2.2m] (0.10,-0.65)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=63% mem=18%
-[component_container_isolated-16] [WARN] [1782639982.376384705] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2858 Hz
-[component_container_isolated-16] [INFO] [1782639982.498092857] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639982.949747716] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(-0.39,-0.51) yaw=-20deg cmd=(vx=-0.20 wz=-0.21) elapsed=113.2s plan[12pts 1.6m] (-0.50,-0.45)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=79C cpu=66% mem=18%
-[imu_madgwick_filter.py-6] [INFO] [1782639983.868911743] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=7340 q_w=-0.9202 angle=313.9deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782639983.937248912] [imu_madgwick_filter]: [imu_madgwick ->] msgs=2759 q_w=-0.7396 angle=275.4deg beta=0.0330
-[component_container_isolated-16] [WARN] [1782639984.376390713] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2884 Hz
-[component_container_isolated-16] [INFO] [1782639984.498106324] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639984.949955682] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(-0.60,-0.44) yaw=-20deg cmd=(vx=-0.30 wz=0.03) elapsed=115.2s plan[12pts 1.6m] (-0.50,-0.45)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=79C cpu=72% mem=18%
-[component_container_isolated-16] [WARN] [1782639986.380178598] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2785 Hz
-[component_container_isolated-16] [INFO] [1782639986.498100371] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639986.947445600] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(-0.82,-0.38) yaw=-17deg cmd=(vx=-0.20 wz=-0.86) elapsed=117.2s plan[8pts 1.0m] (-1.00,-0.25)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=79C cpu=58% mem=18%
-[component_container_isolated-16] [WARN] [1782639988.376616763] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2873 Hz
-[component_container_isolated-16] [INFO] [1782639988.498102249] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782639988.949400105] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(-1.23,-0.21) yaw=-35deg cmd=(vx=-0.30 wz=0.51) elapsed=119.2s plan[7pts 0.9m] (-1.10,-0.25)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=79C cpu=70% mem=18%
-[component_container_isolated-16] [INFO] [1782639989.999066792] [controller_server]: Reached the goal!
-[component_container_isolated-16] [WARN] [1782639990.376388889] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2874 Hz
-[component_container_isolated-16] [INFO] [1782639990.496591330] [bt_navigator]: Goal succeeded
-[competition_master_stage3.py-17] [INFO] [1782639990.501566628] [competition_master_stage3]: [结果回调] 返航完成, 已回到P点!
-[competition_master_stage3.py-17] [INFO] [1782639991.074985261] [competition_master_stage3]: [BAG] 录制已停止
-[competition_master_stage3.py-17] [INFO] [1782639991.079782684] [competition_master_stage3]: [状态机] RETURN_P → DONE
-[competition_master_stage3.py-17] [INFO] [1782639991.091630907] [competition_master_stage3]:
-[competition_master_stage3.py-17] [INFO] [1782639991.095091287] [competition_master_stage3]: ============================================================
-[competition_master_stage3.py-17] [INFO] [1782639991.098488916] [competition_master_stage3]: >>> [Stage 3] 任务结束 <<<
-[competition_master_stage3.py-17] [INFO] [1782639991.102027795] [competition_master_stage3]:   最终状态: DONE
-[competition_master_stage3.py-17] [INFO] [1782639991.105184799] [competition_master_stage3]:   总耗时:   121.4s
-[competition_master_stage3.py-17] [INFO] [1782639991.108201053] [competition_master_stage3]:   --- 各阶段耗时 ---
-[competition_master_stage3.py-17] [INFO] [1782639991.111848641] [competition_master_stage3]:   LAUNCH................ 16.8s
-[competition_master_stage3.py-17] [INFO] [1782639991.114645978] [competition_master_stage3]:   NAV_TO_QR............. 15.7s
-[competition_master_stage3.py-17] [INFO] [1782639991.117695690] [competition_master_stage3]:   BACKING_UP............ 6.0s
-[competition_master_stage3.py-17] [INFO] [1782639991.120714235] [competition_master_stage3]:   CRUISE_CHANNEL........ 55.9s
-[competition_master_stage3.py-17] [INFO] [1782639991.123735906] [competition_master_stage3]:   RETURN_P.............. 43.7s
-[competition_master_stage3.py-17] [INFO] [1782639991.126823909] [competition_master_stage3]:   (transition/overhead). -16.8s
-[competition_master_stage3.py-17] [INFO] [1782639991.129586288] [competition_master_stage3]:   --- ---
-[competition_master_stage3.py-17] [INFO] [1782639991.132890125] [competition_master_stage3]:   QR 原始数据: 1585
-[competition_master_stage3.py-17] [INFO] [1782639991.135934338] [competition_master_stage3]:   QR 方向:   顺时针 (CW=顺时针/odd, CCW=逆时针/even)
-[competition_master_stage3.py-17] [INFO] [1782639991.138490049] [competition_master_stage3]:   VLM 结果:  这张图片呈现了一个**临时布置的室内场景**，细节如下：
-[competition_master_stage3.py-17]
-[competition_master_stage3.py-17] ### 场景与地面
-[competition_master_stage3.py-17] 地面铺着**带有褶皱的浅色塑料布**（米黄与浅灰交织的色调），布料略显凌乱，似用于防护或临时施工/活动筹备。
-[competition_master_stage3.py-17]
-[competition_master_stage3.py-17]
-[competition_master_stage3.py-17] ### 主要物体与位置
-[competition_master_stage3.py-17] - **右侧遮挡物**：画面右侧是一块**深蓝色的厚实布料**（如帐篷布或大型遮挡布），布料垂落且带自然褶皱，占据右侧大部分区域，边缘隐约露出黑色支撑结构（可能是帐篷
-[competition_master_stage3.py-17] [INFO] [1782639991.141590970] [competition_master_stage3]:   超时限制:  180.0s (全局)
-[competition_master_stage3.py-17] [INFO] [1782639991.144814224] [competition_master_stage3]: ============================================================
-[competition_master_stage3.py-17] [INFO] [1782639991.153196609] [competition_master_stage3]: [TRAJ] CSV已保存: /userdata/dev_ws/trajectory_20260628_174631.csv (121 点)
-[competition_master_stage3.py-17] [INFO] [1782639991.567833710] [competition_master_stage3]: [TRAJ] Nav2 params snapshot: 31 keys
-[competition_master_stage3.py-17] [INFO] [1782639991.572893217] [competition_master_stage3]: [TRAJ] 摘要JSON已保存: /userdata/dev_ws/trajectory_20260628_174631_summary.json
-[competition_master_stage3.py-17] [INFO] [1782639991.577050972] [competition_master_stage3]: [TRAJ] 规划历史已保存: /userdata/dev_ws/trajectory_20260628_174631_plans.csv (55 次规划)
-[competition_master_stage3.py-17] [INFO] [1782639991.595910537] [competition_master_stage3]: [TRAJ] costmap PGM已保存: /userdata/dev_ws/trajectory_20260628_174631_costmap.pgm
-[competition_master_stage3.py-17] [INFO] [1782639991.657259322] [competition_master_stage3]: [DIAG] state=DONE pos=(-1.43,-0.14) yaw=-8deg cmd=(vx=0.00 wz=0.00) elapsed=121.9s plan[4pts 0.4m] (-1.60,-0.15)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=79C cpu=50% mem=18%
-[competition_master_stage3.py-17] [INFO] [1782639992.948157392] [competition_master_stage3]: [DIAG] state=DONE pos=(-1.43,-0.14) yaw=-8deg cmd=(vx=0.00 wz=0.00) elapsed=123.2s plan[4pts 0.4m] (-1.60,-0.15)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=79C cpu=61% mem=18%
-[imu_madgwick_filter.py-6] [INFO] [1782639993.868579540] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=7871 q_w=-0.9731 angle=333.4deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782639993.938732919] [imu_madgwick_filter]: [imu_madgwick ->] msgs=2958 q_w=-0.5468 angle=246.3deg beta=0.0330
-^C[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
-[component_container_isolated-16] [INFO] [1782639994.816475972] [rclcpp]: signal_handler(SIGINT/SIGTERM)
-[component_container_isolated-16] [INFO] [1782639994.816703181] [lifecycle_manager_navigation]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_navigation)
-[component_container_isolated-16] [INFO] [1782639994.816989389] [lifecycle_manager_navigation]: Terminating bond timer...
-[ERROR] [lslidar_driver_node-2]: process has died [pid 37149, exit code -6, cmd '/userdata/dev_ws/install/lslidar_driver/lib/lslidar_driver/lslidar_driver_node --ros-args -r __node:=lslidar_driver_node --params-file /userdata/dev_ws/install/lslidar_driver/share/lslidar_driver/params/lsx10.yaml'].
-[ERROR] [origincar_base_node-1]: process has died [pid 37147, exit code -6, cmd '/userdata/dev_ws/install/origincar_base/lib/origincar_base/origincar_base_node --ros-args --params-file /tmp/launch_params_7z3tqrc_ --params-file /tmp/launch_params_ltqm86y4'].
-[INFO] [costmap_filter_info_server-14]: process has finished cleanly [pid 37310]
-[INFO] [imu_madgwick_filter.py-6]: process has finished cleanly [pid 37157]
-[ERROR] [rviz2-18]: process has died [pid 37470, exit code -11, cmd '/opt/ros/humble/lib/rviz2/rviz2 -d /userdata/dev_ws/install/originbot_navigation/share/originbot_navigation/rviz/nav.rviz --ros-args -r __node:=rviz2'].
-[INFO] [ekf_node-7]: process has finished cleanly [pid 37159]
-[INFO] [lifecycle_manager-15]: process has finished cleanly [pid 37319]
-[INFO] [map_server-13]: process has finished cleanly [pid 37308]
-[INFO] [static_transform_publisher-8]: process has finished cleanly [pid 37205]
-[INFO] [robot_state_publisher-3]: process has finished cleanly [pid 37151]
-[map_server-13] [INFO] [1782639994.816547180] [rclcpp]: signal_handler(SIGINT/SIGTERM)
-[map_server-13] [INFO] [1782639994.816776889] [keepout_mask_server]: Running Nav2 LifecycleNode rcl preshutdown (keepout_mask_server)
-[map_server-13] [INFO] [1782639994.817044598] [keepout_mask_server]: Deactivating
-[map_server-13] [INFO] [1782639994.817138056] [keepout_mask_server]: Destroying bond (keepout_mask_server) to lifecycle manager.
-[costmap_filter_info_server-14] [INFO] [1782639994.816793889] [rclcpp]: signal_handler(SIGINT/SIGTERM)
-[costmap_filter_info_server-14] [INFO] [1782639994.816988723] [keepout_filter_info_server]: Running Nav2 LifecycleNode rcl preshutdown (keepout_filter_info_server)
-[costmap_filter_info_server-14] [INFO] [1782639994.817224931] [keepout_filter_info_server]: Deactivating
-[costmap_filter_info_server-14] [INFO] [1782639994.817309348] [keepout_filter_info_server]: Destroying bond (keepout_filter_info_server) to lifecycle manager.
-[rviz2-18] [INFO] [1782639994.816802972] [rclcpp]: signal_handler(SIGINT/SIGTERM)
-[static_transform_publisher-8] [INFO] [1782639994.816800972] [rclcpp]: signal_handler(SIGINT/SIGTERM)
-[origincar_base_node-1] [INFO] [1782639994.817252973] [rclcpp]: signal_handler(SIGINT/SIGTERM)
-[origincar_base_node-1] [INFO] [1782639994.817580848] [origincar_base]: Stop command sent to STM32 on shutdown.
-[origincar_base_node-1] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[origincar_base_node-1] terminate called after throwing an instance of 'rclcpp::exceptions::RCLError'
-[origincar_base_node-1]   what():  failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67
-[aurora930_node-9] [INFO] [1782639994.817659473] [rclcpp]: signal_handler(SIGINT/SIGTERM)
-[aurora930_node-9] I0628 17:46:34.919703 37207 ros2_node.cc:90] process quit succeed
-[aurora930_node-9] I0628 17:46:34.919872 37207 aurora900_ros2_device.cc:83] begin stop()
-[aurora930_node-9] I0628 17:46:34.919920 37207 aurora900_ros2_device.cc:103] stop stream
-[aurora930_node-9] 2026-06-28 17:46:34.965 ( 152.315s) [        992C4020]      aurora900_impl.cc:648   INFO| ir_stream_count_=0, rgb_stream_count_=0, depth_stream_count_=0
-[aurora930_node-9] 2026-06-28 17:46:34.965 ( 152.315s) [        992C4020]      aurora900_impl.cc:649   INFO| mask=7
-[aurora930_node-9] I0628 17:46:35.220434 37207 aurora900_ros2_device.cc:105] destroy stream
-[aurora930_node-9] I0628 17:46:35.220715 37207 aurora900_ros2_device.cc:110] close glog
-[aurora930_node-9] WARNING: Logging before InitGoogleLogging() is written to STDERR
-[aurora930_node-9] I0628 17:46:35.221194 37207 ros2_device.cc:113] close device...
-[aurora930_node-9] 2026-06-28 17:46:35.720 ( 153.070s) [        699E37E0]         cmd_backend.cc:40    INFO| RunBlocking is end!!!
-[aurora930_node-9] 2026-06-28 17:46:35.921 ( 153.271s) [        992C4020]deptrum_camera_vendor.c:121   INFO| device is close.
-[aurora930_node-9] I0628 17:46:35.923583 37207 ros2_device.cc:116] quit succeed
-[robot_state_publisher-3] [INFO] [1782639994.818371224] [rclcpp]: signal_handler(SIGINT/SIGTERM)
-[competition_master_stage3.py-17] [INFO] [1782639994.833065368] [competition_master_stage3]: [MAIN] 收到 Ctrl+C, 停止录制 + 保存轨迹...
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782639994.838841917] [competition_master_stage3]:
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782639994.861710195] [competition_master_stage3]: ============================================================
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782639994.874593128] [competition_master_stage3]: >>> [Stage 3] 任务结束 <<<
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782639994.877988715] [competition_master_stage3]:   最终状态: DONE
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782639994.907835461] [competition_master_stage3]:   总耗时:   125.1s
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782639994.913415301] [competition_master_stage3]:   --- 各阶段耗时 ---
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782639994.921962520] [competition_master_stage3]:   LAUNCH................ 16.8s
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782639994.931158532] [competition_master_stage3]:   NAV_TO_QR............. 15.7s
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782639994.937170247] [competition_master_stage3]:   BACKING_UP............ 6.0s
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782639994.941817670] [competition_master_stage3]:   CRUISE_CHANNEL........ 55.9s
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782639994.947029968] [competition_master_stage3]:   RETURN_P.............. 43.7s
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782639994.952697642] [competition_master_stage3]:   (transition/overhead). -13.0s
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782639994.959415067] [competition_master_stage3]:   --- ---
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782639994.964998907] [competition_master_stage3]:   QR 原始数据: 1585
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782639994.969766830] [competition_master_stage3]:   QR 方向:   顺时针 (CW=顺时针/odd, CCW=逆时针/even)
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782639994.974263585] [competition_master_stage3]:   VLM 结果:  这张图片呈现了一个**临时布置的室内场景**，细节如下：
-[competition_master_stage3.py-17]
-[competition_master_stage3.py-17] ### 场景与地面
-[competition_master_stage3.py-17] 地面铺着**带有褶皱的浅色塑料布**（米黄与浅灰交织的色调），布料略显凌乱，似用于防护或临时施工/活动筹备。
-[competition_master_stage3.py-17]
-[competition_master_stage3.py-17]
-[competition_master_stage3.py-17] ### 主要物体与位置
-[competition_master_stage3.py-17] - **右侧遮挡物**：画面右侧是一块**深蓝色的厚实布料**（如帐篷布或大型遮挡布），布料垂落且带自然褶皱，占据右侧大部分区域，边缘隐约露出黑色支撑结构（可能是帐篷
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782639994.977839673] [competition_master_stage3]:   超时限制:  180.0s (全局)
-[ekf_node-7] [INFO] [1782639994.821884479] [rclcpp]: signal_handler(SIGINT/SIGTERM)
-[lifecycle_manager-15] [INFO] [1782639994.822300438] [rclcpp]: signal_handler(SIGINT/SIGTERM)
-[lifecycle_manager-15] [INFO] [1782639994.824368065] [lifecycle_manager_keepout]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_keepout)
-[lifecycle_manager-15] [INFO] [1782639994.824590274] [lifecycle_manager_keepout]: Terminating bond timer...
-[lifecycle_manager-15] [INFO] [1782639994.995621904] [lifecycle_manager_keepout]: Destroying lifecycle_manager_keepout
-[map_server-13] [INFO] [1782639994.836524830] [keepout_mask_server]: Cleaning up
-[map_server-13] [INFO] [1782639994.836760747] [keepout_mask_server]: Destroying bond (keepout_mask_server) to lifecycle manager.
-[map_server-13] [INFO] [1782639995.052358308] [keepout_mask_server]: Destroying
-[costmap_filter_info_server-14] [INFO] [1782639994.838948125] [keepout_filter_info_server]: Cleaning up
-[costmap_filter_info_server-14] [INFO] [1782639994.839209875] [keepout_filter_info_server]: Destroying bond (keepout_filter_info_server) to lifecycle manager.
-[costmap_filter_info_server-14] [INFO] [1782639995.065972616] [keepout_filter_info_server]: Destroying
-[component_container_isolated-16] [INFO] [1782639995.060330693] [local_costmap.local_costmap]: Message Filter dropping message: frame 'laser_link' at time 1782639994.759 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
-[component_container_isolated-16] [INFO] [1782639995.233983451] [velocity_smoother]: Running Nav2 LifecycleNode rcl preshutdown (velocity_smoother)
-[component_container_isolated-16] [INFO] [1782639995.234432826] [velocity_smoother]: Deactivating
-[component_container_isolated-16] [INFO] [1782639995.234605701] [velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782639995.245775132] [velocity_smoother]: Cleaning up
-[component_container_isolated-16] [INFO] [1782639995.246255716] [velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782639995.246389091] [waypoint_follower]: Running Nav2 LifecycleNode rcl preshutdown (waypoint_follower)
-[component_container_isolated-16] [INFO] [1782639995.246526550] [waypoint_follower]: Deactivating
-[component_container_isolated-16] [INFO] [1782639995.246668050] [waypoint_follower]: Destroying bond (waypoint_follower) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782639995.257636980] [waypoint_follower]: Cleaning up
-[component_container_isolated-16] [INFO] [1782639995.304360622] [waypoint_follower]: Destroying bond (waypoint_follower) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782639995.304518747] [behavior_server]: Running Nav2 LifecycleNode rcl preshutdown (behavior_server)
-[component_container_isolated-16] [INFO] [1782639995.304653539] [behavior_server]: Deactivating
-[component_container_isolated-16] [INFO] [1782639995.304966039] [behavior_server]: Destroying bond (behavior_server) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782639995.315387010] [behavior_server]: Cleaning up
-[component_container_isolated-16] [INFO] [1782639995.363604237] [behavior_server]: Destroying bond (behavior_server) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782639995.363771612] [bt_navigator]: Running Nav2 LifecycleNode rcl preshutdown (bt_navigator)
-[component_container_isolated-16] [INFO] [1782639995.363913988] [bt_navigator]: Deactivating
-[component_container_isolated-16] [INFO] [1782639995.364081238] [bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782639995.374451584] [bt_navigator]: Cleaning up
-[component_container_isolated-16] [INFO] [1782639995.926435397] [bt_navigator]: Completed Cleaning up
-[component_container_isolated-16] [INFO] [1782639995.927368523] [bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782639995.927538232] [amcl]: Running Nav2 LifecycleNode rcl preshutdown (amcl)
-[component_container_isolated-16] [INFO] [1782639995.928093399] [amcl]: Deactivating
-[component_container_isolated-16] [INFO] [1782639995.928372608] [amcl]: Destroying bond (amcl) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782639995.944328919] [amcl]: Cleaning up
-[component_container_isolated-16] [INFO] [1782639995.967574990] [lifecycle_manager_localization]: Have not received a heartbeat from amcl.
-[component_container_isolated-16] [ERROR] [1782639995.967752157] [lifecycle_manager_localization]: CRITICAL FAILURE: SERVER amcl IS DOWN after not receiving a heartbeat for 4000 ms. Shutting down related nodes.
-[component_container_isolated-16] [INFO] [1782639995.968102407] [lifecycle_manager_localization]: Terminating bond timer...
-[component_container_isolated-16] [INFO] [1782639995.968188616] [lifecycle_manager_localization]: Resetting managed nodes...
-[component_container_isolated-16] [INFO] [1782639995.968246991] [lifecycle_manager_localization]: Deactivating amcl
-[component_container_isolated-16] [WARN] [1782639995.992584896] [rcl_lifecycle]: No transition matching 4 found for current state cleaningup
-[component_container_isolated-16] [WARN] [1782639995.992677563] [rcl_lifecycle]: No transition matching 4 found for current state cleaningup
-[component_container_isolated-16] [ERROR] [1782639995.992719355] [amcl]: Unable to start transition 4 from current state cleaningup: Transition is not registered., at ./src/rcl_lifecycle.c:355
-[component_container_isolated-16] [ERROR] [1782639995.994599690] [lifecycle_manager_localization]: Failed to change state for node: amcl
-[component_container_isolated-16] [INFO] [1782639995.994856107] [lifecycle_manager_localization]: Deactivating map_server
-[component_container_isolated-16] [INFO] [1782639995.995816858] [map_server]: Deactivating
-[component_container_isolated-16] [INFO] [1782639995.995992859] [map_server]: Destroying bond (map_server) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782639996.001600616] [amcl]: Destroying bond (amcl) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782639996.001774699] [planner_server]: Running Nav2 LifecycleNode rcl preshutdown (planner_server)
-[component_container_isolated-16] [INFO] [1782639996.001906866] [planner_server]: Deactivating
-[component_container_isolated-16] [INFO] [1782639996.002143116] [global_costmap.global_costmap]: Deactivating
-[component_container_isolated-16] [INFO] [1782639996.110564751] [lifecycle_manager_localization]: Cleaning up amcl
-[component_container_isolated-16] [WARN] [1782639996.111756836] [rcl_lifecycle]: No transition matching 2 found for current state unconfigured
-[component_container_isolated-16] [WARN] [1782639996.111839420] [rcl_lifecycle]: No transition matching 2 found for current state unconfigured
-[component_container_isolated-16] [ERROR] [1782639996.111867920] [amcl]: Unable to start transition 2 from current state unconfigured: Transition is not registered., at ./src/rcl_lifecycle.c:355
-[component_container_isolated-16] [INFO] [1782639996.112814546] [lifecycle_manager_localization]: Cleaning up map_server
-[component_container_isolated-16] [INFO] [1782639996.113394422] [map_server]: Cleaning up
-[component_container_isolated-16] [INFO] [1782639996.122854892] [lifecycle_manager_localization]: Managed nodes have been reset
-[component_container_isolated-16] [INFO] [1782639996.368486823] [planner_server]: Deactivating plugin GridBased of type SmacPlannerHybrid
-[component_container_isolated-16] [INFO] [1782639996.368785740] [planner_server]: Destroying bond (planner_server) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782639996.379192628] [planner_server]: Cleaning up
-[component_container_isolated-16] [INFO] [1782639996.402337240] [global_costmap.global_costmap]: Cleaning up
-[component_container_isolated-16] [INFO] [1782639996.411842627] [planner_server]: Cleaning up plugin GridBased of type SmacPlannerHybrid
-[component_container_isolated-16] [INFO] [1782639996.412867336] [planner_server]: Destroying plugin GridBased of type SmacPlannerHybrid
-[bmi088_iio_bridge.py-5] Traceback (most recent call last):
-[bmi088_iio_bridge.py-5]   File "/userdata/dev_ws/install/origincar_bringup/lib/origincar_bringup/bmi088_iio_bridge.py", line 493, in <module>
-[bmi088_iio_bridge.py-5]     main()
-[bmi088_iio_bridge.py-5]   File "/userdata/dev_ws/install/origincar_bringup/lib/origincar_bringup/bmi088_iio_bridge.py", line 489, in main
-[bmi088_iio_bridge.py-5]     rclpy.shutdown()
-[bmi088_iio_bridge.py-5]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 130, in shutdown
-[bmi088_iio_bridge.py-5]     _shutdown(context=context)
-[bmi088_iio_bridge.py-5]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/utilities.py", line 58, in shutdown
-[bmi088_iio_bridge.py-5]     return context.shutdown()
-[bmi088_iio_bridge.py-5]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py", line 102, in shutdown
-[bmi088_iio_bridge.py-5]     self.__context.shutdown()
-[bmi088_iio_bridge.py-5] rclpy._rclpy_pybind11.RCLError: failed to shutdown: rcl_shutdown already called on the given context, at ./src/rcl/init.c:241
-[vision_ai_node-12] Traceback (most recent call last):
-[vision_ai_node-12]   File "/userdata/dev_ws/install/racing_vision_ai/lib/racing_vision_ai/vision_ai_node", line 33, in <module>
-[vision_ai_node-12]     sys.exit(load_entry_point('racing-vision-ai==0.0.1', 'console_scripts', 'vision_ai_node')())
-[vision_ai_node-12]   File "/userdata/dev_ws/install/racing_vision_ai/lib/python3.10/site-packages/racing_vision_ai/vision_ai_node.py", line 283, in main
-[vision_ai_node-12]     rclpy.shutdown()
-[vision_ai_node-12]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 130, in shutdown
-[vision_ai_node-12]     _shutdown(context=context)
-[vision_ai_node-12]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/utilities.py", line 58, in shutdown
-[vision_ai_node-12]     return context.shutdown()
-[vision_ai_node-12]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py", line 102, in shutdown
-[vision_ai_node-12]     self.__context.shutdown()
-[vision_ai_node-12] rclpy._rclpy_pybind11.RCLError: failed to shutdown: rcl_shutdown already called on the given context, at ./src/rcl/init.c:241
-[imu_madgwick_filter.py-4] Traceback (most recent call last):
-[imu_madgwick_filter.py-4]   File "/userdata/dev_ws/install/origincar_bringup/lib/origincar_bringup/imu_madgwick_filter.py", line 301, in <module>
-[imu_madgwick_filter.py-4]     main()
-[imu_madgwick_filter.py-4]   File "/userdata/dev_ws/install/origincar_bringup/lib/origincar_bringup/imu_madgwick_filter.py", line 286, in main
-[imu_madgwick_filter.py-4]     rclpy.spin(node)
-[imu_madgwick_filter.py-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 229, in spin
-[imu_madgwick_filter.py-4]     executor.spin_once()
-[imu_madgwick_filter.py-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 808, in spin_once
-[imu_madgwick_filter.py-4]     self._spin_once_impl(timeout_sec)
-[imu_madgwick_filter.py-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 805, in _spin_once_impl
-[imu_madgwick_filter.py-4]     raise handler.exception()
-[imu_madgwick_filter.py-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/task.py", line 272, in _execute_coroutine_step
-[imu_madgwick_filter.py-4]     result = coro.send(None)
-[imu_madgwick_filter.py-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 478, in handler
-[imu_madgwick_filter.py-4]     arg = take_from_wait_list(entity)
-[imu_madgwick_filter.py-4]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 400, in _take_subscription
-[imu_madgwick_filter.py-4]     msg_info = sub.handle.take_message(sub.msg_type, sub.raw)
-[imu_madgwick_filter.py-4] RuntimeError: Unable to convert call argument to Python object (compile in debug mode for details)
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782639994.981473719] [competition_master_stage3]: ============================================================
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782639994.989638271] [competition_master_stage3]: [TRAJ] CSV已保存: /userdata/dev_ws/trajectory_20260628_174634.csv (122 点)
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782639995.550722054] [competition_master_stage3]: [TRAJ] Nav2 params snapshot: 31 keys
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782639995.561826693] [competition_master_stage3]: [TRAJ] 摘要JSON已保存: /userdata/dev_ws/trajectory_20260628_174634_summary.json
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782639995.570648579] [competition_master_stage3]: [TRAJ] 规划历史已保存: /userdata/dev_ws/trajectory_20260628_174634_plans.csv (55 次规划)
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782639995.594242066] [competition_master_stage3]: [TRAJ] costmap PGM已保存: /userdata/dev_ws/trajectory_20260628_174634_costmap.pgm
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[component_container_isolated-16] [INFO] [1782639996.433294278] [planner_server]: Destroying bond (planner_server) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782639996.433453195] [smoother_server]: Running Nav2 LifecycleNode rcl preshutdown (smoother_server)
-[component_container_isolated-16] [INFO] [1782639996.433567362] [smoother_server]: Deactivating
-[component_container_isolated-16] [INFO] [1782639996.433622362] [smoother_server]: Deactivating smoother: SmoothPath of type nav2_constrained_smoother::ConstrainedSmoother
-[component_container_isolated-16] [INFO] [1782639996.433760821] [smoother_server]: Destroying bond (smoother_server) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782639996.444122417] [smoother_server]: Cleaning up
-[component_container_isolated-16] [INFO] [1782639996.444251334] [smoother_server]: Cleaning up smoother: SmoothPath of type nav2_constrained_smoother::ConstrainedSmoother
-[component_container_isolated-16] [INFO] [1782639996.460819646] [smoother_server]: Destroying bond (smoother_server) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782639996.460996480] [map_server]: Running Nav2 LifecycleNode rcl preshutdown (map_server)
-[component_container_isolated-16] [INFO] [1782639996.461082771] [map_server]: Destroying bond (map_server) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782639996.461139146] [lifecycle_manager_localization]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_localization)
-[component_container_isolated-16] [INFO] [1782639996.471692493] [controller_server]: Running Nav2 LifecycleNode rcl preshutdown (controller_server)
-[component_container_isolated-16] [INFO] [1782639996.471935951] [controller_server]: Deactivating
-[component_container_isolated-16] [INFO] [1782639996.472020785] [controller_server]: Deactivating controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
-[component_container_isolated-16] [INFO] [1782639996.472247119] [local_costmap.local_costmap]: Deactivating
-[component_container_isolated-16] [INFO] [1782639996.486023802] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782639996.496577149] [controller_server]: Cleaning up
-[component_container_isolated-16] [INFO] [1782639996.496719107] [controller_server]: Cleaning up controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
-[component_container_isolated-16] [INFO] [1782639996.497010483] [local_costmap.local_costmap]: Cleaning up
-[ERROR] [imu_madgwick_filter.py-4]: process has died [pid 37153, exit code 1, cmd '/userdata/dev_ws/install/origincar_bringup/lib/origincar_bringup/imu_madgwick_filter.py --ros-args -r __node:=imu_madgwick_filter --params-file /userdata/dev_ws/install/origincar_base/share/origincar_base/config/imu_madgwick.yaml'].
-[ERROR] [bmi088_iio_bridge.py-5]: process has died [pid 37155, exit code 1, cmd '/userdata/dev_ws/install/origincar_bringup/lib/origincar_bringup/bmi088_iio_bridge.py --ros-args -r __node:=bmi088_iio_bridge --params-file /tmp/launch_params_kpsgggmf'].
-[ERROR] [vision_ai_node-12]: process has died [pid 37213, exit code 1, cmd '/userdata/dev_ws/install/racing_vision_ai/lib/racing_vision_ai/vision_ai_node --ros-args -r __node:=vision_ai_node'].
-[INFO] [aurora930_node-9]: process has finished cleanly [pid 37207]
-[INFO] [competition_master_stage3.py-17]: process has finished cleanly [pid 37468]
-[component_container_isolated-16] [INFO] [1782639997.540690991] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
-[ERROR] [component_container_isolated-16]: process[component_container_isolated-16] failed to terminate '5' seconds after receiving 'SIGINT', escalating to 'SIGTERM'
-[INFO] [component_container_isolated-16]: sending signal 'SIGTERM' to process[component_container_isolated-16]
-[component_container_isolated-16] [INFO] [1782640001.424262945] [rclcpp]: signal_handler(SIGINT/SIGTERM)
-[ERROR] [component_container_isolated-16]: process[component_container_isolated-16] failed to terminate '10.0' seconds after receiving 'SIGTERM', escalating to 'SIGKILL'
-[INFO] [component_container_isolated-16]: sending signal 'SIGKILL' to process[component_container_isolated-16]
-[ERROR] [component_container_isolated-16]: process has died [pid 37466, exit code -9, cmd '/opt/ros/humble/lib/rclcpp_components/component_container_isolated --ros-args --log-level info --ros-args -r __node:=nav2_container --params-file /tmp/launch_params_vyp6onng --params-file /tmp/launch_params_udihkic0 -r /tf:=tf -r /tf_static:=tf_static'].
-root@ubuntu:/userdata/dev_ws# ros2 launch origincar_bringup stage3_bringup.launch.py
-[INFO] [launch]: All log files can be found below /root/.ros/log/2026-06-28-17-46-49-881871-ubuntu-38837
-[INFO] [launch]: Default logging verbosity is set to INFO
-[INFO] [origincar_base_node-1]: process started with pid [38859]
-[INFO] [lslidar_driver_node-2]: process started with pid [38861]
-[INFO] [robot_state_publisher-3]: process started with pid [38863]
-[INFO] [imu_madgwick_filter.py-4]: process started with pid [38865]
-[INFO] [bmi088_iio_bridge.py-5]: process started with pid [38867]
-[INFO] [imu_madgwick_filter.py-6]: process started with pid [38869]
-[INFO] [ekf_node-7]: process started with pid [38871]
-[INFO] [static_transform_publisher-8]: process started with pid [38911]
-[INFO] [aurora930_node-9]: process started with pid [38913]
-[INFO] [qr_decoder-10]: process started with pid [38915]
-[INFO] [qr_decision-11]: process started with pid [38917]
-[INFO] [vision_ai_node-12]: process started with pid [38919]
-[origincar_base_node-1] [INFO] [1782640010.589077013] [origincar_base]: origincar_base serial port opened
-[lslidar_driver_node-2] [INFO] [1782640010.577110706] [lslidar_driver_node]: Lidar is N10
-[lslidar_driver_node-2] [INFO] [1782640010.593767477] [lslidar_driver_node]: Initialised lslidar without error
-[lslidar_driver_node-2] [INFO] [1782640010.593925060] [lslidar_driver_node]: Successfully initialize driver...
-[robot_state_publisher-3] [INFO] [1782640010.582803380] [robot_state_publisher]: got segment base_footprint
-[robot_state_publisher-3] [INFO] [1782640010.583172047] [robot_state_publisher]: got segment base_link
-[robot_state_publisher-3] [INFO] [1782640010.583258755] [robot_state_publisher]: got segment gyro_link
-[robot_state_publisher-3] [INFO] [1782640010.583312256] [robot_state_publisher]: got segment laser_link
-[ekf_node-7] Both imu1_differential and imu1_relative were set to true. Using differential mode.
-[static_transform_publisher-8] [INFO] [1782640010.757015887] [depth_camera_tf]: Spinning until stopped - publishing transform
-[static_transform_publisher-8] translation: ('0.140000', '0.000000', '0.050000')
-[static_transform_publisher-8] rotation: ('0.000000', '0.000000', '0.000000', '1.000000')
-[static_transform_publisher-8] from 'base_link' to 'depth_camera_link'
-[aurora930_node-9] W0628 17:46:51.308854 38913 ros2_node.cc:35] hello aurora 900/930
-[qr_decoder-10] [INFO] [1782640011.395941427] [qr_decoder_zbar]: QR decoder (ZBar) started: rgb=/aurora/rgb/image_raw, depth=/aurora/depth/image_raw, filter=on, range=[50, 4000]mm, min_qr_len=1, intrinsics: fx=421.3 fy=422.3 cx=320.3 cy=197.0
-[aurora930_node-9] 2026-06-28 17:46:51.403 (   0.241s) [        8EE34020] device_manager_impl.cc:89    INFO| hotplug has registed by user
-[aurora930_node-9] device_count==========1
-[aurora930_node-9] I0628 17:46:51.432363 38913 aurora900_ros2_device.cc:153] BOOT_ORDER_1::Found 1 deptrum device
-[aurora930_node-9] I0628 17:46:51.441107 38913 aurora900_ros2_device.cc:162] BOOT_ORDER_1::No serial number provided: picking first device
-[aurora930_node-9] 2026-06-28 17:46:51.441 (   0.278s) [        8EE34020] device_manager_impl.cc:318   INFO| Device information:
-[aurora930_node-9]      ir_pid:0x1930, rgb_pid:0x0
-[aurora930_node-9]      serial number:HY400529001015314G00248
-[aurora930_node-9] I0628 17:46:51.441418 38913 aurora900_ros2_device.cc:206] BOOT_ORDER_1::0:device start opening
-[aurora930_node-9] 2026-06-28 17:46:51.443 (   0.281s) [        8EE34020]   custom_usb_device.cc:101   INFO| bulk in endpoint addr:129
-[aurora930_node-9] 2026-06-28 17:46:51.444 (   0.281s) [        8EE34020]   custom_usb_device.cc:98    INFO| bulk out endpoint addr:2
-[aurora930_node-9] 2026-06-28 17:46:51.449 (   0.286s) [        8EE34020]deptrum_camera_aurora93:53    INFO| doe_broken:0 ito_support:1 crash_count:0 wdt_count:0 hard_reset_count:2 heart_boot_count:0 boot_total:121 last_crash_time:N
-[aurora930_node-9] I0628 17:46:51.449146 38913 aurora900_ros2_device.cc:247] device supported frame_mode:
-[aurora930_node-9] I0628 17:46:51.449262 38913 aurora900_ros2_device.cc:252] [0]:ir_mode:=13 kRes320x200Ir8Bit rgb_mode:=31 kRes320x200RgbYuv depth_mode:=0 kInvalid
-[aurora930_node-9] I0628 17:46:51.449358 38913 aurora900_ros2_device.cc:252] [1]:ir_mode:=17 kRes480x300Depth16Bit rgb_mode:=32 kRes480x300RgbYuv depth_mode:=0 kInvalid
-[aurora930_node-9] I0628 17:46:51.449419 38913 aurora900_ros2_device.cc:252] [2]:ir_mode:=20 kRes640x400Ir8Bit rgb_mode:=33 kRes640x400RgbYuv depth_mode:=0 kInvalid
-[aurora930_node-9] I0628 17:46:51.449461 38913 aurora900_ros2_device.cc:266] current set mode ir_mode:20:kRes640x400Ir8Bit,rgb_mode:33:kRes640x400RgbYuv
-[INFO] [map_server-13]: process started with pid [38997]
-[INFO] [costmap_filter_info_server-14]: process started with pid [38999]
-[INFO] [lifecycle_manager-15]: process started with pid [39001]
-[costmap_filter_info_server-14] [INFO] [1782640011.951054904] [costmap_filter_info_server]: This is costmap filter info publisher
-[lifecycle_manager-15] [INFO] [1782640011.957884538] [lifecycle_manager_keepout]: Creating
-[aurora930_node-9] I0628 17:46:51.986614 38913 aurora900_ros2_device.cc:387] Switch Auto Exposure
-[aurora930_node-9] 2026-06-28 17:46:52.039 (   0.877s) [        8EE34020]      aurora900_impl.cc:1106  INFO| SetHeartbeat user set heartbeat enable: 0
-[lifecycle_manager-15] [INFO] [1782640012.058604287] [lifecycle_manager_keepout]: Creating and initializing lifecycle service clients
-[map_server-13] [INFO] [1782640012.103185092] [keepout_mask_server]:
-[map_server-13]         keepout_mask_server lifecycle node launched.
-[map_server-13]         Waiting on external lifecycle transitions to activate
-[map_server-13]         See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[map_server-13] [INFO] [1782640012.104220260] [keepout_mask_server]: Creating
-[lifecycle_manager-15] [INFO] [1782640012.120722114] [lifecycle_manager_keepout]: Starting managed nodes bringup...
-[lifecycle_manager-15] [INFO] [1782640012.121139990] [lifecycle_manager_keepout]: Configuring keepout_mask_server
-[map_server-13] [INFO] [1782640012.122199783] [keepout_mask_server]: Configuring
-[map_server-13] [INFO] [1782640012.122470741] [map_io]: Loading yaml file: /userdata/dev_ws/install/originbot_navigation/share/originbot_navigation/maps/keepout_mask.yaml
-[map_server-13] [INFO] [1782640012.123754118] [map_io]: resolution: 0.05
-[map_server-13] [INFO] [1782640012.123840326] [map_io]: origin[0]: -2.65
-[map_server-13] [INFO] [1782640012.123872368] [map_io]: origin[1]: -4.5
-[map_server-13] [INFO] [1782640012.123899993] [map_io]: origin[2]: 0
-[map_server-13] [INFO] [1782640012.123928993] [map_io]: free_thresh: 0.5
-[map_server-13] [INFO] [1782640012.123957326] [map_io]: occupied_thresh: 0.5
-[map_server-13] [INFO] [1782640012.123996785] [map_io]: mode: scale
-[map_server-13] [INFO] [1782640012.124026493] [map_io]: negate: 0
-[map_server-13] [INFO] [1782640012.124826328] [map_io]: Loading image_file: /userdata/dev_ws/install/originbot_navigation/share/originbot_navigation/maps/keepout_mask.pgm
-[costmap_filter_info_server-14] [INFO] [1782640012.135415299] [keepout_filter_info_server]:
-[costmap_filter_info_server-14]         keepout_filter_info_server lifecycle node launched.
-[costmap_filter_info_server-14]         Waiting on external lifecycle transitions to activate
-[costmap_filter_info_server-14]         See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[map_server-13] [INFO] [1782640012.146165479] [map_io]: Read map /userdata/dev_ws/install/originbot_navigation/share/originbot_navigation/maps/keepout_mask.pgm: 163 X 141 map @ 0.05 m/cell
-[lifecycle_manager-15] [INFO] [1782640012.188510323] [lifecycle_manager_keepout]: Configuring keepout_filter_info_server
-[costmap_filter_info_server-14] [INFO] [1782640012.189431616] [keepout_filter_info_server]: Configuring
-[lifecycle_manager-15] [INFO] [1782640012.210159225] [lifecycle_manager_keepout]: Activating keepout_mask_server
-[map_server-13] [INFO] [1782640012.223184657] [keepout_mask_server]: Activating
-[map_server-13] [INFO] [1782640012.223729908] [keepout_mask_server]: Creating bond (keepout_mask_server) to lifecycle manager.
-[lifecycle_manager-15] [INFO] [1782640012.344915933] [lifecycle_manager_keepout]: Server keepout_mask_server connected with bond.
-[lifecycle_manager-15] [INFO] [1782640012.345106433] [lifecycle_manager_keepout]: Activating keepout_filter_info_server
-[costmap_filter_info_server-14] [INFO] [1782640012.346111268] [keepout_filter_info_server]: Activating
-[costmap_filter_info_server-14] [INFO] [1782640012.346339226] [keepout_filter_info_server]: Creating bond (keepout_filter_info_server) to lifecycle manager.
-[bmi088_iio_bridge.py-5] [INFO] [1782640012.399612959] [bmi088_iio_bridge]: =================================================================
-[bmi088_iio_bridge.py-5] [INFO] [1782640012.402560296] [bmi088_iio_bridge]:   DIAGNOSTIC: Scanning IIO devices under /sys/bus/iio/devices/
-[bmi088_iio_bridge.py-5] [INFO] [1782640012.405196424] [bmi088_iio_bridge]:   Equivalent to: ls /sys/bus/iio/devices/*/name
-[bmi088_iio_bridge.py-5] [INFO] [1782640012.407733927] [bmi088_iio_bridge]: =================================================================
-[bmi088_iio_bridge.py-5] [INFO] [1782640012.410283180] [bmi088_iio_bridge]:   iio:device0/name = "34190000.adc"
-[bmi088_iio_bridge.py-5] [INFO] [1782640012.412900642] [bmi088_iio_bridge]:   iio:device1/name = "bmi08x"
-[bmi088_iio_bridge.py-5] [INFO] [1782640012.415683020] [bmi088_iio_bridge]:   trigger0/name = "34190000.adc-dev0"
-[bmi088_iio_bridge.py-5] [INFO] [1782640012.418548315] [bmi088_iio_bridge]:   Total IIO devices found: 3
-[bmi088_iio_bridge.py-5] [INFO] [1782640012.421554902] [bmi088_iio_bridge]:   BMI088 kernel module APPEARS LOADED: 1 BMI device(s) detected
-[bmi088_iio_bridge.py-5] [INFO] [1782640012.424284947] [bmi088_iio_bridge]:   BMI device names: ['bmi08x']
-[bmi088_iio_bridge.py-5] [INFO] [1782640012.427480035] [bmi088_iio_bridge]:   gyro:  /sys/bus/iio/devices/iio:device1 (name=="bmi08x") attr=in_anglvel is_si=False scale_override=0.00053
-[bmi088_iio_bridge.py-5] [INFO] [1782640012.430620914] [bmi088_iio_bridge]:   accel: /sys/bus/iio/devices/iio:device1 (name=="bmi08x") attr=in_accel is_si=False scale_override=0.00341
-[imu_madgwick_filter.py-6] [INFO] [1782640012.443557596] [imu_madgwick_bmi088]: [imu_madgwick] init: beta=0.0030, gyro_noise=0.0002, accel_noise=0.010
-[aurora930_node-9] I0628 17:46:52.450023 38913 aurora900_ros2_device.cc:304] BOOT_ORDER_1::Device information:
-[aurora930_node-9] I0628 17:46:52.450183 38913 aurora900_ros2_device.cc:305]     sdk version: 1.1.22
-[aurora930_node-9] I0628 17:46:52.450227 38913 aurora900_ros2_device.cc:306]     device name: Aurora 930
-[aurora930_node-9] I0628 17:46:52.450254 38913 aurora900_ros2_device.cc:307]     serial number: HY400529001015314G00248
-[aurora930_node-9] I0628 17:46:52.450280 38913 aurora900_ros2_device.cc:308]     firmware version: 1.7.2
-[aurora930_node-9] I0628 17:46:52.450332 38913 camera_parameters.cc:134] BOOT_ORDER_1::Camera Parameters:
-[aurora930_node-9] I0628 17:46:52.450361 38913 camera_parameters.cc:135] BOOT_ORDER_1::  Ir Intrinsics:
-[aurora930_node-9] I0628 17:46:52.450397 38913 camera_parameters.cc:146]                 Resolution:
-[aurora930_node-9] I0628 17:46:52.450423 38913 camera_parameters.cc:147]                         Rows:400
-[aurora930_node-9] I0628 17:46:52.450448 38913 camera_parameters.cc:148]                         Cols:640
-[aurora930_node-9] I0628 17:46:52.450479 38913 camera_parameters.cc:149]                 Intrinsics:
-[aurora930_node-9] I0628 17:46:52.450505 38913 camera_parameters.cc:150]                         fx: 421.307
-[aurora930_node-9] I0628 17:46:52.450613 38913 camera_parameters.cc:151]                         fy: 422.254
-[aurora930_node-9] I0628 17:46:52.450654 38913 camera_parameters.cc:152]                         cx: 320.27
-[aurora930_node-9] I0628 17:46:52.450687 38913 camera_parameters.cc:153]                         cy: 197.01
-[aurora930_node-9] I0628 17:46:52.450723 38913 camera_parameters.cc:154]                         k1: 0.0606853
-[aurora930_node-9] I0628 17:46:52.450757 38913 camera_parameters.cc:155]                         k2: -0.10961
-[aurora930_node-9] I0628 17:46:52.450788 38913 camera_parameters.cc:156]                         p1: 0.00126689
-[aurora930_node-9] I0628 17:46:52.450845 38913 camera_parameters.cc:157]                         p2: -0.00120539
-[aurora930_node-9] I0628 17:46:52.450887 38913 camera_parameters.cc:158]                         k3: 0.0522281
-[aurora930_node-9] I0628 17:46:52.450919 38913 camera_parameters.cc:138] BOOT_ORDER_1::  Rgb Intrinsics:
-[aurora930_node-9] I0628 17:46:52.450975 38913 camera_parameters.cc:146]                 Resolution:
-[aurora930_node-9] I0628 17:46:52.451006 38913 camera_parameters.cc:147]                         Rows:400
-[aurora930_node-9] I0628 17:46:52.451032 38913 camera_parameters.cc:148]                         Cols:640
-[aurora930_node-9] I0628 17:46:52.451058 38913 camera_parameters.cc:149]                 Intrinsics:
-[aurora930_node-9] I0628 17:46:52.451083 38913 camera_parameters.cc:150]                         fx: 416.49
-[aurora930_node-9] I0628 17:46:52.451116 38913 camera_parameters.cc:151]                         fy: 417.383
-[aurora930_node-9] I0628 17:46:52.451148 38913 camera_parameters.cc:152]                         cx: 316.832
-[aurora930_node-9] I0628 17:46:52.451179 38913 camera_parameters.cc:153]                         cy: 188.753
-[aurora930_node-9] I0628 17:46:52.451210 38913 camera_parameters.cc:154]                         k1: 0.00611878
-[aurora930_node-9] I0628 17:46:52.451248 38913 camera_parameters.cc:155]                         k2: -0.0490436
-[aurora930_node-9] I0628 17:46:52.451279 38913 camera_parameters.cc:156]                         p1: 0.000399548
-[aurora930_node-9] I0628 17:46:52.451311 38913 camera_parameters.cc:157]                         p2: 0.000563892
-[aurora930_node-9] I0628 17:46:52.451349 38913 camera_parameters.cc:158]                         k3: 0.0308458
-[aurora930_node-9] I0628 17:46:52.451380 38913 camera_parameters.cc:141] BOOT_ORDER_1::  Ir to Rgb Extrinsic:
-[aurora930_node-9] I0628 17:46:52.451411 38913 camera_parameters.cc:162]                 Extrinsics:
-[aurora930_node-9] I0628 17:46:52.451437 38913 camera_parameters.cc:163]                         Rotation[0]: 0.999973, 0.00724076, -0.00112023
-[aurora930_node-9] I0628 17:46:52.451474 38913 camera_parameters.cc:165]                         Rotation[1]: -0.00724006, 0.999973, 0.000633162
-[aurora930_node-9] I0628 17:46:52.451516 38913 camera_parameters.cc:167]                         Rotation[2]: 0.00112478, -0.000625033, 0.999999
-[aurora930_node-9] I0628 17:46:52.451604 38913 camera_parameters.cc:169]                         Translation: -9.88662, 0.117748, 0.603513
-[aurora930_node-9] 2026-06-28 17:46:52.452 (   1.289s) [        8EE34020]      aurora900_impl.cc:578   INFO| stream_mask_:0, rgb_stream_count_:1
-[imu_madgwick_filter.py-4] [INFO] [1782640012.467702793] [imu_madgwick_filter]: [imu_madgwick] init: beta=0.0330, gyro_noise=0.0010, accel_noise=0.050
-[lifecycle_manager-15] [INFO] [1782640012.468912711] [lifecycle_manager_keepout]: Server keepout_filter_info_server connected with bond.
-[lifecycle_manager-15] [INFO] [1782640012.469088503] [lifecycle_manager_keepout]: Managed nodes are active
-[lifecycle_manager-15] [INFO] [1782640012.469161003] [lifecycle_manager_keepout]: Creating bond timer...
-[imu_madgwick_filter.py-4] [INFO] [1782640012.474020259] [imu_madgwick_filter]: [imu_madgwick] FIRST_MSG received from /imu/data_raw, starting filter pipeline
-[imu_madgwick_filter.py-4] [INFO] [1782640012.476895929] [imu_madgwick_filter]: [imu_madgwick] accel init: roll=-1.6deg, pitch=0.3deg
-[bmi088_iio_bridge.py-5] [INFO] [1782640012.548644018] [bmi088_iio_bridge]: BMI088 IIO Bridge 启动 @ 100Hz -> /imu_data  [OK]
-[imu_madgwick_filter.py-6] [INFO] [1782640012.573825215] [imu_madgwick_bmi088]: [imu_madgwick] FIRST_MSG received from /imu/data_raw, starting filter pipeline
-[imu_madgwick_filter.py-6] [INFO] [1782640012.576302635] [imu_madgwick_bmi088]: [imu_madgwick] accel init: roll=-2.3deg, pitch=-3.6deg
-[qr_decision-11] [INFO] [1782640012.584468062] [qr_decision]: qr_decision started: cooldown=3.0s, awaiting /sign from qr_decoder
-[aurora930_node-9] 2026-06-28 17:46:52.784 (   1.621s) [        53FF57E0]deptrum_camera_aurora93:407    ERR| recv first frame time is 1782640012784
-[lslidar_driver_node-2] port = /dev/ttyACM1, baud_rate = 230400
-[lslidar_driver_node-2] open_port /dev/ttyACM1 OK !
-[vision_ai_node-12] [INFO] [1782640016.073662868] [vision_ai_node]: 成功加载配置文件: /userdata/dev_ws/install/racing_vision_ai/share/racing_vision_ai/config/vision_ai_config.yaml
-[vision_ai_node-12] [INFO] [1782640016.438294526] [vision_ai_node]: Volcengine Ark client initialized successfully
-[vision_ai_node-12] [INFO] [1782640016.453017502] [vision_ai_node]: Vision AI Node initialized
-[vision_ai_node-12] [INFO] [1782640016.455457255] [vision_ai_node]: Waiting for sign4return=100 signal...
-[vision_ai_node-12] [INFO] [1782640016.457733425] [vision_ai_node]: Results will be published to vlm_result
-[INFO] [component_container_isolated-16]: process started with pid [39170]
-[bmi088_iio_bridge.py-5] [INFO] [1782640017.811188218] [bmi088_iio_bridge]:   gyro bias calibrated: (0.003066, 0.000994, -0.003082) rad/s
-[INFO] [competition_master_stage3.py-17]: process started with pid [39172]
-[INFO] [rviz2-18]: process started with pid [39176]
-[component_container_isolated-16] [INFO] [1782640018.795902555] [nav2_container]: Load Library: /opt/ros/humble/lib/libcontroller_server_core.so
-[component_container_isolated-16] [INFO] [1782640018.824594007] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_controller::ControllerServer>
-[component_container_isolated-16] [INFO] [1782640018.824770132] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_controller::ControllerServer>
-[component_container_isolated-16] [INFO] [1782640018.897760056] [controller_server]:
-[component_container_isolated-16]       controller_server lifecycle node launched.
-[component_container_isolated-16]       Waiting on external lifecycle transitions to activate
-[component_container_isolated-16]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[component_container_isolated-16] [INFO] [1782640018.922892670] [controller_server]: Creating controller server
-[component_container_isolated-16] [INFO] [1782640019.000820433] [local_costmap.local_costmap]:
-[component_container_isolated-16]       local_costmap lifecycle node launched.
-[component_container_isolated-16]       Waiting on external lifecycle transitions to activate
-[component_container_isolated-16]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[component_container_isolated-16] [INFO] [1782640019.003373519] [local_costmap.local_costmap]: Creating Costmap
+[component_container_isolated-17] [INFO] [1783057340.373387012] [nav2_container]: Load Library: /opt/ros/humble/lib/libcontroller_server_core.so
+[component_container_isolated-17] [INFO] [1783057340.421334894] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_controller::ControllerServer>
+[component_container_isolated-17] [INFO] [1783057340.421589102] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_controller::ControllerServer>
+[component_container_isolated-17] [INFO] [1783057340.612654298] [controller_server]:
+[component_container_isolated-17]       controller_server lifecycle node launched.
+[component_container_isolated-17]       Waiting on external lifecycle transitions to activate
+[component_container_isolated-17]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-17] [INFO] [1783057340.647801345] [controller_server]: Creating controller server
+[component_container_isolated-17] [INFO] [1783057340.823534872] [local_costmap.local_costmap]:
+[component_container_isolated-17]       local_costmap lifecycle node launched.
+[component_container_isolated-17]       Waiting on external lifecycle transitions to activate
+[component_container_isolated-17]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-17] [INFO] [1783057340.826619164] [local_costmap.local_costmap]: Creating Costmap
+[component_container_isolated-17] [INFO] [1783057340.872228713] [nav2_container]: Load Library: /opt/ros/humble/lib/libamcl_core.so
 [INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/controller_server' in container '/nav2_container'
-[component_container_isolated-16] [INFO] [1782640019.024904587] [nav2_container]: Load Library: /opt/ros/humble/lib/libmap_server_core.so
-[component_container_isolated-16] [INFO] [1782640019.077216943] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_map_server::CostmapFilterInfoServer>
-[component_container_isolated-16] [INFO] [1782640019.077447027] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_map_server::MapSaver>
-[component_container_isolated-16] [INFO] [1782640019.077552402] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_map_server::MapServer>
-[component_container_isolated-16] [INFO] [1782640019.077631819] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_map_server::MapServer>
-[component_container_isolated-16] [INFO] [1782640019.131945511] [map_server]:
-[component_container_isolated-16]       map_server lifecycle node launched.
-[component_container_isolated-16]       Waiting on external lifecycle transitions to activate
-[component_container_isolated-16]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[component_container_isolated-16] [INFO] [1782640019.132386720] [map_server]: Creating
-[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/map_server' in container '/nav2_container'
-[component_container_isolated-16] [INFO] [1782640019.138504685] [nav2_container]: Load Library: /opt/ros/humble/lib/libsmoother_server_core.so
-[component_container_isolated-16] [INFO] [1782640019.145837194] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_smoother::SmootherServer>
-[component_container_isolated-16] [INFO] [1782640019.146011486] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_smoother::SmootherServer>
-[component_container_isolated-16] [INFO] [1782640019.228161754] [smoother_server]:
-[component_container_isolated-16]       smoother_server lifecycle node launched.
-[component_container_isolated-16]       Waiting on external lifecycle transitions to activate
-[component_container_isolated-16]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[component_container_isolated-16] [INFO] [1782640019.240173227] [smoother_server]: Creating smoother server
-[component_container_isolated-16] [INFO] [1782640019.252187950] [nav2_container]: Load Library: /opt/ros/humble/lib/libamcl_core.so
-[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/smoother_server' in container '/nav2_container'
-[component_container_isolated-16] [INFO] [1782640019.262722255] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_amcl::AmclNode>
-[component_container_isolated-16] [INFO] [1782640019.262923589] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_amcl::AmclNode>
-[component_container_isolated-16] [INFO] [1782640019.343406521] [amcl]:
-[component_container_isolated-16]       amcl lifecycle node launched.
-[component_container_isolated-16]       Waiting on external lifecycle transitions to activate
-[component_container_isolated-16]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[component_container_isolated-16] [INFO] [1782640019.345661732] [amcl]: Creating
+[component_container_isolated-17] [INFO] [1783057340.900362050] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_amcl::AmclNode>
+[component_container_isolated-17] [INFO] [1783057340.900558592] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_amcl::AmclNode>
+[component_container_isolated-17] [INFO] [1783057341.047698073] [amcl]:
+[component_container_isolated-17]       amcl lifecycle node launched.
+[component_container_isolated-17]       Waiting on external lifecycle transitions to activate
+[component_container_isolated-17]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-17] [INFO] [1783057341.050511657] [amcl]: Creating
+[component_container_isolated-17] [INFO] [1783057341.236543810] [nav2_container]: Load Library: /opt/ros/humble/lib/libsmoother_server_core.so
 [INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/amcl' in container '/nav2_container'
-[component_container_isolated-16] [INFO] [1782640019.430317670] [nav2_container]: Load Library: /opt/ros/humble/lib/libplanner_server_core.so
-[component_container_isolated-16] [INFO] [1782640019.435120759] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_planner::PlannerServer>
-[component_container_isolated-16] [INFO] [1782640019.435285259] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_planner::PlannerServer>
-[component_container_isolated-16] [INFO] [1782640019.522733908] [planner_server]:
-[component_container_isolated-16]       planner_server lifecycle node launched.
-[component_container_isolated-16]       Waiting on external lifecycle transitions to activate
-[component_container_isolated-16]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[component_container_isolated-16] [INFO] [1782640019.532781296] [planner_server]: Creating
-[component_container_isolated-16] [INFO] [1782640019.604592842] [global_costmap.global_costmap]:
-[component_container_isolated-16]       global_costmap lifecycle node launched.
-[component_container_isolated-16]       Waiting on external lifecycle transitions to activate
-[component_container_isolated-16]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[component_container_isolated-16] [INFO] [1782640019.607481304] [global_costmap.global_costmap]: Creating Costmap
-[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/planner_server' in container '/nav2_container'
-[component_container_isolated-16] [INFO] [1782640019.637332174] [nav2_container]: Load Library: /opt/ros/humble/lib/libnav2_lifecycle_manager_core.so
-[component_container_isolated-16] [INFO] [1782640019.640899970] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_lifecycle_manager::LifecycleManager>
-[component_container_isolated-16] [INFO] [1782640019.641107679] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_lifecycle_manager::LifecycleManager>
-[component_container_isolated-16] [INFO] [1782640019.697931624] [lifecycle_manager_localization]: Creating
-[component_container_isolated-16] [INFO] [1782640019.722083987] [lifecycle_manager_localization]: Creating and initializing lifecycle service clients
-[component_container_isolated-16] [INFO] [1782640019.722747029] [nav2_container]: Load Library: /opt/ros/humble/lib/libbehavior_server_core.so
+[component_container_isolated-17] [INFO] [1783057341.242817978] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_smoother::SmootherServer>
+[component_container_isolated-17] [INFO] [1783057341.242994145] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_smoother::SmootherServer>
+[component_container_isolated-17] [INFO] [1783057341.369877539] [smoother_server]:
+[component_container_isolated-17]       smoother_server lifecycle node launched.
+[component_container_isolated-17]       Waiting on external lifecycle transitions to activate
+[component_container_isolated-17]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-17] [INFO] [1783057341.380920582] [smoother_server]: Creating smoother server
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/smoother_server' in container '/nav2_container'
+[component_container_isolated-17] [INFO] [1783057341.395750001] [nav2_container]: Load Library: /opt/ros/humble/lib/libnav2_lifecycle_manager_core.so
+[component_container_isolated-17] [INFO] [1783057341.399126835] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_lifecycle_manager::LifecycleManager>
+[component_container_isolated-17] [INFO] [1783057341.399305002] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_lifecycle_manager::LifecycleManager>
+[component_container_isolated-17] [INFO] [1783057341.500481934] [lifecycle_manager_localization]: Creating
+[component_container_isolated-17] [INFO] [1783057341.542717190] [nav2_container]: Load Library: /opt/ros/humble/lib/libplanner_server_core.so
+[component_container_isolated-17] [INFO] [1783057341.546170316] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_planner::PlannerServer>
+[component_container_isolated-17] [INFO] [1783057341.546323983] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_planner::PlannerServer>
 [INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/lifecycle_manager_localization' in container '/nav2_container'
-[component_container_isolated-16] [INFO] [1782640019.747807477] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<behavior_server::BehaviorServer>
-[component_container_isolated-16] [INFO] [1782640019.747980144] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<behavior_server::BehaviorServer>
-[component_container_isolated-16] [INFO] [1782640019.776242012] [lifecycle_manager_localization]: Starting managed nodes bringup...
-[component_container_isolated-16] [INFO] [1782640019.779515183] [lifecycle_manager_localization]: Configuring map_server
-[component_container_isolated-16] [INFO] [1782640019.782008936] [map_server]: Configuring
-[component_container_isolated-16] [INFO] [1782640019.782625603] [map_io]: Loading yaml file: /userdata/dev_ws/install/originbot_navigation/share/originbot_navigation/maps/room.yaml
-[component_container_isolated-16] [INFO] [1782640019.784149147] [map_io]: resolution: 0.05
-[component_container_isolated-16] [INFO] [1782640019.784256522] [map_io]: origin[0]: -2.65
-[component_container_isolated-16] [INFO] [1782640019.784289647] [map_io]: origin[1]: -4.5
-[component_container_isolated-16] [INFO] [1782640019.784317439] [map_io]: origin[2]: 0
-[component_container_isolated-16] [INFO] [1782640019.784347022] [map_io]: free_thresh: 0.25
-[component_container_isolated-16] [INFO] [1782640019.784375480] [map_io]: occupied_thresh: 0.65
-[component_container_isolated-16] [INFO] [1782640019.784419397] [map_io]: mode: trinary
-[component_container_isolated-16] [INFO] [1782640019.784451355] [map_io]: negate: 0
-[component_container_isolated-16] [INFO] [1782640019.785240148] [map_io]: Loading image_file: /userdata/dev_ws/install/originbot_navigation/share/originbot_navigation/maps/room.pgm
-[component_container_isolated-16] [INFO] [1782640019.821099192] [map_io]: Read map /userdata/dev_ws/install/originbot_navigation/share/originbot_navigation/maps/room.pgm: 163 X 141 map @ 0.05 m/cell
-[component_container_isolated-16] [INFO] [1782640019.840263966] [behavior_server]:
-[component_container_isolated-16]       behavior_server lifecycle node launched.
-[component_container_isolated-16]       Waiting on external lifecycle transitions to activate
-[component_container_isolated-16]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[component_container_isolated-16] [INFO] [1782640019.848852060] [lifecycle_manager_localization]: Configuring amcl
-[component_container_isolated-16] [INFO] [1782640019.849818519] [amcl]: Configuring
-[component_container_isolated-16] [INFO] [1782640019.850258020] [amcl]: initTransforms
+[component_container_isolated-17] [INFO] [1783057341.571677362] [lifecycle_manager_localization]: Creating and initializing lifecycle service clients
+[component_container_isolated-17] [INFO] [1783057341.652750499] [lifecycle_manager_localization]: Starting managed nodes bringup...
+[component_container_isolated-17] [INFO] [1783057341.653588666] [lifecycle_manager_localization]: Configuring map_server
+[component_container_isolated-17] [INFO] [1783057341.655875083] [map_server]: Configuring
+[component_container_isolated-17] [INFO] [1783057341.656191458] [map_io]: Loading yaml file: /userdata/dev_ws/install/originbot_navigation/share/originbot_navigation/maps/room.yaml
+[component_container_isolated-17] [INFO] [1783057341.657334708] [map_io]: resolution: 0.05
+[component_container_isolated-17] [INFO] [1783057341.657432291] [map_io]: origin[0]: -2.65
+[component_container_isolated-17] [INFO] [1783057341.657466708] [map_io]: origin[1]: -4.5
+[component_container_isolated-17] [INFO] [1783057341.657494208] [map_io]: origin[2]: 0
+[component_container_isolated-17] [INFO] [1783057341.657522375] [map_io]: free_thresh: 0.25
+[component_container_isolated-17] [INFO] [1783057341.657550958] [map_io]: occupied_thresh: 0.65
+[component_container_isolated-17] [INFO] [1783057341.657597375] [map_io]: mode: trinary
+[component_container_isolated-17] [INFO] [1783057341.657629166] [map_io]: negate: 0
+[component_container_isolated-17] [INFO] [1783057341.658305500] [map_io]: Loading image_file: /userdata/dev_ws/install/originbot_navigation/share/originbot_navigation/maps/room.pgm
+[component_container_isolated-17] [INFO] [1783057341.706891466] [planner_server]:
+[component_container_isolated-17]       planner_server lifecycle node launched.
+[component_container_isolated-17]       Waiting on external lifecycle transitions to activate
+[component_container_isolated-17]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-17] [INFO] [1783057341.709917008] [map_io]: Read map /userdata/dev_ws/install/originbot_navigation/share/originbot_navigation/maps/room.pgm: 163 X 141 map @ 0.05 m/cell
+[component_container_isolated-17] [INFO] [1783057341.732926720] [planner_server]: Creating
+[component_container_isolated-17] [INFO] [1783057341.766588766] [lifecycle_manager_localization]: Configuring amcl
+[component_container_isolated-17] [INFO] [1783057341.767437558] [amcl]: Configuring
+[component_container_isolated-17] [INFO] [1783057341.768985392] [amcl]: initTransforms
+[component_container_isolated-17] [INFO] [1783057341.873578574] [amcl]: initPubSub
+[component_container_isolated-17] [INFO] [1783057341.935869834] [amcl]: Subscribed to map topic.
+[component_container_isolated-17] [INFO] [1783057341.947168752] [global_costmap.global_costmap]:
+[component_container_isolated-17]       global_costmap lifecycle node launched.
+[component_container_isolated-17]       Waiting on external lifecycle transitions to activate
+[component_container_isolated-17]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-17] [INFO] [1783057341.957541171] [global_costmap.global_costmap]: Creating Costmap
+[component_container_isolated-17] [INFO] [1783057341.987562759] [lifecycle_manager_localization]: Activating map_server
+[component_container_isolated-17] [INFO] [1783057341.988674175] [map_server]: Activating
+[component_container_isolated-17] [INFO] [1783057341.989161801] [map_server]: Creating bond (map_server) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1783057342.015155638] [amcl]: Received a 163 X 141 map @ 0.050 m/pix
+[hobot_codec_republish-13] [WARN] [1783057342.039350725] [vlm_jpeg_encoder]: Sub imgRaw fps [12.41]
+[hobot_codec_republish-13] [WARN] [1783057342.042005850] [vlm_jpeg_encoder]: Pub img fps [12.41]
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/planner_server' in container '/nav2_container'
+[component_container_isolated-17] [INFO] [1783057342.066837187] [nav2_container]: Load Library: /opt/ros/humble/lib/libbehavior_server_core.so
+[component_container_isolated-17] [INFO] [1783057342.085313857] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<behavior_server::BehaviorServer>
+[component_container_isolated-17] [INFO] [1783057342.085519774] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<behavior_server::BehaviorServer>
+[component_container_isolated-17] [INFO] [1783057342.106137402] [lifecycle_manager_localization]: Server map_server connected with bond.
+[component_container_isolated-17] [INFO] [1783057342.106303485] [lifecycle_manager_localization]: Activating amcl
+[component_container_isolated-17] [INFO] [1783057342.107164902] [amcl]: Activating
+[component_container_isolated-17] [INFO] [1783057342.107414527] [amcl]: initialPoseReceived
+[component_container_isolated-17] [INFO] [1783057342.107897860] [amcl]: Setting pose (1783057342.107893): -1.985 -0.014 0.262
+[component_container_isolated-17] [INFO] [1783057342.109748236] [amcl]: Creating bond (amcl) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1783057342.139734032] [amcl]: createLaserObject
+[component_container_isolated-17] [INFO] [1783057342.232843588] [lifecycle_manager_localization]: Server amcl connected with bond.
+[component_container_isolated-17] [INFO] [1783057342.233032171] [lifecycle_manager_localization]: Managed nodes are active
+[component_container_isolated-17] [INFO] [1783057342.233153546] [lifecycle_manager_localization]: Creating bond timer...
+[component_container_isolated-17] [INFO] [1783057342.241040964] [behavior_server]:
+[component_container_isolated-17]       behavior_server lifecycle node launched.
+[component_container_isolated-17]       Waiting on external lifecycle transitions to activate
+[component_container_isolated-17]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
 [INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/behavior_server' in container '/nav2_container'
-[component_container_isolated-16] [INFO] [1782640019.892966781] [nav2_container]: Load Library: /opt/ros/humble/lib/libbt_navigator_core.so
-[component_container_isolated-16] [INFO] [1782640019.904174461] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_bt_navigator::BtNavigator>
-[component_container_isolated-16] [INFO] [1782640019.904349420] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_bt_navigator::BtNavigator>
-[component_container_isolated-16] [INFO] [1782640019.920457731] [amcl]: initPubSub
-[component_container_isolated-16] [INFO] [1782640019.961675407] [amcl]: Subscribed to map topic.
-[component_container_isolated-16] [INFO] [1782640019.990759318] [lifecycle_manager_localization]: Activating map_server
-[component_container_isolated-16] [INFO] [1782640019.991629610] [map_server]: Activating
-[component_container_isolated-16] [INFO] [1782640019.992161944] [map_server]: Creating bond (map_server) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782640019.994232780] [amcl]: Received a 163 X 141 map @ 0.050 m/pix
-[component_container_isolated-16] [INFO] [1782640020.039475753] [bt_navigator]:
-[component_container_isolated-16]       bt_navigator lifecycle node launched.
-[component_container_isolated-16]       Waiting on external lifecycle transitions to activate
-[component_container_isolated-16]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-17] [INFO] [1783057342.287373221] [nav2_container]: Load Library: /opt/ros/humble/lib/libbt_navigator_core.so
+[component_container_isolated-17] [INFO] [1783057342.297485098] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_bt_navigator::BtNavigator>
+[component_container_isolated-17] [INFO] [1783057342.297810890] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_bt_navigator::BtNavigator>
+[component_container_isolated-17] [INFO] [1783057342.442985745] [bt_navigator]:
+[component_container_isolated-17]       bt_navigator lifecycle node launched.
+[component_container_isolated-17]       Waiting on external lifecycle transitions to activate
+[component_container_isolated-17]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-17] [INFO] [1783057342.443516870] [bt_navigator]: Creating
 [INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/bt_navigator' in container '/nav2_container'
-[component_container_isolated-16] [INFO] [1782640020.039812628] [bt_navigator]: Creating
-[component_container_isolated-16] [INFO] [1782640020.061029987] [nav2_container]: Load Library: /opt/ros/humble/lib/libwaypoint_follower_core.so
-[component_container_isolated-16] [INFO] [1782640020.064073783] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_waypoint_follower::WaypointFollower>
-[component_container_isolated-16] [INFO] [1782640020.064281991] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_waypoint_follower::WaypointFollower>
-[component_container_isolated-16] [INFO] [1782640020.120304435] [lifecycle_manager_localization]: Server map_server connected with bond.
-[component_container_isolated-16] [INFO] [1782640020.120469436] [lifecycle_manager_localization]: Activating amcl
-[component_container_isolated-16] [INFO] [1782640020.121354062] [amcl]: Activating
-[component_container_isolated-16] [INFO] [1782640020.121578020] [amcl]: initialPoseReceived
-[component_container_isolated-16] [INFO] [1782640020.122052688] [amcl]: Setting pose (1782640020.122047): -1.985 -0.014 0.262
-[component_container_isolated-16] [INFO] [1782640020.123918231] [amcl]: Creating bond (amcl) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1783057342.464261665] [nav2_container]: Load Library: /opt/ros/humble/lib/libwaypoint_follower_core.so
+[component_container_isolated-17] [INFO] [1783057342.467459499] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_waypoint_follower::WaypointFollower>
+[component_container_isolated-17] [INFO] [1783057342.467637124] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_waypoint_follower::WaypointFollower>
+[component_container_isolated-17] [INFO] [1783057342.557161888] [waypoint_follower]:
+[component_container_isolated-17]       waypoint_follower lifecycle node launched.
+[component_container_isolated-17]       Waiting on external lifecycle transitions to activate
+[component_container_isolated-17]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-17] [INFO] [1783057342.573297724] [waypoint_follower]: Creating
 [INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/waypoint_follower' in container '/nav2_container'
-[component_container_isolated-16] [INFO] [1782640020.146131175] [waypoint_follower]:
-[component_container_isolated-16]       waypoint_follower lifecycle node launched.
-[component_container_isolated-16]       Waiting on external lifecycle transitions to activate
-[component_container_isolated-16]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
-[component_container_isolated-16] [INFO] [1782640020.149055304] [waypoint_follower]: Creating
-[component_container_isolated-16] [INFO] [1782640020.152276516] [amcl]: createLaserObject
-[component_container_isolated-16] [INFO] [1782640020.172752250] [nav2_container]: Load Library: /opt/ros/humble/lib/libvelocity_smoother_core.so
-[component_container_isolated-16] [INFO] [1782640020.176309713] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_velocity_smoother::VelocitySmoother>
-[component_container_isolated-16] [INFO] [1782640020.176463963] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_velocity_smoother::VelocitySmoother>
-[component_container_isolated-16] [INFO] [1782640020.236386370] [lifecycle_manager_localization]: Server amcl connected with bond.
-[component_container_isolated-16] [INFO] [1782640020.236568745] [lifecycle_manager_localization]: Managed nodes are active
-[component_container_isolated-16] [INFO] [1782640020.236686704] [lifecycle_manager_localization]: Creating bond timer...
-[component_container_isolated-16] [INFO] [1782640020.290885645] [velocity_smoother]:
-[component_container_isolated-16]       velocity_smoother lifecycle node launched.
-[component_container_isolated-16]       Waiting on external lifecycle transitions to activate
-[component_container_isolated-16]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-17] [INFO] [1783057342.617428230] [nav2_container]: Load Library: /opt/ros/humble/lib/libvelocity_smoother_core.so
+[component_container_isolated-17] [INFO] [1783057342.626883565] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_velocity_smoother::VelocitySmoother>
+[component_container_isolated-17] [INFO] [1783057342.631256066] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_velocity_smoother::VelocitySmoother>
+[component_container_isolated-17] [INFO] [1783057342.746842167] [velocity_smoother]:
+[component_container_isolated-17]       velocity_smoother lifecycle node launched.
+[component_container_isolated-17]       Waiting on external lifecycle transitions to activate
 [INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/velocity_smoother' in container '/nav2_container'
-[component_container_isolated-16] [INFO] [1782640020.306241872] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_lifecycle_manager::LifecycleManager>
-[component_container_isolated-16] [INFO] [1782640020.306423289] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_lifecycle_manager::LifecycleManager>
-[component_container_isolated-16] [INFO] [1782640020.402642658] [lifecycle_manager_navigation]: Creating
-[component_container_isolated-16] [INFO] [1782640020.447042546] [lifecycle_manager_navigation]: Creating and initializing lifecycle service clients
+[component_container_isolated-17]       See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[component_container_isolated-17] [INFO] [1783057342.767734670] [nav2_container]: Found class: rclcpp_components::NodeFactoryTemplate<nav2_lifecycle_manager::LifecycleManager>
+[component_container_isolated-17] [INFO] [1783057342.767902087] [nav2_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<nav2_lifecycle_manager::LifecycleManager>
+[component_container_isolated-17] [INFO] [1783057342.917933693] [lifecycle_manager_navigation]: Creating
 [INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/lifecycle_manager_navigation' in container '/nav2_container'
-[component_container_isolated-16] [INFO] [1782640020.544412540] [lifecycle_manager_navigation]: Starting managed nodes bringup...
-[component_container_isolated-16] [INFO] [1782640020.544922458] [lifecycle_manager_navigation]: Configuring controller_server
-[component_container_isolated-16] [INFO] [1782640020.547649461] [controller_server]: Configuring controller interface
-[component_container_isolated-16] [INFO] [1782640020.548701254] [controller_server]: getting goal checker plugins..
-[component_container_isolated-16] [INFO] [1782640020.555775554] [controller_server]: Controller frequency set to 10.0000Hz
-[component_container_isolated-16] [INFO] [1782640020.556152763] [local_costmap.local_costmap]: Configuring
-[component_container_isolated-16] [INFO] [1782640020.596542271] [local_costmap.local_costmap]: Using plugin "obstacle_layer"
-[component_container_isolated-16] [INFO] [1782640020.631823690] [local_costmap.local_costmap]: Subscribed to Topics: scan aurora_points
-[component_container_isolated-16] [INFO] [1782640020.742622993] [local_costmap.local_costmap]: Initialized plugin "obstacle_layer"
-[component_container_isolated-16] [INFO] [1782640020.742803534] [local_costmap.local_costmap]: Using plugin "keepout_filter"
-[component_container_isolated-16] [INFO] [1782640020.768787066] [local_costmap.local_costmap]: Initialized plugin "keepout_filter"
-[component_container_isolated-16] [INFO] [1782640020.770423735] [local_costmap.local_costmap]: Using plugin "inflation_layer"
-[component_container_isolated-16] [INFO] [1782640020.791403053] [local_costmap.local_costmap]: Initialized plugin "inflation_layer"
-[component_container_isolated-16] [INFO] [1782640020.852240086] [controller_server]: Created progress_checker : progress_checker of type nav2_controller::SimpleProgressChecker
-[component_container_isolated-16] [INFO] [1782640020.859769220] [controller_server]: Created goal checker : goal_checker of type nav2_controller::SimpleGoalChecker
-[component_container_isolated-16] [INFO] [1782640020.871954735] [controller_server]: Controller Server has goal_checker  goal checkers available.
-[component_container_isolated-16] [INFO] [1782640020.877616742] [controller_server]: Created controller : FollowPath of type nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController
-[component_container_isolated-16] [INFO] [1782640020.979094658] [controller_server]: Controller Server has FollowPath  controllers available.
-[component_container_isolated-16] [INFO] [1782640021.030676222] [lifecycle_manager_navigation]: Configuring smoother_server
-[component_container_isolated-16] [INFO] [1782640021.033007975] [smoother_server]: Configuring smoother server
-[component_container_isolated-16] [INFO] [1782640021.109094193] [smoother_server]: Created smoother : SmoothPath of type nav2_constrained_smoother/ConstrainedSmoother
-[component_container_isolated-16] [INFO] [1782640021.164242344] [smoother_server]: Smoother Server has SmoothPath  smoothers available.
-[component_container_isolated-16] [INFO] [1782640021.204080643] [lifecycle_manager_navigation]: Configuring planner_server
-[component_container_isolated-16] [INFO] [1782640021.204965270] [planner_server]: Configuring
-[component_container_isolated-16] [INFO] [1782640021.205279353] [global_costmap.global_costmap]: Configuring
-[component_container_isolated-16] [INFO] [1782640021.247895614] [global_costmap.global_costmap]: Using plugin "static_layer"
-[component_container_isolated-16] [INFO] [1782640021.272622728] [global_costmap.global_costmap]: Subscribing to the map topic (/map) with transient local durability
-[component_container_isolated-16] [INFO] [1782640021.277577817] [global_costmap.global_costmap]: Initialized plugin "static_layer"
-[component_container_isolated-16] [INFO] [1782640021.277737609] [global_costmap.global_costmap]: Using plugin "obstacle_layer"
-[component_container_isolated-16] [INFO] [1782640021.288184330] [global_costmap.global_costmap]: Subscribed to Topics: scan aurora_points
-[component_container_isolated-16] [INFO] [1782640021.366322135] [global_costmap.global_costmap]: Initialized plugin "obstacle_layer"
-[component_container_isolated-16] [INFO] [1782640021.366487218] [global_costmap.global_costmap]: Using plugin "keepout_filter"
-[component_container_isolated-16] [INFO] [1782640021.384735991] [global_costmap.global_costmap]: Initialized plugin "keepout_filter"
-[component_container_isolated-16] [INFO] [1782640021.384909699] [global_costmap.global_costmap]: Using plugin "inflation_layer"
-[component_container_isolated-16] [INFO] [1782640021.400784635] [global_costmap.global_costmap]: Initialized plugin "inflation_layer"
-[competition_master_stage3.py-17] [INFO] [1782640021.402419137] [competition_master_stage3]: ============================================================
-[competition_master_stage3.py-17] [INFO] [1782640021.407184935] [competition_master_stage3]: === [Stage 3] 总控节点初始化 ===
-[competition_master_stage3.py-17] [INFO] [1782640021.412327316] [competition_master_stage3]:   QR点:    (0.41, -3.17, yaw=0.00)
-[competition_master_stage3.py-17] [INFO] [1782640021.419199825] [competition_master_stage3]:   通道入口: (0.38, -1.10, yaw=0.00)
-[competition_master_stage3.py-17] [INFO] [1782640021.423912789] [competition_master_stage3]:   P点:     (-1.99, -0.01, yaw=0.26)
-[competition_master_stage3.py-17] [INFO] [1782640021.429232795] [competition_master_stage3]:   cruise_cw: 3 路点 → VLM=(3.01, -1.16)
-[competition_master_stage3.py-17] [INFO] [1782640021.434413010] [competition_master_stage3]:   cruise_ccw: 4 路点 → VLM=(2.17, 0.69)
-[competition_master_stage3.py-17] [INFO] [1782640021.445415065] [competition_master_stage3]:   超时: total=180.0s QR=90.0s entry=60.0s cruise=180.0s vlm=30.0s return=120.0s
-[competition_master_stage3.py-17] [INFO] [1782640021.449340945] [competition_master_stage3]:   回退QR方向: 逆时针
-[competition_master_stage3.py-17] [INFO] [1782640021.453997659] [competition_master_stage3]:   VLM结果话题: vlm_result
-[competition_master_stage3.py-17] [INFO] [1782640021.458749123] [competition_master_stage3]: ============================================================
-[component_container_isolated-16] [INFO] [1782640021.469101844] [global_costmap.global_costmap]: StaticLayer: Resizing costmap to 163 X 141 at 0.050000 m/pix
-[component_container_isolated-16] [INFO] [1782640021.493349166] [planner_server]: Created global planner plugin GridBased of type nav2_smac_planner/SmacPlannerHybrid
-[component_container_isolated-16] [INFO] [1782640021.494189625] [planner_server]: Configuring GridBased of type SmacPlannerHybrid
-[component_container_isolated-16] [INFO] [1782640021.536715136] [planner_server]: Even sized heuristic lookup table size set 200.000000, increasing size by 1 to make odd
-[imu_madgwick_filter.py-6] [INFO] [1782640022.309602794] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=462 q_w=0.9993 angle=4.1deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782640022.332512614] [imu_madgwick_filter]: [imu_madgwick ->] msgs=200 q_w=0.9966 angle=9.4deg beta=0.0330
-[rviz2-18] [INFO] [1782640023.110000278] [rviz2]: Stereo is NOT SUPPORTED
-[rviz2-18] [INFO] [1782640023.110898154] [rviz2]: OpenGl version: 4.5 (GLSL 4.5)
-[rviz2-18] [INFO] [1782640023.534927466] [rviz2]: Stereo is NOT SUPPORTED
-[rviz2-18] [INFO] [1782640026.076164085] [rviz2]: Trying to create a map of size 163 x 141 using 1 swatches
-[rviz2-18] [ERROR] [1782640026.480546998] [rviz2]: Vertex Program:rviz/glsl120/indexed_8bit_image.vert Fragment Program:rviz/glsl120/indexed_8bit_image.frag GLSL link result :
-[rviz2-18] active samplers with a different type refer to the same texture image unit
-[qr_decoder-10] [INFO] [1782640027.989525681] [qr_decoder_zbar]: [qr_decoder] SCAN_STATUS frame=200 last_qr_frame=-1 gap=-1 frames rejects=0
-[imu_madgwick_filter.py-6] [INFO] [1782640032.309844011] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=1052 q_w=0.9994 angle=4.1deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782640032.344978596] [imu_madgwick_filter]: [imu_madgwick ->] msgs=400 q_w=0.9866 angle=18.8deg beta=0.0330
-[component_container_isolated-16] Reallocing temp weights 301 - 60
-[competition_master_stage3.py-17] [INFO] [1782640037.727818001] [competition_master_stage3]: [DIAG] state=INIT pos=(-2.00,-0.02) yaw=19deg cmd=(vx=0.00 wz=0.00) elapsed=0.0s cpuFreq=1500MHz cpuT=78C cpu=62% mem=17%
-[component_container_isolated-16] [INFO] [1782640037.860090954] [planner_server]: Configured plugin GridBased of type SmacPlannerHybrid with maximum iterations 2027, max on approach iterations 300, and not allowing unknown traversal. Tolerance 0.50.Using motion model: Reeds-Shepp.
-[component_container_isolated-16] [INFO] [1782640037.861159164] [planner_server]: Planner Server has GridBased  planners available.
-[component_container_isolated-16] [INFO] [1782640037.914419771] [lifecycle_manager_navigation]: Configuring behavior_server
-[component_container_isolated-16] [INFO] [1782640037.919339068] [behavior_server]: Configuring
-[component_container_isolated-16] [INFO] [1782640037.955761196] [behavior_server]: Creating behavior plugin spin of type nav2_behaviors/Spin
-[component_container_isolated-16] [INFO] [1782640037.959456325] [behavior_server]: Configuring spin
-[component_container_isolated-16] [INFO] [1782640038.007748884] [behavior_server]: Creating behavior plugin backup of type nav2_behaviors/BackUp
-[component_container_isolated-16] [INFO] [1782640038.011478306] [behavior_server]: Configuring backup
-[component_container_isolated-16] [INFO] [1782640038.057224153] [behavior_server]: Creating behavior plugin drive_on_heading of type nav2_behaviors/DriveOnHeading
-[component_container_isolated-16] [INFO] [1782640038.061278491] [behavior_server]: Configuring drive_on_heading
-[component_container_isolated-16] [INFO] [1782640038.100938873] [behavior_server]: Creating behavior plugin wait of type nav2_behaviors/Wait
-[component_container_isolated-16] [INFO] [1782640038.106663505] [behavior_server]: Configuring wait
-[component_container_isolated-16] [INFO] [1782640038.138365127] [lifecycle_manager_navigation]: Configuring bt_navigator
-[component_container_isolated-16] [INFO] [1782640038.139455170] [bt_navigator]: Configuring
-[competition_master_stage3.py-17] [INFO] [1782640038.490030806] [competition_master_stage3]: [LAUNCH] 发车阶段: 17.3s
-[competition_master_stage3.py-17] [INFO] [1782640038.495345354] [competition_master_stage3]: >>> 系统就绪, 开始 Stage 3 导航
-[competition_master_stage3.py-17] [INFO] [1782640038.508851912] [competition_master_stage3]: [BAG] 录制开始: stage3_20260628_174718
-[competition_master_stage3.py-17] [INFO] [1782640038.516093712] [competition_master_stage3]: [状态机] INIT → NAV_TO_QR
-[competition_master_stage3.py-17] [INFO] [1782640038.543078495] [competition_master_stage3]: [DIAG] nav目标距离: 3.97m, robot=(-2.00,-0.02) → target=(0.41,-3.17)
-[competition_master_stage3.py-17] [INFO] [1782640038.547736959] [competition_master_stage3]: >>> 发送导航目标 [任务发布点]: (0.41, -3.17, yaw=0.00)
-[component_container_isolated-16] [INFO] [1782640038.567893400] [lifecycle_manager_navigation]: Configuring waypoint_follower
-[component_container_isolated-16] [INFO] [1782640038.569288694] [waypoint_follower]: Configuring
-[competition_master_stage3.py-17] [WARN] [1782640038.579459290] [competition_master_stage3]: 导航目标被拒绝, 3s 后重试...
-[component_container_isolated-16] [INFO] [1782640038.673765488] [waypoint_follower]: Created waypoint_task_executor : wait_at_waypoint of type nav2_waypoint_follower::WaitAtWaypoint
-[component_container_isolated-16] [INFO] [1782640038.682809040] [lifecycle_manager_navigation]: Configuring velocity_smoother
-[component_container_isolated-16] [INFO] [1782640038.684202417] [velocity_smoother]: Configuring velocity smoother
-[component_container_isolated-16] [INFO] [1782640038.719591835] [lifecycle_manager_navigation]: Activating controller_server
-[component_container_isolated-16] [INFO] [1782640038.720751753] [controller_server]: Activating
-[component_container_isolated-16] [INFO] [1782640038.721083504] [local_costmap.local_costmap]: Activating
-[component_container_isolated-16] [INFO] [1782640038.721274296] [local_costmap.local_costmap]: Checking transform
-[component_container_isolated-16] [INFO] [1782640038.721848296] [local_costmap.local_costmap]: start
-[component_container_isolated-16] [INFO] [1782640038.739128817] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640038.753910294] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640038.754236461] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782640038.770297480] [local_costmap.local_costmap]: KeepoutFilter: Received filter mask from /keepout_mask topic.
-[component_container_isolated-16] [INFO] [1782640039.006220226] [controller_server]: Activating controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
-[component_container_isolated-16] [INFO] [1782640039.006519185] [controller_server]: Creating bond (controller_server) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782640039.125586288] [lifecycle_manager_navigation]: Server controller_server connected with bond.
-[component_container_isolated-16] [INFO] [1782640039.125808622] [lifecycle_manager_navigation]: Activating smoother_server
-[component_container_isolated-16] [INFO] [1782640039.129075293] [smoother_server]: Activating
-[component_container_isolated-16] [INFO] [1782640039.129325001] [smoother_server]: Activating smoother: SmoothPath of type nav2_constrained_smoother::ConstrainedSmoother
-[component_container_isolated-16] [INFO] [1782640039.129422043] [smoother_server]: Creating bond (smoother_server) to lifecycle manager.
-[competition_master_stage3.py-17] [INFO] [1782640039.217737567] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-2.03,-0.03) yaw=19deg cmd=(vx=0.00 wz=0.00) elapsed=0.6s cpuFreq=1500MHz cpuT=79C cpu=66% mem=17%
-[component_container_isolated-16] [INFO] [1782640039.258546534] [lifecycle_manager_navigation]: Server smoother_server connected with bond.
-[component_container_isolated-16] [INFO] [1782640039.258900909] [lifecycle_manager_navigation]: Activating planner_server
-[component_container_isolated-16] [INFO] [1782640039.263674373] [planner_server]: Activating
-[component_container_isolated-16] [INFO] [1782640039.264014665] [global_costmap.global_costmap]: Activating
-[component_container_isolated-16] [INFO] [1782640039.264107124] [global_costmap.global_costmap]: Checking transform
-[component_container_isolated-16] [INFO] [1782640039.264436958] [global_costmap.global_costmap]: start
-[component_container_isolated-16] [INFO] [1782640039.271652383] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640039.281383312] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640039.281565228] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782640039.288643654] [global_costmap.global_costmap]: KeepoutFilter: Received filter mask from /keepout_mask topic.
-[rviz2-18] [INFO] [1782640039.590812147] [rviz2]: Trying to create a map of size 60 x 60 using 1 swatches
-[component_container_isolated-16] [INFO] [1782640040.381282234] [planner_server]: Activating plugin GridBased of type SmacPlannerHybrid
-[component_container_isolated-16] [INFO] [1782640040.386226949] [planner_server]: Creating bond (planner_server) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782640040.502833716] [lifecycle_manager_navigation]: Server planner_server connected with bond.
-[component_container_isolated-16] [INFO] [1782640040.502979966] [lifecycle_manager_navigation]: Activating behavior_server
-[component_container_isolated-16] [INFO] [1782640040.504143634] [behavior_server]: Activating
-[component_container_isolated-16] [INFO] [1782640040.504273843] [behavior_server]: Activating spin
-[component_container_isolated-16] [INFO] [1782640040.504576260] [behavior_server]: Activating backup
-[component_container_isolated-16] [INFO] [1782640040.504826885] [behavior_server]: Activating drive_on_heading
-[component_container_isolated-16] [INFO] [1782640040.504915510] [behavior_server]: Activating wait
-[component_container_isolated-16] [INFO] [1782640040.505036385] [behavior_server]: Creating bond (behavior_server) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782640040.623189987] [lifecycle_manager_navigation]: Server behavior_server connected with bond.
-[component_container_isolated-16] [INFO] [1782640040.623373279] [lifecycle_manager_navigation]: Activating bt_navigator
-[component_container_isolated-16] [INFO] [1782640040.624699031] [bt_navigator]: Activating
-[rviz2-18] [INFO] [1782640040.726229988] [rviz2]: Trying to create a map of size 163 x 141 using 1 swatches
-[component_container_isolated-16] [WARN] [1782640040.776614799] [bt_navigator_navigate_through_poses_rclcpp_node]: Wait duration is negative or zero (0). Setting to positive.
-[component_container_isolated-16] [WARN] [1782640040.847786969] [bt_navigator_navigate_through_poses_rclcpp_node]: Wait duration is negative or zero (0). Setting to positive.
-[component_container_isolated-16] [WARN] [1782640040.910920004] [bt_navigator_navigate_through_poses_rclcpp_node]: Wait duration is negative or zero (0). Setting to positive.
-[component_container_isolated-16] [WARN] [1782640041.102460363] [bt_navigator_navigate_through_poses_rclcpp_node]: Wait duration is negative or zero (0). Setting to positive.
-[competition_master_stage3.py-17] [INFO] [1782640041.218996921] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-2.03,-0.03) yaw=19deg cmd=(vx=0.00 wz=0.00) elapsed=2.7s cpuFreq=1500MHz cpuT=80C cpu=100% mem=18%
-[component_container_isolated-16] [WARN] [1782640041.328917555] [bt_navigator_navigate_to_pose_rclcpp_node]: Wait duration is negative or zero (0). Setting to positive.
-[component_container_isolated-16] [INFO] [1782640041.477527444] [bt_navigator]: Creating bond (bt_navigator) to lifecycle manager.
-[competition_master_stage3.py-17] [INFO] [1782640041.586444910] [competition_master_stage3]: 重试发送导航目标 (QR点)...
-[competition_master_stage3.py-17] [INFO] [1782640041.593395502] [competition_master_stage3]: [DIAG] nav目标距离: 3.98m, robot=(-2.03,-0.03) → target=(0.41,-3.17)
-[component_container_isolated-16] [INFO] [1782640041.595488088] [lifecycle_manager_navigation]: Server bt_navigator connected with bond.
-[component_container_isolated-16] [INFO] [1782640041.595659838] [lifecycle_manager_navigation]: Activating waypoint_follower
-[competition_master_stage3.py-17] [INFO] [1782640041.596632089] [competition_master_stage3]: >>> 发送导航目标 [任务发布点]: (0.41, -3.17, yaw=0.00)
-[component_container_isolated-16] [INFO] [1782640041.598071924] [waypoint_follower]: Activating
-[component_container_isolated-16] [INFO] [1782640041.598339258] [waypoint_follower]: Creating bond (waypoint_follower) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782640041.601274970] [bt_navigator]: Begin navigating from current location (-2.03, -0.03) to (0.41, -3.17)
-[competition_master_stage3.py-17] [INFO] [1782640041.629214420] [competition_master_stage3]: 导航目标已接受，车辆出发...
-[component_container_isolated-16] [INFO] [1782640041.724090411] [lifecycle_manager_navigation]: Server waypoint_follower connected with bond.
-[component_container_isolated-16] [INFO] [1782640041.724245578] [lifecycle_manager_navigation]: Activating velocity_smoother
-[component_container_isolated-16] [INFO] [1782640041.726032871] [velocity_smoother]: Activating
-[component_container_isolated-16] [INFO] [1782640041.726378247] [velocity_smoother]: Creating bond (velocity_smoother) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782640041.843294306] [lifecycle_manager_navigation]: Server velocity_smoother connected with bond.
-[component_container_isolated-16] [INFO] [1782640041.843460806] [lifecycle_manager_navigation]: Managed nodes are active
-[component_container_isolated-16] [INFO] [1782640041.843525431] [lifecycle_manager_navigation]: Creating bond timer...
-[component_container_isolated-16] [WARN] [1782640042.293536103] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4532 Hz
-[imu_madgwick_filter.py-6] [INFO] [1782640042.309985290] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=1565 q_w=0.9993 angle=4.1deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782640042.332994235] [imu_madgwick_filter]: [imu_madgwick ->] msgs=600 q_w=0.9699 angle=28.2deg beta=0.0330
-[component_container_isolated-16] [INFO] [1782640042.403781863] [controller_server]: Received a goal, begin computing control effort.
-[component_container_isolated-16] [WARN] [1782640042.404248946] [controller_server]: No goal checker was specified in parameter 'current_goal_checker'. Server will use only plugin loaded goal_checker . This warning will appear once.
-[competition_master_stage3.py-17] [INFO] [1782640043.204124794] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-2.03,-0.03) yaw=19deg cmd=(vx=0.27 wz=-0.97) elapsed=4.6s plan[28pts 4.1m] (-2.00,-0.05)→(0.40,-3.15) cpuFreq=1500MHz cpuT=79C cpu=57% mem=18%
-[qr_decoder-10] [INFO] [1782640043.778953410] [qr_decoder_zbar]: [qr_decoder] SCAN_STATUS frame=400 last_qr_frame=-1 gap=-1 frames rejects=0
-[component_container_isolated-16] [WARN] [1782640044.290667157] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2715 Hz
-[component_container_isolated-16] [INFO] [1782640044.404583587] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782640045.204038933] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-1.56,-0.19) yaw=-51deg cmd=(vx=0.40 wz=0.14) elapsed=6.6s plan[26pts 3.8m] (-1.70,-0.05)→(0.40,-3.15) cpuFreq=1500MHz cpuT=80C cpu=25% mem=19%
-[component_container_isolated-16] [WARN] [1782640046.286583539] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2903 Hz
-[component_container_isolated-16] [INFO] [1782640046.404553849] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782640047.204149820] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-1.30,-0.60) yaw=-53deg cmd=(vx=0.40 wz=-0.13) elapsed=8.6s plan[22pts 3.1m] (-1.30,-0.65)→(0.40,-3.15) cpuFreq=1500MHz cpuT=80C cpu=42% mem=19%
-[component_container_isolated-16] Reallocing temp weights 642 - 60
-[component_container_isolated-16] [WARN] [1782640048.287001091] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2768 Hz
-[component_container_isolated-16] [INFO] [1782640048.404566067] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782640049.207301749] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-0.93,-1.08) yaw=-55deg cmd=(vx=0.40 wz=-0.14) elapsed=10.6s plan[20pts 2.8m] (-1.10,-0.85)→(0.40,-3.15) cpuFreq=1500MHz cpuT=80C cpu=100% mem=19%
-[component_container_isolated-16] Reallocing temp weights 1500 - 60
-[component_container_isolated-16] [WARN] [1782640050.286852474] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2772 Hz
-[component_container_isolated-16] [INFO] [1782640050.404674825] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782640051.206495588] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-0.77,-1.36) yaw=-66deg cmd=(vx=0.40 wz=-0.13) elapsed=12.6s plan[15pts 2.0m] (-0.70,-1.55)→(0.40,-3.15) cpuFreq=1500MHz cpuT=80C cpu=92% mem=19%
-[imu_madgwick_filter.py-4] [WARN] [1782640052.224930237] [imu_madgwick_filter]: [imu_madgwick] dt outlier: 0.2013s > 0.15s, capping
-[component_container_isolated-16] [WARN] [1782640052.286314728] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2785 Hz
-[imu_madgwick_filter.py-6] [INFO] [1782640052.310238632] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=2062 q_w=0.7252 angle=87.0deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782640052.332799909] [imu_madgwick_filter]: [imu_madgwick ->] msgs=791 q_w=0.9026 angle=51.0deg beta=0.0330
-[component_container_isolated-16] [INFO] [1782640052.404574121] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782640053.204015630] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-0.50,-1.88) yaw=-65deg cmd=(vx=0.40 wz=0.05) elapsed=14.6s plan[13pts 1.8m] (-0.60,-1.75)→(0.40,-3.15) cpuFreq=1500MHz cpuT=80C cpu=37% mem=19%
-[qr_decoder-10] [INFO] [1782640053.262828868] [qr_decoder_zbar]: [qr_decoder] QR DETECTED frame=526 symbols=1 (gap=-1 frames)
-[qr_decoder-10] [INFO] [1782640053.263079243] [qr_decoder_zbar]: [QR] 1585 | 3D:(-0.490, +0.183, 1.760)m | px(203,241) D:1760mm
-[qr_decoder-10] [INFO] [1782640053.263604119] [qr_decoder_zbar]: [QR] 1585 | robot_pos: (0.24, -2.59, yaw=-1.79)
-[qr_decision-11] [INFO] [1782640053.267397832] [qr_decision]: [QR] 1585 CW @ (x=0.24, y=-2.59, yaw=-1.79) → /qr_event
-[competition_master_stage3.py-17] [INFO] [1782640053.270257377] [competition_master_stage3]: [QR检测] 内容: 1585
-[qr_decision-11] [INFO] [1782640053.270544419] [qr_decision]: [检查点] qr_decision 发布 /qr_event (由 task_manager 决定停车)
-[competition_master_stage3.py-17] [INFO] [1782640053.277128427] [competition_master_stage3]: [KILL] 已发送终止信号: qr_decoder_zbar
-[competition_master_stage3.py-17] [INFO] [1782640053.281215640] [competition_master_stage3]: >>> QR 解码已关闭, 等待方向判断 (/qr_event)...
-[competition_master_stage3.py-17] [INFO] [1782640053.285202854] [competition_master_stage3]: [QR检测] 取消当前导航目标, 等待BT完成 cancel/halt 清理...
-[competition_master_stage3.py-17] [INFO] [1782640053.298643620] [competition_master_stage3]: [QR事件] 方向: 顺时针 (通道巡航阶段使用)
-[component_container_isolated-16] [INFO] [1782640053.304592669] [controller_server]: Goal was canceled. Stopping the robot.
-[component_container_isolated-16] [INFO] [1782640053.304997294] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
-[component_container_isolated-16] [INFO] [1782640053.306840921] [bt_navigator]: [navigate_to_pose] [ActionServer] Client requested to cancel the goal. Cancelling.
-[component_container_isolated-16] [INFO] [1782640053.307816006] [bt_navigator]: Goal canceled
-[competition_master_stage3.py-17] [INFO] [1782640053.311149510] [competition_master_stage3]: [KILL] 已发送终止信号: qr_decision
-[competition_master_stage3.py-17] [INFO] [1782640053.337871626] [competition_master_stage3]: [结果回调] BT取消确认完成 (STATUS_CANCELED), 准备发送通道入口目标...
-[qr_decoder-10] [INFO] [1782640053.338669627] [rclcpp]: signal_handler(SIGINT/SIGTERM)
-[competition_master_stage3.py-17] [INFO] [1782640053.344736301] [competition_master_stage3]: [状态机] NAV_TO_QR → BACKING_UP
-[competition_master_stage3.py-17] [INFO] [1782640053.353055269] [competition_master_stage3]: >>> BT取消完成, 右后退摆正车头→前进进通道...
-[competition_master_stage3.py-17] [INFO] [1782640053.367268911] [competition_master_stage3]: [BACKUP] 右后退中: vx=-0.15 wz=0.80, 持续 6.0s...
+[component_container_isolated-17] [INFO] [1783057342.994361580] [lifecycle_manager_navigation]: Creating and initializing lifecycle service clients
+[component_container_isolated-17] [INFO] [1783057343.245070744] [lifecycle_manager_navigation]: Starting managed nodes bringup...
+[component_container_isolated-17] [INFO] [1783057343.245313285] [lifecycle_manager_navigation]: Configuring controller_server
+[component_container_isolated-17] [INFO] [1783057343.247816827] [controller_server]: Configuring controller interface
+[component_container_isolated-17] [INFO] [1783057343.248807703] [controller_server]: getting goal checker plugins..
+[component_container_isolated-17] [INFO] [1783057343.250498620] [controller_server]: Controller frequency set to 10.0000Hz
+[component_container_isolated-17] [INFO] [1783057343.250826370] [local_costmap.local_costmap]: Configuring
+[component_container_isolated-17] [INFO] [1783057343.309403212] [local_costmap.local_costmap]: Using plugin "obstacle_layer"
+[imu_madgwick_filter.py-6] [INFO] [1783057343.422879979] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=439 q_w=0.9993 angle=4.3deg beta=0.0030
+[component_container_isolated-17] [INFO] [1783057343.432867939] [local_costmap.local_costmap]: Subscribed to Topics: scan aurora_points tracked_obstacles
+[imu_madgwick_filter.py-4] [INFO] [1783057343.440174149] [imu_madgwick_filter]: [imu_madgwick ->] msgs=197 q_w=0.9993 angle=4.4deg beta=0.0330
+[component_container_isolated-17] [INFO] [1783057343.693942771] [local_costmap.local_costmap]: Initialized plugin "obstacle_layer"
+[component_container_isolated-17] [INFO] [1783057343.705142231] [local_costmap.local_costmap]: Using plugin "keepout_filter"
+[component_container_isolated-17] [INFO] [1783057343.858822005] [local_costmap.local_costmap]: Initialized plugin "keepout_filter"
+[component_container_isolated-17] [INFO] [1783057343.867171965] [local_costmap.local_costmap]: Using plugin "inflation_layer"
+[component_container_isolated-17] [INFO] [1783057343.947781602] [local_costmap.local_costmap]: Initialized plugin "inflation_layer"
+[component_container_isolated-17] [INFO] [1783057344.137221465] [controller_server]: Created progress_checker : progress_checker of type nav2_controller::SimpleProgressChecker
+[component_container_isolated-17] [INFO] [1783057344.173856387] [controller_server]: Created goal checker : goal_checker of type nav2_controller::SimpleGoalChecker
+[component_container_isolated-17] [INFO] [1783057344.227318979] [controller_server]: Controller Server has goal_checker  goal checkers available.
+[component_container_isolated-17] [INFO] [1783057344.232440438] [controller_server]: Created controller : FollowPath of type nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[depth_detector-18] [INFO] [1783057344.312502159] [depth_detector]: DepthDetector v2 ready: CCL + ground removal + median, 320×200 @ DS=2
+[speed_profile_node.py-23] [INFO] [1783057344.390322087] [speed_profile_node]: speed_profile_node started — v_max=0.50 v_min=0.15 beta=0.47 lambda=1.32 max_accel=1.01 max_decel=-1.57
+[component_container_isolated-17] [INFO] [1783057344.572192449] [controller_server]: Controller Server has FollowPath  controllers available.
+[component_container_isolated-17] [INFO] [1783057344.696870843] [lifecycle_manager_navigation]: Configuring smoother_server
+[component_container_isolated-17] [INFO] [1783057344.699200718] [smoother_server]: Configuring smoother server
+[component_container_isolated-17] [INFO] [1783057344.867933536] [smoother_server]: Created smoother : SmoothPath of type nav2_constrained_smoother/ConstrainedSmoother
+[costmap_publisher-20] [INFO] [1783057344.877351871] [costmap_publisher]: CostmapPublisher ready (tracked_object → PointCloud2)
+[component_container_isolated-17] [INFO] [1783057345.022561143] [smoother_server]: Smoother Server has SmoothPath  smoothers available.
+[path_optimizer_node.py-22] [INFO] [1783057345.072352443] [path_optimizer_node]: PathOptimizerNode started
+[path_optimizer_node.py-22] [INFO] [1783057345.080610944] [path_optimizer_node]: Parameters: lambda=0.100, alpha=0.120, max_shift=0.080 m, scipy=True, iters=50, lr=0.100
+[component_container_isolated-17] [INFO] [1783057345.095469946] [lifecycle_manager_navigation]: Configuring planner_server
+[component_container_isolated-17] [INFO] [1783057345.097123363] [planner_server]: Configuring
+[component_container_isolated-17] [INFO] [1783057345.097511447] [global_costmap.global_costmap]: Configuring
+[component_container_isolated-17] [INFO] [1783057345.172734209] [global_costmap.global_costmap]: Using plugin "static_layer"
+[component_container_isolated-17] [INFO] [1783057345.188050336] [global_costmap.global_costmap]: Subscribing to the map topic (/map) with transient local durability
+[component_container_isolated-17] [INFO] [1783057345.198767004] [global_costmap.global_costmap]: Initialized plugin "static_layer"
+[component_container_isolated-17] [INFO] [1783057345.198940921] [global_costmap.global_costmap]: Using plugin "obstacle_layer"
+[component_container_isolated-17] [INFO] [1783057345.219843674] [global_costmap.global_costmap]: Subscribed to Topics: scan aurora_points tracked_obstacles
+[component_container_isolated-17] [INFO] [1783057345.386369867] [global_costmap.global_costmap]: Initialized plugin "obstacle_layer"
+[component_container_isolated-17] [INFO] [1783057345.387472575] [global_costmap.global_costmap]: Using plugin "keepout_filter"
+[component_container_isolated-17] [INFO] [1783057345.409593037] [global_costmap.global_costmap]: Initialized plugin "keepout_filter"
+[component_container_isolated-17] [INFO] [1783057345.409791537] [global_costmap.global_costmap]: Using plugin "inflation_layer"
+[component_container_isolated-17] [INFO] [1783057345.428196498] [global_costmap.global_costmap]: Initialized plugin "inflation_layer"
+[component_container_isolated-17] [INFO] [1783057345.503605885] [global_costmap.global_costmap]: StaticLayer: Resizing costmap to 163 X 141 at 0.050000 m/pix
+[component_container_isolated-17] [INFO] [1783057345.541788683] [planner_server]: Created global planner plugin GridBased of type nav2_smac_planner/SmacPlannerHybrid
+[component_container_isolated-17] [INFO] [1783057345.542006558] [planner_server]: Configuring GridBased of type SmacPlannerHybrid
+[component_container_isolated-17] [INFO] [1783057345.615140694] [planner_server]: Even sized heuristic lookup table size set 200.000000, increasing size by 1 to make odd
+[competition_master_stage3.py-21] [INFO] [1783057345.988187960] [competition_master_stage3]: ============================================================
+[competition_master_stage3.py-21] [INFO] [1783057345.992793711] [competition_master_stage3]: === [Stage 3] 总控节点初始化 ===
+[competition_master_stage3.py-21] [INFO] [1783057345.995708753] [competition_master_stage3]:   QR点:    (0.41, -3.17, yaw=0.00)
+[competition_master_stage3.py-21] [INFO] [1783057345.998623879] [competition_master_stage3]:   通道入口: (0.38, -1.10, yaw=0.00)
+[competition_master_stage3.py-21] [INFO] [1783057346.003214254] [competition_master_stage3]:   P点:     (-1.99, -0.01, yaw=0.26)
+[competition_master_stage3.py-21] [INFO] [1783057346.006830463] [competition_master_stage3]:   cruise_cw: 3 路点 → VLM=(3.01, -1.16)
+[competition_master_stage3.py-21] [INFO] [1783057346.011946339] [competition_master_stage3]:   cruise_ccw: 4 路点 → VLM=(2.17, 0.69)
+[competition_master_stage3.py-21] [INFO] [1783057346.014927673] [competition_master_stage3]:   超时: total=180.0s QR=90.0s entry=60.0s cruise=180.0s vlm=30.0s return=120.0s
+[competition_master_stage3.py-21] [INFO] [1783057346.017982673] [competition_master_stage3]:   回退QR方向: 逆时针
+[competition_master_stage3.py-21] [INFO] [1783057346.022108715] [competition_master_stage3]:   VLM结果话题: vlm_result
+[competition_master_stage3.py-21] [INFO] [1783057346.025018091] [competition_master_stage3]: ============================================================
+[tracker_node-19] [INFO] [1783057346.941189942] [tracker_node]: TrackerNode ready (N=50, 5.0Hz, cost_gate=3.0m)
+[hobot_codec_republish-13] [WARN] [1783057347.098407842] [vlm_jpeg_encoder]: Sub imgRaw fps [10.28]
+[hobot_codec_republish-13] [WARN] [1783057347.101324467] [vlm_jpeg_encoder]: Pub img fps [10.28]
+[tracker_node-19] [INFO] [1783057348.457920055] [tracker_node]: Tracker initialized at (0.02, 0.00)
+[rviz2-24] [INFO] [1783057348.723806472] [rviz2]: Stereo is NOT SUPPORTED
+[rviz2-24] [INFO] [1783057348.724565805] [rviz2]: OpenGl version: 4.5 (GLSL 4.5)
+[rviz2-24] [INFO] [1783057349.866835443] [rviz2]: Stereo is NOT SUPPORTED
+[qr_decoder-10] [INFO] [1783057350.697058741] [qr_decoder_zbar]: [qr_decoder] SCAN_STATUS frame=200 last_qr_frame=-1 gap=-1 frames rejects=0
+[tracker_node-19] [WARN] [1783057351.456872861] [tracker_node]: Measurement timeout (3.1s), pausing tracking
+[tracker_node-19] [INFO] [1783057351.657600352] [tracker_node]: Tracker initialized at (0.11, 0.00)
+[hobot_codec_republish-13] [WARN] [1783057352.123359509] [vlm_jpeg_encoder]: Sub imgRaw fps [12.94]
+[hobot_codec_republish-13] [WARN] [1783057352.125855718] [vlm_jpeg_encoder]: Pub img fps [12.94]
+[imu_madgwick_filter.py-6] [INFO] [1783057353.417254590] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=911 q_w=0.9993 angle=4.3deg beta=0.0030
+[imu_madgwick_filter.py-4] [INFO] [1783057353.439225927] [imu_madgwick_filter]: [imu_madgwick ->] msgs=397 q_w=0.9973 angle=8.5deg beta=0.0330
+[rviz2-24] [INFO] [1783057354.551999855] [rviz2]: Trying to create a map of size 163 x 141 using 1 swatches
+[rviz2-24] [ERROR] [1783057355.516409385] [rviz2]: Vertex Program:rviz/glsl120/indexed_8bit_image.vert Fragment Program:rviz/glsl120/indexed_8bit_image.frag GLSL link result :
+[rviz2-24] active samplers with a different type refer to the same texture image unit
+[tracker_node-19] [WARN] [1783057356.660370236] [tracker_node]: Reinitializing (divergence=2.37m > 1.5m)
+[hobot_codec_republish-13] [WARN] [1783057357.166192943] [vlm_jpeg_encoder]: Sub imgRaw fps [13.49]
+[hobot_codec_republish-13] [WARN] [1783057357.172754319] [vlm_jpeg_encoder]: Pub img fps [13.48]
+[component_container_isolated-17] [INFO] [1783057361.740073147] [planner_server]: Configured plugin GridBased of type SmacPlannerHybrid with maximum iterations 2027, max on approach iterations 300, and not allowing unknown traversal. Tolerance 0.50.Using motion model: Reeds-Shepp.
+[component_container_isolated-17] [INFO] [1783057361.740344064] [planner_server]: Planner Server has GridBased  planners available.
+[component_container_isolated-17] [INFO] [1783057361.802203074] [lifecycle_manager_navigation]: Configuring behavior_server
+[component_container_isolated-17] [INFO] [1783057361.803160574] [behavior_server]: Configuring
+[component_container_isolated-17] [INFO] [1783057361.853409999] [behavior_server]: Creating behavior plugin spin of type nav2_behaviors/Spin
+[component_container_isolated-17] [INFO] [1783057361.857601541] [behavior_server]: Configuring spin
+[component_container_isolated-17] [INFO] [1783057361.931097678] [behavior_server]: Creating behavior plugin backup of type nav2_behaviors/BackUp
+[component_container_isolated-17] [INFO] [1783057361.935519346] [behavior_server]: Configuring backup
+[component_container_isolated-17] [INFO] [1783057361.970895685] [behavior_server]: Creating behavior plugin drive_on_heading of type nav2_behaviors/DriveOnHeading
+[component_container_isolated-17] [INFO] [1783057361.975237394] [behavior_server]: Configuring drive_on_heading
+[component_container_isolated-17] [INFO] [1783057362.035455362] [behavior_server]: Creating behavior plugin wait of type nav2_behaviors/Wait
+[component_container_isolated-17] [INFO] [1783057362.039038946] [behavior_server]: Configuring wait
+[component_container_isolated-17] [INFO] [1783057362.079966703] [lifecycle_manager_navigation]: Configuring bt_navigator
+[component_container_isolated-17] [INFO] [1783057362.080780203] [bt_navigator]: Configuring
+[hobot_codec_republish-13] [WARN] [1783057362.233245395] [vlm_jpeg_encoder]: Sub imgRaw fps [13.23]
+[hobot_codec_republish-13] [WARN] [1783057362.239868438] [vlm_jpeg_encoder]: Pub img fps [13.23]
+[competition_master_stage3.py-21] [INFO] [1783057362.506297940] [competition_master_stage3]: [LAUNCH] 发车阶段: 17.5s
+[competition_master_stage3.py-21] [INFO] [1783057362.521460026] [competition_master_stage3]: >>> 系统就绪, 开始 Stage 3 导航
+[competition_master_stage3.py-21] [INFO] [1783057362.556654198] [competition_master_stage3]: [BAG] 录制开始: stage3_20260703_134242
+[competition_master_stage3.py-21] [INFO] [1783057362.565538908] [competition_master_stage3]: [状态机] INIT → NAV_TO_QR
+[component_container_isolated-17] [INFO] [1783057362.586519453] [lifecycle_manager_navigation]: Configuring waypoint_follower
+[competition_master_stage3.py-21] [INFO] [1783057362.587747412] [competition_master_stage3]: >>> 发送导航目标 [任务发布点]: (0.41, -3.17, yaw=0.00)
+[component_container_isolated-17] [INFO] [1783057362.587842787] [waypoint_follower]: Configuring
+[competition_master_stage3.py-21] [WARN] [1783057362.658074673] [competition_master_stage3]: 导航目标被拒绝, 3s 后重试...
+[component_container_isolated-17] [INFO] [1783057362.741123187] [waypoint_follower]: Created waypoint_task_executor : wait_at_waypoint of type nav2_waypoint_follower::WaitAtWaypoint
+[component_container_isolated-17] [INFO] [1783057362.751392855] [lifecycle_manager_navigation]: Configuring velocity_smoother
+[component_container_isolated-17] [INFO] [1783057362.753032980] [velocity_smoother]: Configuring velocity smoother
+[component_container_isolated-17] [INFO] [1783057362.781759777] [lifecycle_manager_navigation]: Activating controller_server
+[component_container_isolated-17] [INFO] [1783057362.782661860] [controller_server]: Activating
+[component_container_isolated-17] [INFO] [1783057362.782932277] [local_costmap.local_costmap]: Activating
+[component_container_isolated-17] [INFO] [1783057362.783048902] [local_costmap.local_costmap]: Checking transform
+[component_container_isolated-17] [INFO] [1783057362.783435860] [local_costmap.local_costmap]: start
+[component_container_isolated-17] [INFO] [1783057362.802829947] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057362.819996200] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057362.820185700] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [INFO] [1783057362.829394410] [local_costmap.local_costmap]: KeepoutFilter: Received filter mask from /keepout_mask topic.
+[competition_master_stage3.py-21] [INFO] [1783057363.071658741] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-2.01,-0.02) yaw=14deg cmd=(vx=0.00 wz=0.00) elapsed=0.5s cpuFreq=1500MHz cpuT=74C cpu=88% mem=20%
+[component_container_isolated-17] [INFO] [1783057363.119901874] [controller_server]: Activating controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[component_container_isolated-17] [INFO] [1783057363.120199416] [controller_server]: Creating bond (controller_server) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1783057363.239007727] [lifecycle_manager_navigation]: Server controller_server connected with bond.
+[component_container_isolated-17] [INFO] [1783057363.239209019] [lifecycle_manager_navigation]: Activating smoother_server
+[component_container_isolated-17] [INFO] [1783057363.242394853] [smoother_server]: Activating
+[component_container_isolated-17] [INFO] [1783057363.242726145] [smoother_server]: Activating smoother: SmoothPath of type nav2_constrained_smoother::ConstrainedSmoother
+[component_container_isolated-17] [INFO] [1783057363.242886770] [smoother_server]: Creating bond (smoother_server) to lifecycle manager.
+[tracker_node-19] [WARN] [1783057363.257670730] [tracker_node]: Measurement timeout (3.1s), pausing tracking
+[component_container_isolated-17] [INFO] [1783057363.371610416] [lifecycle_manager_navigation]: Server smoother_server connected with bond.
+[component_container_isolated-17] [INFO] [1783057363.371787374] [lifecycle_manager_navigation]: Activating planner_server
+[component_container_isolated-17] [INFO] [1783057363.372880583] [planner_server]: Activating
+[component_container_isolated-17] [INFO] [1783057363.373156749] [global_costmap.global_costmap]: Activating
+[component_container_isolated-17] [INFO] [1783057363.373232333] [global_costmap.global_costmap]: Checking transform
+[component_container_isolated-17] [INFO] [1783057363.373490958] [global_costmap.global_costmap]: start
+[component_container_isolated-17] [INFO] [1783057363.399306504] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[imu_madgwick_filter.py-6] [INFO] [1783057363.414205840] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=1424 q_w=0.9993 angle=4.2deg beta=0.0030
+[component_container_isolated-17] [INFO] [1783057363.429954634] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057363.430131092] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [INFO] [1783057363.441303094] [global_costmap.global_costmap]: KeepoutFilter: Received filter mask from /keepout_mask topic.
+[imu_madgwick_filter.py-4] [INFO] [1783057363.442424969] [imu_madgwick_filter]: [imu_madgwick ->] msgs=593 q_w=0.9938 angle=12.8deg beta=0.0330
+[tracker_node-19] [INFO] [1783057363.456346221] [tracker_node]: Tracker initialized at (0.02, 0.00)
+[tracker_node-19] [WARN] [1783057363.657114296] [tracker_node]: Measurement timeout (3.5s), pausing tracking
+[tracker_node-19] [INFO] [1783057363.856446746] [tracker_node]: Tracker initialized at (0.02, 0.00)
+[rviz2-24] [INFO] [1783057363.971862015] [rviz2]: Trying to create a map of size 60 x 60 using 1 swatches
+[component_container_isolated-17] [INFO] [1783057364.629871791] [planner_server]: Activating plugin GridBased of type SmacPlannerHybrid
+[component_container_isolated-17] [INFO] [1783057364.639092501] [planner_server]: Creating bond (planner_server) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1783057364.778646649] [lifecycle_manager_navigation]: Server planner_server connected with bond.
+[component_container_isolated-17] [INFO] [1783057364.778845357] [lifecycle_manager_navigation]: Activating behavior_server
+[component_container_isolated-17] [INFO] [1783057364.780293691] [behavior_server]: Activating
+[component_container_isolated-17] [INFO] [1783057364.780529441] [behavior_server]: Activating spin
+[component_container_isolated-17] [INFO] [1783057364.780709524] [behavior_server]: Activating backup
+[component_container_isolated-17] [INFO] [1783057364.780819191] [behavior_server]: Activating drive_on_heading
+[component_container_isolated-17] [INFO] [1783057364.780896566] [behavior_server]: Activating wait
+[component_container_isolated-17] [INFO] [1783057364.780979482] [behavior_server]: Creating bond (behavior_server) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1783057364.910595837] [lifecycle_manager_navigation]: Server behavior_server connected with bond.
+[component_container_isolated-17] [INFO] [1783057364.911180046] [lifecycle_manager_navigation]: Activating bt_navigator
+[component_container_isolated-17] [INFO] [1783057364.914601338] [bt_navigator]: Activating
+[competition_master_stage3.py-21] [INFO] [1783057365.090238659] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-2.01,-0.02) yaw=14deg cmd=(vx=0.00 wz=0.00) elapsed=2.5s cpuFreq=1500MHz cpuT=75C cpu=100% mem=21%
+[component_container_isolated-17] [WARN] [1783057365.153781044] [bt_navigator_navigate_through_poses_rclcpp_node]: Wait duration is negative or zero (0). Setting to positive.
+[component_container_isolated-17] [WARN] [1783057365.335357366] [bt_navigator_navigate_through_poses_rclcpp_node]: Wait duration is negative or zero (0). Setting to positive.
+[component_container_isolated-17] [WARN] [1783057365.489771725] [bt_navigator_navigate_through_poses_rclcpp_node]: Wait duration is negative or zero (0). Setting to positive.
+[rviz2-24] [INFO] [1783057365.651648585] [rviz2]: Trying to create a map of size 163 x 141 using 1 swatches
+[competition_master_stage3.py-21] [INFO] [1783057365.688834175] [competition_master_stage3]: 重试发送导航目标 (QR点)...
+[component_container_isolated-17] [WARN] [1783057365.737174725] [bt_navigator_navigate_through_poses_rclcpp_node]: Wait duration is negative or zero (0). Setting to positive.
+[competition_master_stage3.py-21] [INFO] [1783057365.757565228] [competition_master_stage3]: [DIAG] nav目标距离: 3.97m, robot=(-2.01,-0.02) → target=(0.41,-3.17)
+[competition_master_stage3.py-21] [INFO] [1783057365.782772357] [competition_master_stage3]: >>> 发送导航目标 [任务发布点]: (0.41, -3.17, yaw=0.00)
+[component_container_isolated-17] [WARN] [1783057366.007175895] [bt_navigator_navigate_to_pose_rclcpp_node]: Wait duration is negative or zero (0). Setting to positive.
+[component_container_isolated-17] [INFO] [1783057366.270733980] [bt_navigator]: Creating bond (bt_navigator) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1783057366.301346902] [bt_navigator]: Begin navigating from current location (-2.01, -0.02) to (0.41, -3.17)
+[component_container_isolated-17] [INFO] [1783057366.302629402] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[competition_master_stage3.py-21] [INFO] [1783057366.316467571] [competition_master_stage3]: 导航目标已接受，车辆出发...
+[component_container_isolated-17] [INFO] [1783057366.326645156] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057366.341479992] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057366.341639117] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057366.357294161] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [INFO] [1783057366.389692583] [lifecycle_manager_navigation]: Server bt_navigator connected with bond.
+[component_container_isolated-17] [INFO] [1783057366.391119834] [lifecycle_manager_navigation]: Activating waypoint_follower
+[component_container_isolated-17] [INFO] [1783057366.394824668] [waypoint_follower]: Activating
+[component_container_isolated-17] [INFO] [1783057366.395104584] [waypoint_follower]: Creating bond (waypoint_follower) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1783057366.522947397] [lifecycle_manager_navigation]: Server waypoint_follower connected with bond.
+[component_container_isolated-17] [INFO] [1783057366.523122856] [lifecycle_manager_navigation]: Activating velocity_smoother
+[component_container_isolated-17] [INFO] [1783057366.525783398] [velocity_smoother]: Activating
+[component_container_isolated-17] [INFO] [1783057366.526206814] [velocity_smoother]: Creating bond (velocity_smoother) to lifecycle manager.
+[component_container_isolated-17] [WARN] [1783057366.563462071] [planner_server]: GridBased: failed to create plan, no valid path found.
+[component_container_isolated-17] [WARN] [1783057366.563720696] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (0.41, -3.17)
+[component_container_isolated-17] [WARN] [1783057366.563833821] [planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[imu_madgwick_filter.py-4] [WARN] [1783057366.668431213] [imu_madgwick_filter]: [imu_madgwick] dt outlier: 0.1500s > 0.15s, capping
+[component_container_isolated-17] [INFO] [1783057366.675226089] [lifecycle_manager_navigation]: Server velocity_smoother connected with bond.
+[component_container_isolated-17] [INFO] [1783057366.675407173] [lifecycle_manager_navigation]: Managed nodes are active
+[component_container_isolated-17] [INFO] [1783057366.675477589] [lifecycle_manager_navigation]: Creating bond timer...
+[component_container_isolated-17] [INFO] [1783057366.721198764] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057366.751582394] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057366.766409646] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057366.766583813] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [INFO] [1783057366.777274023] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057366.812658404] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [WARN] [1783057366.816868405] [BehaviorTreeEngine]: Behavior Tree tick rate 10.00 was exceeded!
+[component_container_isolated-17] [INFO] [1783057366.834317824] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057366.834484283] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057366.852539577] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[tracker_node-19] [WARN] [1783057367.056466361] [tracker_node]: Measurement timeout (3.2s), pausing tracking
+[competition_master_stage3.py-21] [INFO] [1783057367.079625782] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-2.01,-0.02) yaw=14deg cmd=(vx=0.00 wz=0.00) elapsed=4.5s cpuFreq=1500MHz cpuT=76C cpu=83% mem=21%
+[tracker_node-19] [INFO] [1783057367.256332603] [tracker_node]: Tracker initialized at (-0.11, 0.00)
+[qr_decoder-10] [INFO] [1783057367.263657813] [qr_decoder_zbar]: [qr_decoder] SCAN_STATUS frame=400 last_qr_frame=-1 gap=-1 frames rejects=0
+[hobot_codec_republish-13] [WARN] [1783057367.281837399] [vlm_jpeg_encoder]: Sub imgRaw fps [10.30]
+[hobot_codec_republish-13] [WARN] [1783057367.284299983] [vlm_jpeg_encoder]: Pub img fps [10.31]
+[component_container_isolated-17] [WARN] [1783057367.398072960] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.7768 Hz
+[path_optimizer_node.py-22] [INFO] [1783057367.430296049] [path_optimizer_node]: Path optimised (34 pts, 8.4 ms): mean |kappa| 0.7657 -> 0.8242 (-7.6%), max |kappa| 3.3333 -> 4.6943 (-40.8%), max shift 0.080 m
+[tracker_node-19] [WARN] [1783057367.455765136] [tracker_node]: Measurement timeout (3.6s), pausing tracking
+[speed_profile_node.py-23] [INFO] [1783057367.464518138] [speed_profile_node]: Plan received: 34 poses, mean|κ|=0.8349 m⁻¹, max|κ|=3.3066 m⁻¹, mean_v=0.385 m/s, min_v=0.153 m/s, max_v=0.498 m/s
+[component_container_isolated-17] [INFO] [1783057367.505449478] [controller_server]: Received a goal, begin computing control effort.
+[component_container_isolated-17] [WARN] [1783057367.505785228] [controller_server]: No goal checker was specified in parameter 'current_goal_checker'. Server will use only plugin loaded goal_checker . This warning will appear once.
+[tracker_node-19] [INFO] [1783057367.656326462] [tracker_node]: Tracker initialized at (-0.11, 0.00)
+[tracker_node-19] [WARN] [1783057367.857337037] [tracker_node]: Measurement timeout (4.0s), pausing tracking
+[tracker_node-19] [INFO] [1783057368.056924529] [tracker_node]: Tracker initialized at (-0.11, 0.00)
+[tracker_node-19] [WARN] [1783057368.256539354] [tracker_node]: Measurement timeout (4.4s), pausing tracking
+[tracker_node-19] [INFO] [1783057368.460259180] [tracker_node]: Tracker initialized at (-0.11, 0.00)
+[component_container_isolated-17] [INFO] [1783057368.602723870] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057368.618964206] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057368.630567000] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057368.630721542] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057368.843084036] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[competition_master_stage3.py-21] [INFO] [1783057369.078299200] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-1.80,-0.00) yaw=-0deg cmd=(vx=0.40 wz=0.09) elapsed=6.5s plan[34pts 4.7m] (-2.00,-0.05)→(0.40,-3.15) cpuFreq=1500MHz cpuT=76C cpu=85% mem=22%
+[component_container_isolated-17] Reallocing temp weights 301 - 60
+[component_container_isolated-17] [WARN] [1783057369.394908837] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3002 Hz
+[path_optimizer_node.py-22] [INFO] [1783057369.437098802] [path_optimizer_node]: Path optimised (32 pts, 4.8 ms): mean |kappa| 0.8101 -> 0.8801 (-8.6%), max |kappa| 3.3333 -> 4.8618 (-45.9%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057369.492546978] [speed_profile_node]: Plan received: 32 poses, mean|κ|=0.8957 m⁻¹, max|κ|=3.4718 m⁻¹, mean_v=0.379 m/s, min_v=0.150 m/s, max_v=0.499 m/s
+[component_container_isolated-17] [INFO] [1783057369.506068481] [controller_server]: Passing new path to controller.
+[component_container_isolated-17] [INFO] [1783057370.602553249] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057370.625273294] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057370.636616213] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057370.636746713] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057370.647489590] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[competition_master_stage3.py-21] [INFO] [1783057371.080043871] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-1.08,0.01) yaw=-2deg cmd=(vx=-0.13 wz=0.05) elapsed=8.5s plan[32pts 4.3m] (-1.60,0.05)→(0.40,-3.15) cpuFreq=1500MHz cpuT=76C cpu=93% mem=21%
+[component_container_isolated-17] [WARN] [1783057371.394296841] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3379 Hz
+[path_optimizer_node.py-22] [INFO] [1783057371.417129303] [path_optimizer_node]: Path optimised (25 pts, 9.0 ms): mean |kappa| 0.8044 -> 0.6406 (20.4%), max |kappa| 3.3333 -> 4.4021 (-32.1%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057371.439855432] [speed_profile_node]: Plan received: 25 poses, mean|κ|=0.6657 m⁻¹, max|κ|=2.9709 m⁻¹, mean_v=0.414 m/s, min_v=0.168 m/s, max_v=0.495 m/s
+[component_container_isolated-17] [INFO] [1783057371.506068694] [controller_server]: Passing new path to controller.
+[tracker_node-19] [WARN] [1783057371.656705552] [tracker_node]: Measurement timeout (3.0s), pausing tracking
+[tracker_node-19] [INFO] [1783057371.857178545] [tracker_node]: Tracker initialized at (0.02, 0.00)
+[hobot_codec_republish-13] [WARN] [1783057372.294449702] [vlm_jpeg_encoder]: Sub imgRaw fps [13.37]
+[hobot_codec_republish-13] [WARN] [1783057372.301454870] [vlm_jpeg_encoder]: Pub img fps [13.36]
+[component_container_isolated-17] [INFO] [1783057372.602695338] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057372.616481424] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057372.625070634] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057372.625225467] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057372.637159177] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[competition_master_stage3.py-21] [INFO] [1783057373.077524127] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-0.87,-0.01) yaw=-10deg cmd=(vx=0.19 wz=-0.97) elapsed=10.5s plan[25pts 3.5m] (-0.90,-0.05)→(0.40,-3.15) cpuFreq=1500MHz cpuT=76C cpu=88% mem=22%
+[component_container_isolated-17] [WARN] [1783057373.389582555] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3099 Hz
+[imu_madgwick_filter.py-6] [INFO] [1783057373.414124768] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=1798 q_w=0.9108 angle=48.8deg beta=0.0030
+[path_optimizer_node.py-22] [INFO] [1783057373.418305810] [path_optimizer_node]: Path optimised (24 pts, 10.6 ms): mean |kappa| 0.4741 -> 0.5263 (-11.0%), max |kappa| 3.3333 -> 3.4345 (-3.0%), max shift 0.080 m
+[imu_madgwick_filter.py-4] [INFO] [1783057373.440140731] [imu_madgwick_filter]: [imu_madgwick ->] msgs=788 q_w=0.9661 angle=29.9deg beta=0.0330
+[speed_profile_node.py-23] [INFO] [1783057373.457068775] [speed_profile_node]: Plan received: 24 poses, mean|κ|=0.5403 m⁻¹, max|κ|=2.3853 m⁻¹, mean_v=0.426 m/s, min_v=0.202 m/s, max_v=0.497 m/s
+[component_container_isolated-17] [INFO] [1783057373.506526367] [controller_server]: Passing new path to controller.
+[component_container_isolated-17] Reallocing temp weights 1500 - 60
+[component_container_isolated-17] [INFO] [1783057374.503601537] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057374.534680209] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057374.548669753] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057374.548824587] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057374.578727217] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[competition_master_stage3.py-21] [INFO] [1783057375.077319802] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-0.59,-0.26) yaw=-76deg cmd=(vx=0.40 wz=0.28) elapsed=12.5s plan[24pts 3.4m] (-0.80,-0.05)→(0.40,-3.15) cpuFreq=1500MHz cpuT=76C cpu=100% mem=22%
+[component_container_isolated-17] [WARN] [1783057375.390194022] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2009 Hz
+[path_optimizer_node.py-22] [INFO] [1783057375.405354817] [path_optimizer_node]: Path optimised (21 pts, 3.8 ms): mean |kappa| 0.4004 -> 0.5983 (-49.4%), max |kappa| 3.3333 -> 3.6478 (-9.4%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057375.441980448] [speed_profile_node]: Plan received: 21 poses, mean|κ|=0.6108 m⁻¹, max|κ|=2.6087 m⁻¹, mean_v=0.417 m/s, min_v=0.188 m/s, max_v=0.500 m/s
+[component_container_isolated-17] [INFO] [1783057375.506126542] [controller_server]: Passing new path to controller.
+[component_container_isolated-17] [INFO] [1783057376.603126106] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057376.624233610] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057376.639595196] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057376.639798321] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057376.655131698] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[imu_madgwick_filter.py-4] [WARN] [1783057376.813731267] [imu_madgwick_filter]: [imu_madgwick] dt outlier: 0.2000s > 0.15s, capping
+[tracker_node-19] [WARN] [1783057376.866824693] [tracker_node]: Reinitializing (divergence=2.15m > 1.5m)
+[competition_master_stage3.py-21] [INFO] [1783057377.081485105] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-0.39,-0.93) yaw=-77deg cmd=(vx=0.40 wz=-0.06) elapsed=14.5s plan[21pts 2.8m] (-0.50,-0.55)→(0.40,-3.15) cpuFreq=1500MHz cpuT=76C cpu=88% mem=22%
+[hobot_codec_republish-13] [WARN] [1783057377.340365816] [vlm_jpeg_encoder]: Sub imgRaw fps [13.28]
+[hobot_codec_republish-13] [WARN] [1783057377.345648817] [vlm_jpeg_encoder]: Pub img fps [13.28]
+[component_container_isolated-17] [WARN] [1783057377.400549743] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
+[component_container_isolated-17] [WARN] [1783057377.400825618] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (0.41, -3.17)
+[component_container_isolated-17] [WARN] [1783057377.400937243] [planner_server]: [compute_path_to_pose] [ActionServer] Aborting handle.
+[component_container_isolated-17] [INFO] [1783057377.502838136] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057377.516504597] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057377.522205431] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057377.532228891] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057377.545686602] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057377.545845435] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057377.556912562] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057378.384701747] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2008 Hz
+[path_optimizer_node.py-22] [INFO] [1783057378.405707250] [path_optimizer_node]: Path optimised (17 pts, 3.5 ms): mean |kappa| 1.1344 -> 1.3614 (-20.0%), max |kappa| 3.3333 -> 3.8336 (-15.0%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057378.437768089] [speed_profile_node]: Plan received: 17 poses, mean|κ|=1.2721 m⁻¹, max|κ|=2.7033 m⁻¹, mean_v=0.323 m/s, min_v=0.182 m/s, max_v=0.419 m/s
+[component_container_isolated-17] [INFO] [1783057378.506053393] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057379.076323033] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-0.31,-1.16) yaw=-81deg cmd=(vx=0.40 wz=-0.73) elapsed=16.5s plan[17pts 2.4m] (-0.30,-1.15)→(0.40,-3.15) cpuFreq=1500MHz cpuT=76C cpu=93% mem=22%
+[component_container_isolated-17] [INFO] [1783057379.602676041] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057379.625884170] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057379.641343923] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057379.641534215] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057379.656705759] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057380.387542053] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3989 Hz
+[path_optimizer_node.py-22] [INFO] [1783057380.403841139] [path_optimizer_node]: Path optimised (15 pts, 3.3 ms): mean |kappa| 0.7534 -> 0.7313 (2.9%), max |kappa| 3.3333 -> 3.0810 (7.6%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057380.443306771] [speed_profile_node]: Plan received: 15 poses, mean|κ|=0.7266 m⁻¹, max|κ|=1.9911 m⁻¹, mean_v=0.395 m/s, min_v=0.231 m/s, max_v=0.479 m/s
+[component_container_isolated-17] [INFO] [1783057380.506064823] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057381.077755048] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-0.35,-1.37) yaw=-115deg cmd=(vx=0.26 wz=0.97) elapsed=18.5s plan[15pts 2.0m] (-0.30,-1.35)→(0.40,-3.15) cpuFreq=1500MHz cpuT=77C cpu=71% mem=22%
+[component_container_isolated-17] [INFO] [1783057381.602552973] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057381.619837726] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057381.636859771] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057381.637051771] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057381.647650523] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[hobot_codec_republish-13] [WARN] [1783057382.370594358] [vlm_jpeg_encoder]: Sub imgRaw fps [12.73]
+[hobot_codec_republish-13] [WARN] [1783057382.375869067] [vlm_jpeg_encoder]: Pub img fps [12.73]
+[component_container_isolated-17] [WARN] [1783057382.388837652] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3295 Hz
+[path_optimizer_node.py-22] [INFO] [1783057382.400269863] [path_optimizer_node]: Path optimised (13 pts, 2.9 ms): mean |kappa| 0.6912 -> 0.4560 (34.0%), max |kappa| 3.3333 -> 1.2873 (61.4%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057382.431273535] [speed_profile_node]: Plan received: 13 poses, mean|κ|=0.4340 m⁻¹, max|κ|=0.9247 m⁻¹, mean_v=0.433 m/s, min_v=0.351 m/s, max_v=0.486 m/s
+[component_container_isolated-17] [INFO] [1783057382.506074840] [controller_server]: Passing new path to controller.
+[qr_decoder-10] [INFO] [1783057382.905526993] [qr_decoder_zbar]: [qr_decoder] SCAN_STATUS frame=600 last_qr_frame=-1 gap=-1 frames rejects=0
+[competition_master_stage3.py-21] [INFO] [1783057383.087310566] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-0.49,-1.71) yaw=-104deg cmd=(vx=0.31 wz=0.59) elapsed=20.5s plan[13pts 1.7m] (-0.50,-1.75)→(0.40,-3.15) cpuFreq=1500MHz cpuT=76C cpu=100% mem=22%
+[imu_madgwick_filter.py-6] [INFO] [1783057383.416914583] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=2213 q_w=0.5067 angle=119.1deg beta=0.0030
+[imu_madgwick_filter.py-4] [INFO] [1783057383.439705670] [imu_madgwick_filter]: [imu_madgwick ->] msgs=975 q_w=0.6969 angle=91.6deg beta=0.0330
+[component_container_isolated-17] [INFO] [1783057383.512574141] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057383.540770438] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057383.553676315] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057383.553869523] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057383.569884568] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057384.404457381] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.1733 Hz
+[path_optimizer_node.py-22] [INFO] [1783057384.434361512] [path_optimizer_node]: Path optimised (11 pts, 7.3 ms): mean |kappa| 0.6204 -> 0.2193 (64.6%), max |kappa| 3.3306 -> 0.4681 (85.9%), max shift 0.077 m
+[speed_profile_node.py-23] [INFO] [1783057384.455608182] [speed_profile_node]: Plan received: 11 poses, mean|κ|=0.1956 m⁻¹, max|κ|=0.3176 m⁻¹, mean_v=0.473 m/s, min_v=0.453 m/s, max_v=0.498 m/s
+[component_container_isolated-17] [INFO] [1783057384.606255834] [controller_server]: Passing new path to controller.
+[tracker_node-19] [WARN] [1783057385.056741955] [tracker_node]: Measurement timeout (3.0s), pausing tracking
+[competition_master_stage3.py-21] [INFO] [1783057385.078824459] [competition_master_stage3]: [DIAG] state=NAV_TO_QR pos=(-0.39,-2.09) yaw=-61deg cmd=(vx=0.40 wz=0.06) elapsed=22.5s plan[11pts 1.5m] (-0.50,-1.95)→(0.40,-3.15) cpuFreq=1500MHz cpuT=76C cpu=90% mem=22%
+[tracker_node-19] [INFO] [1783057385.256774865] [tracker_node]: Tracker initialized at (-0.06, 0.00)
+[qr_decoder-10] [INFO] [1783057385.453074900] [qr_decoder_zbar]: [qr_decoder] QR DETECTED frame=631 symbols=1 (gap=-1 frames)
+[tracker_node-19] [WARN] [1783057385.456749234] [tracker_node]: Measurement timeout (3.4s), pausing tracking
+[qr_decoder-10] [INFO] [1783057385.457484359] [qr_decoder_zbar]: [QR] 1584 | depth=0mm (advisory, publishing anyway)
+[qr_decoder-10] [INFO] [1783057385.463755318] [qr_decoder_zbar]: [QR] 1584 | robot_pos: (0.44, -2.48, yaw=-1.69)
+[competition_master_stage3.py-21] [INFO] [1783057385.470837486] [competition_master_stage3]: [QR检测] 内容: 1584
+[competition_master_stage3.py-21] [INFO] [1783057385.478721571] [competition_master_stage3]: [KILL] 已发送终止信号: qr_decoder_zbar
+[qr_decision-11] [INFO] [1783057385.478659238] [qr_decision]: [QR] 1584 CCW @ (x=0.43, y=-2.53, yaw=-1.69) → /qr_event
+[competition_master_stage3.py-21] [INFO] [1783057385.485015239] [competition_master_stage3]: >>> QR 解码已关闭, 等待方向判断 (/qr_event)...
+[qr_decision-11] [INFO] [1783057385.485409739] [qr_decision]: [检查点] qr_decision 发布 /qr_event (由 task_manager 决定停车)
+[competition_master_stage3.py-21] [INFO] [1783057385.488593989] [competition_master_stage3]: [QR检测] 取消当前导航目标, 等待BT完成 cancel/halt 清理...
+[competition_master_stage3.py-21] [INFO] [1783057385.502471200] [competition_master_stage3]: [QR事件] 方向: 逆时针 (通道巡航阶段使用)
+[component_container_isolated-17] [INFO] [1783057385.506788576] [controller_server]: Goal was canceled. Stopping the robot.
+[component_container_isolated-17] [INFO] [1783057385.507037368] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[component_container_isolated-17] [INFO] [1783057385.511463119] [bt_navigator]: [navigate_to_pose] [ActionServer] Client requested to cancel the goal. Cancelling.
+[component_container_isolated-17] [INFO] [1783057385.512210910] [bt_navigator]: Goal canceled
+[competition_master_stage3.py-21] [INFO] [1783057385.524704788] [competition_master_stage3]: [KILL] 已发送终止信号: qr_decision
+[qr_decoder-10] [INFO] [1783057385.548523542] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[competition_master_stage3.py-21] [INFO] [1783057385.554247209] [competition_master_stage3]: [结果回调] BT取消确认完成 (STATUS_CANCELED), 准备发送通道入口目标...
+[competition_master_stage3.py-21] [INFO] [1783057385.560677919] [competition_master_stage3]: [状态机] NAV_TO_QR → BACKING_UP
+[competition_master_stage3.py-21] [INFO] [1783057385.570298337] [competition_master_stage3]: >>> BT取消完成, 右后退摆正车头→前进进通道...
+[competition_master_stage3.py-21] [INFO] [1783057385.576188338] [competition_master_stage3]: [BACKUP] 右后退中: vx=-0.15 wz=0.80, 持续 6.0s...
+[tracker_node-19] [INFO] [1783057385.662392604] [tracker_node]: Tracker initialized at (-0.06, 0.00)
+[tracker_node-19] [WARN] [1783057385.856256804] [tracker_node]: Measurement timeout (3.8s), pausing tracking
 [qr_decision-11] Traceback (most recent call last):
 [qr_decision-11]   File "/userdata/dev_ws/install/origincar_qr/lib/origincar_qr/qr_decision", line 33, in <module>
 [qr_decision-11]     sys.exit(load_entry_point('origincar-qr==0.0.0', 'console_scripts', 'qr_decision')())
@@ -1544,911 +681,1421 @@ root@ubuntu:/userdata/dev_ws# ros2 launch origincar_bringup stage3_bringup.launc
 [qr_decision-11]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 681, in _wait_for_ready_callbacks
 [qr_decision-11]     raise ExternalShutdownException()
 [qr_decision-11] rclpy.executors.ExternalShutdownException
-[INFO] [qr_decoder-10]: process has finished cleanly [pid 38915]
-[ERROR] [qr_decision-11]: process has died [pid 38917, exit code 1, cmd '/userdata/dev_ws/install/origincar_qr/lib/origincar_qr/qr_decision --ros-args -r __node:=qr_decision --params-file /tmp/launch_params_14x73qgy'].
-[competition_master_stage3.py-17] [INFO] [1782640055.203955048] [competition_master_stage3]: [DIAG] state=BACKING_UP pos=(-0.34,-2.17) yaw=-59deg cmd=(vx=-0.15 wz=0.80) elapsed=16.6s plan[13pts 1.8m] (-0.60,-1.75)→(0.40,-3.15) cpuFreq=1500MHz cpuT=80C cpu=33% mem=18%
-[competition_master_stage3.py-17] [INFO] [1782640057.202773338] [competition_master_stage3]: [DIAG] state=BACKING_UP pos=(-0.38,-2.17) yaw=-27deg cmd=(vx=-0.15 wz=0.80) elapsed=18.6s plan[13pts 1.8m] (-0.60,-1.75)→(0.40,-3.15) cpuFreq=1500MHz cpuT=80C cpu=28% mem=18%
-[competition_master_stage3.py-17] [INFO] [1782640059.204202169] [competition_master_stage3]: [DIAG] state=BACKING_UP pos=(-0.66,-2.13) yaw=29deg cmd=(vx=-0.15 wz=0.80) elapsed=20.6s plan[13pts 1.8m] (-0.60,-1.75)→(0.40,-3.15) cpuFreq=1500MHz cpuT=79C cpu=28% mem=18%
-[competition_master_stage3.py-17] [INFO] [1782640059.370628953] [competition_master_stage3]: [状态机] BACKING_UP → CRUISE_CHANNEL
-[competition_master_stage3.py-17] [INFO] [1782640059.375015625] [competition_master_stage3]: [CRUISE] 方向: CW (顺时针, odd QR), 路点: (0.93,0.11), (2.19,0.77), (3.01,-1.16)
-[competition_master_stage3.py-17] [INFO] [1782640059.386604306] [competition_master_stage3]: [CRUISE] NavigateThroughPoses: (0.38,-1.10), (0.93,0.11), (2.19,0.77), (3.01,-1.16)
-[component_container_isolated-16] [INFO] [1782640059.389712976] [bt_navigator]: Begin navigating from current location through 4 poses to (3.01, -1.16)
-[competition_master_stage3.py-17] [INFO] [1782640059.402779784] [competition_master_stage3]: NavigateThroughPoses 已接受, 巡航中...
-[component_container_isolated-16] [WARN] [1782640060.310243628] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.0900 Hz
-[component_container_isolated-16] [INFO] [1782640060.491581805] [controller_server]: Received a goal, begin computing control effort.
-[competition_master_stage3.py-17] [INFO] [1782640061.210596463] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(-0.74,-2.19) yaw=45deg cmd=(vx=0.40 wz=-0.27) elapsed=22.6s plan[61pts 8.7m] (-0.80,-2.25)→(3.00,-1.15) cpuFreq=1500MHz cpuT=80C cpu=57% mem=18%
-[component_container_isolated-16] [WARN] [1782640062.298516232] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4175 Hz
-[imu_madgwick_filter.py-6] [INFO] [1782640062.311813289] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=2593 q_w=0.9857 angle=19.4deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782640062.335462943] [imu_madgwick_filter]: [imu_madgwick ->] msgs=991 q_w=0.8483 angle=63.9deg beta=0.0330
-[component_container_isolated-16] [INFO] [1782640062.492528465] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782640063.203110612] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(-0.35,-1.80) yaw=39deg cmd=(vx=0.40 wz=0.25) elapsed=24.6s plan[58pts 8.2m] (-0.50,-1.95)→(3.00,-1.15) cpuFreq=1500MHz cpuT=79C cpu=16% mem=18%
-[component_container_isolated-16] [WARN] [1782640064.296469553] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4193 Hz
-[component_container_isolated-16] [INFO] [1782640064.493199914] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782640065.215455700] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(-0.04,-1.44) yaw=48deg cmd=(vx=0.40 wz=-0.25) elapsed=26.6s plan[53pts 7.5m] (-0.00,-1.45)→(3.00,-1.15) cpuFreq=1500MHz cpuT=80C cpu=93% mem=18%
-[component_container_isolated-16] [WARN] [1782640066.295818915] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4212 Hz
-[component_container_isolated-16] [INFO] [1782640066.492435026] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782640067.203858506] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(0.32,-1.16) yaw=22deg cmd=(vx=0.40 wz=0.68) elapsed=28.6s plan[51pts 7.2m] (0.20,-1.25)→(3.00,-1.15) cpuFreq=1500MHz cpuT=79C cpu=62% mem=18%
-[component_container_isolated-16] [WARN] [1782640068.293327398] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4255 Hz
-[component_container_isolated-16] [INFO] [1782640068.592493132] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782640069.203675657] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(0.77,-0.81) yaw=55deg cmd=(vx=0.40 wz=0.43) elapsed=30.6s plan[46pts 6.4m] (0.80,-0.85)→(3.00,-1.15) cpuFreq=1500MHz cpuT=80C cpu=55% mem=18%
-[component_container_isolated-16] [WARN] [1782640070.295144466] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4228 Hz
-[component_container_isolated-16] [INFO] [1782640070.492444078] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782640071.203265347] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(0.95,-0.40) yaw=66deg cmd=(vx=0.40 wz=0.18) elapsed=32.6s plan[45pts 6.4m] (0.80,-0.65)→(3.00,-1.15) cpuFreq=1500MHz cpuT=79C cpu=62% mem=18%
-[component_container_isolated-16] [WARN] [1782640072.289644274] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4350 Hz
-[imu_madgwick_filter.py-6] [INFO] [1782640072.310757507] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=3133 q_w=0.8824 angle=56.1deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782640072.333293493] [imu_madgwick_filter]: [imu_madgwick ->] msgs=1188 q_w=0.5672 angle=110.9deg beta=0.0330
-[component_container_isolated-16] [INFO] [1782640072.492474017] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782640073.204121661] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.03,-0.15) yaw=75deg cmd=(vx=0.40 wz=0.33) elapsed=34.6s plan[35pts 5.1m] (1.10,-0.05)→(3.00,-1.15) cpuFreq=1500MHz cpuT=79C cpu=33% mem=18%
-[component_container_isolated-16] [WARN] [1782640074.286263456] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782640074.286518165] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (2.19, 0.77)
-[component_container_isolated-16] [WARN] [1782640074.286608207] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640074.390502664] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640074.400887052] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640074.409821479] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640074.410031063] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782640074.410309438] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640074.410750522] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [WARN] [1782640074.422780203] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[competition_master_stage3.py-17] [INFO] [1782640075.204298971] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.03,0.32) yaw=97deg cmd=(vx=0.31 wz=-0.24) elapsed=36.6s plan[35pts 5.1m] (1.10,-0.05)→(3.00,-1.15) cpuFreq=1500MHz cpuT=80C cpu=37% mem=18%
-[component_container_isolated-16] [WARN] [1782640075.285680777] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782640075.285938402] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (2.19, 0.77)
-[component_container_isolated-16] [WARN] [1782640075.286047277] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640075.392427571] [controller_server]: Goal was canceled. Stopping the robot.
-[component_container_isolated-16] [INFO] [1782640075.392619780] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
-[component_container_isolated-16] [INFO] [1782640075.393156281] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
-[component_container_isolated-16] [INFO] [1782640075.401155123] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640075.406915339] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640075.407069797] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782640075.407215089] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640075.422183982] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [WARN] [1782640075.429905991] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640075.436820666] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640075.437112292] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [INFO] [1782640075.437540167] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640075.437638834] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640075.449506723] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640075.690933845] [behavior_server]: Running backup
-[component_container_isolated-16] [INFO] [1782640075.691467429] [behavior_server]: DriveOnHeading: no acceleration or deceleration limits set
-[competition_master_stage3.py-17] [INFO] [1782640077.200807650] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(0.94,0.65) yaw=101deg cmd=(vx=-0.12 wz=0.00) elapsed=38.6s plan[35pts 5.1m] (1.10,-0.05)→(3.00,-1.15) cpuFreq=1500MHz cpuT=79C cpu=50% mem=18%
-[component_container_isolated-16] [WARN] [1782640077.992024929] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
-[component_container_isolated-16] [WARN] [1782640077.992198471] [behavior_server]: backup failed
-[component_container_isolated-16] [WARN] [1782640077.992297554] [behavior_server]: [backup] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640078.291191161] [behavior_server]: Running wait
-[competition_master_stage3.py-17] [INFO] [1782640079.210893051] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(0.90,0.65) yaw=97deg cmd=(vx=0.00 wz=0.00) elapsed=40.6s plan[35pts 5.1m] (1.10,-0.05)→(3.00,-1.15) cpuFreq=1500MHz cpuT=80C cpu=92% mem=18%
-[competition_master_stage3.py-17] [INFO] [1782640081.201200510] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(0.90,0.65) yaw=97deg cmd=(vx=0.00 wz=0.00) elapsed=42.6s plan[35pts 5.1m] (1.10,-0.05)→(3.00,-1.15) cpuFreq=1500MHz cpuT=80C cpu=50% mem=18%
-[component_container_isolated-16] [INFO] [1782640081.291661951] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [WARN] [1782640082.291195559] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4346 Hz
-[imu_madgwick_filter.py-6] [INFO] [1782640082.310823875] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=3669 q_w=0.7674 angle=79.8deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782640082.332721067] [imu_madgwick_filter]: [imu_madgwick ->] msgs=1384 q_w=0.3187 angle=142.8deg beta=0.0330
-[component_container_isolated-16] [INFO] [1782640082.491459423] [controller_server]: Received a goal, begin computing control effort.
-[competition_master_stage3.py-17] [INFO] [1782640083.204727357] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(0.90,0.65) yaw=97deg cmd=(vx=0.31 wz=-0.97) elapsed=44.6s plan[29pts 3.9m] (0.90,0.65)→(3.00,-1.15) cpuFreq=1500MHz cpuT=80C cpu=60% mem=18%
-[component_container_isolated-16] [WARN] [1782640084.290735067] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4308 Hz
-[component_container_isolated-16] [INFO] [1782640084.491880390] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782640085.202533069] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.06,0.98) yaw=30deg cmd=(vx=0.40 wz=-0.34) elapsed=46.6s plan[31pts 4.3m] (0.90,0.85)→(3.00,-1.15) cpuFreq=1500MHz cpuT=80C cpu=28% mem=18%
-[component_container_isolated-16] [WARN] [1782640086.288814528] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4368 Hz
-[component_container_isolated-16] [INFO] [1782640086.492198187] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782640087.200922697] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.42,1.11) yaw=15deg cmd=(vx=0.20 wz=-0.97) elapsed=48.6s plan[23pts 3.1m] (1.50,1.15)→(3.00,-1.15) cpuFreq=1500MHz cpuT=80C cpu=57% mem=18%
-[component_container_isolated-16] [WARN] [1782640088.291675368] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4308 Hz
-[component_container_isolated-16] [INFO] [1782640088.491869398] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782640089.203758785] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.81,1.16) yaw=-26deg cmd=(vx=0.19 wz=-0.97) elapsed=50.6s plan[22pts 2.9m] (1.70,1.15)→(3.00,-1.15) cpuFreq=1500MHz cpuT=80C cpu=100% mem=18%
-[component_container_isolated-16] [WARN] [1782640090.288424032] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4377 Hz
-[component_container_isolated-16] [INFO] [1782640090.491868523] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782640091.205350162] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(2.01,0.94) yaw=-70deg cmd=(vx=0.25 wz=0.97) elapsed=52.6s plan[19pts 2.5m] (2.00,0.95)→(3.00,-1.15) cpuFreq=1500MHz cpuT=80C cpu=86% mem=18%
-[component_container_isolated-16] [WARN] [1782640092.287711780] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4418 Hz
-[imu_madgwick_filter.py-6] [INFO] [1782640092.312574476] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=4181 q_w=0.9246 angle=44.8deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782640092.333198542] [imu_madgwick_filter]: [imu_madgwick ->] msgs=1583 q_w=0.9708 angle=27.8deg beta=0.0330
-[component_container_isolated-16] [INFO] [1782640092.392080153] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782640093.202052739] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(2.31,0.55) yaw=-35deg cmd=(vx=0.17 wz=-0.97) elapsed=54.6s plan[14pts 2.0m] (2.30,0.55)→(3.00,-1.15) cpuFreq=1500MHz cpuT=80C cpu=70% mem=18%
-[component_container_isolated-16] [WARN] [1782640094.284455730] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2617 Hz
-[component_container_isolated-16] [INFO] [1782640094.401091493] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782640095.203998611] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(2.58,0.39) yaw=-64deg cmd=(vx=0.35 wz=-0.97) elapsed=56.6s plan[13pts 1.8m] (2.50,0.45)→(3.00,-1.15) cpuFreq=1500MHz cpuT=80C cpu=100% mem=18%
-[component_container_isolated-16] [WARN] [1782640096.288525729] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2583 Hz
-[component_container_isolated-16] [INFO] [1782640096.491927803] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782640097.203073519] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(2.60,-0.16) yaw=-91deg cmd=(vx=0.40 wz=0.10) elapsed=58.6s plan[10pts 1.4m] (2.60,0.05)→(3.00,-1.15) cpuFreq=1500MHz cpuT=80C cpu=55% mem=18%
-[component_container_isolated-16] [WARN] [1782640098.287974928] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4392 Hz
-[component_container_isolated-16] [INFO] [1782640098.391921259] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782640099.213825939] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(2.70,-0.68) yaw=-81deg cmd=(vx=0.32 wz=-0.08) elapsed=60.6s plan[5pts 0.7m] (2.70,-0.65)→(3.00,-1.15) cpuFreq=1500MHz cpuT=80C cpu=100% mem=18%
-[component_container_isolated-16] [INFO] [1782640100.092664686] [controller_server]: Reached the goal!
-[component_container_isolated-16] [WARN] [1782640100.286138331] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2608 Hz
-[component_container_isolated-16] [INFO] [1782640100.590683691] [bt_navigator]: Goal succeeded
-[competition_master_stage3.py-17] [INFO] [1782640100.602783747] [competition_master_stage3]: [结果回调] 巡航完成, 触发VLM推理...
-[competition_master_stage3.py-17] [INFO] [1782640100.605484625] [competition_master_stage3]: [VLM] 发布 sign4return=100, 拍照推理中...
-[competition_master_stage3.py-17] [INFO] [1782640100.609372005] [competition_master_stage3]: [状态机] CRUISE_CHANNEL → RETURN_P
-[vision_ai_node-12] [INFO] [1782640100.610557214] [vision_ai_node]: Received sign4return: 100
-[competition_master_stage3.py-17] [INFO] [1782640100.620610060] [competition_master_stage3]: [RETURN] NavigateThroughPoses: 通道入口→P点 (0.38,-1.10)→(-1.99,-0.01)
-[component_container_isolated-16] [INFO] [1782640100.624904981] [bt_navigator]: Begin navigating from current location through 2 poses to (-1.99, -0.01)
-[vision_ai_node-12] [INFO] [1782640100.625461899] [vision_ai_node]: Received trigger signal (sign4return=100), subscribing to image topic...
-[competition_master_stage3.py-17] [INFO] [1782640100.656259393] [competition_master_stage3]: NavigateThroughPoses 已接受, 巡航中...
-[vision_ai_node-12] [INFO] [1782640100.667791574] [vision_ai_node]: Subscribed to /aurora/rgb/image_raw topic
-[vision_ai_node-12] [INFO] [1782640100.714666879] [vision_ai_node]: Received compressed image, processing with AI model...
-[competition_master_stage3.py-17] [INFO] [1782640101.205536000] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.74,-0.91) yaw=-83deg cmd=(vx=0.00 wz=0.00) elapsed=62.6s plan[3pts 0.4m] (2.70,-0.95)→(3.00,-1.15) cpuFreq=1500MHz cpuT=80C cpu=16% mem=18%
-[component_container_isolated-16] [WARN] [1782640101.295941940] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.5041 Hz
-[component_container_isolated-16] [INFO] [1782640101.428310180] [controller_server]: Received a goal, begin computing control effort.
-[component_container_isolated-16] [INFO] [1782640101.428593389] [controller_server]: Passing new path to controller.
-[imu_madgwick_filter.py-6] [INFO] [1782640102.310027471] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=4693 q_w=0.7524 angle=82.4deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782640102.333189498] [imu_madgwick_filter]: [imu_madgwick ->] msgs=1773 q_w=0.9998 angle=2.4deg beta=0.0330
-[competition_master_stage3.py-17] [INFO] [1782640103.204956569] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.98,-1.38) yaw=-47deg cmd=(vx=0.40 wz=-0.07) elapsed=64.6s plan[50pts 7.1m] (2.80,-1.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=33% mem=18%
-[component_container_isolated-16] [WARN] [1782640103.293007172] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3094 Hz
-[component_container_isolated-16] [INFO] [1782640103.428833374] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782640105.202122548] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(3.25,-1.67) yaw=-77deg cmd=(vx=-0.29 wz=0.97) elapsed=66.6s plan[47pts 6.5m] (3.00,-1.45)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=81C cpu=33% mem=18%
-[component_container_isolated-16] [WARN] [1782640105.284060228] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782640105.284360479] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.07, -0.73)
-[component_container_isolated-16] [WARN] [1782640105.284481270] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640105.425745645] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640105.435414865] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640105.448826422] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640105.449407048] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640105.449825299] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782640105.449714299] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [WARN] [1782640105.462480439] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [WARN] [1782640106.297323672] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.7573 Hz
-[component_container_isolated-16] [INFO] [1782640106.428695744] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782640107.204784324] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(3.19,-1.50) yaw=-48deg cmd=(vx=-0.17 wz=-1.41) elapsed=68.6s plan[50pts 7.0m] (3.20,-1.55)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=55% mem=18%
-[component_container_isolated-16] [WARN] [1782640108.293185980] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3109 Hz
-[component_container_isolated-16] [INFO] [1782640108.428716723] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782640109.204752886] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(3.18,-1.51) yaw=-65deg cmd=(vx=0.19 wz=-0.97) elapsed=70.6s plan[49pts 6.7m] (3.10,-1.45)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=81% mem=18%
-[component_container_isolated-16] [WARN] [1782640110.290816705] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3104 Hz
-[component_container_isolated-16] [INFO] [1782640110.428718283] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782640111.205153613] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(3.20,-1.76) yaw=-106deg cmd=(vx=0.30 wz=-0.97) elapsed=72.6s plan[46pts 6.3m] (3.20,-1.75)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=81C cpu=50% mem=18%
-[component_container_isolated-16] [WARN] [1782640112.295289185] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3025 Hz
-[imu_madgwick_filter.py-6] [INFO] [1782640112.310584578] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=5197 q_w=0.1940 angle=157.6deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782640112.334907981] [imu_madgwick_filter]: [imu_madgwick ->] msgs=1973 q_w=0.8452 angle=64.6deg beta=0.0330
-[component_container_isolated-16] [INFO] [1782640112.428694425] [controller_server]: Passing new path to controller.
-[imu_madgwick_filter.py-4] [WARN] [1782640112.669061374] [imu_madgwick_filter]: [imu_madgwick] dt outlier: 0.1500s > 0.15s, capping
-[competition_master_stage3.py-17] [INFO] [1782640113.202880209] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.92,-2.02) yaw=-156deg cmd=(vx=0.40 wz=-0.48) elapsed=74.6s plan[45pts 6.2m] (3.10,-1.95)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=42% mem=18%
-[component_container_isolated-16] [WARN] [1782640114.283792811] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782640114.284101811] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.07, -0.73)
-[component_container_isolated-16] [WARN] [1782640114.284225770] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640114.425804727] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640114.440019369] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640114.455671304] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640114.457011097] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782640114.460654393] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640114.461793436] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [WARN] [1782640114.474358368] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[competition_master_stage3.py-17] [INFO] [1782640115.203993015] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.35,-1.96) yaw=161deg cmd=(vx=-0.30 wz=0.34) elapsed=76.6s plan[45pts 6.2m] (3.10,-1.95)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=16% mem=18%
-[component_container_isolated-16] [WARN] [1782640115.289636699] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782640115.289894241] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.07, -0.73)
-[component_container_isolated-16] [WARN] [1782640115.289985908] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640115.428736654] [controller_server]: Goal was canceled. Stopping the robot.
-[component_container_isolated-16] [INFO] [1782640115.429071946] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
-[component_container_isolated-16] [INFO] [1782640115.431183490] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
-[component_container_isolated-16] [INFO] [1782640115.443744713] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640115.450250054] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640115.455309476] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640115.455483810] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782640115.470136952] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [WARN] [1782640115.473643831] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640115.477414877] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640115.477793336] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [INFO] [1782640115.482090674] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640115.482246966] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640115.493856147] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640115.726144002] [behavior_server]: Running backup
-[competition_master_stage3.py-17] [INFO] [1782640117.208770073] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.52,-2.00) yaw=174deg cmd=(vx=-0.12 wz=0.00) elapsed=78.6s plan[45pts 6.2m] (3.10,-1.95)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=100% mem=18%
-[competition_master_stage3.py-17] [INFO] [1782640119.202393824] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.89,-2.03) yaw=174deg cmd=(vx=-0.12 wz=0.00) elapsed=80.6s plan[45pts 6.2m] (3.10,-1.95)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=44% mem=18%
-[component_container_isolated-16] [WARN] [1782640119.228819355] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
-[component_container_isolated-16] [WARN] [1782640119.229076772] [behavior_server]: backup failed
-[component_container_isolated-16] [WARN] [1782640119.229179064] [behavior_server]: [backup] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640119.525561994] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
-[component_container_isolated-16] [INFO] [1782640119.551789150] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640119.555392029] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640119.568390294] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640119.568771503] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782640119.574052009] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [WARN] [1782640119.582790228] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640119.585602356] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640119.585750023] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782640119.587865942] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640119.588114776] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [WARN] [1782640119.597763037] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640119.833006771] [behavior_server]: Running backup
-[component_container_isolated-16] [WARN] [1782640119.836734608] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
-[component_container_isolated-16] [WARN] [1782640119.836909275] [behavior_server]: backup failed
-[component_container_isolated-16] [WARN] [1782640119.837017942] [behavior_server]: [backup] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640120.128798325] [behavior_server]: Running wait
-[competition_master_stage3.py-17] [INFO] [1782640121.202833498] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.89,-2.03) yaw=174deg cmd=(vx=0.00 wz=0.00) elapsed=82.6s plan[45pts 6.2m] (3.10,-1.95)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=50% mem=18%
-[imu_madgwick_filter.py-6] [INFO] [1782640122.310457501] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=5719 q_w=-0.1966 angle=202.7deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782640122.332684360] [imu_madgwick_filter]: [imu_madgwick ->] msgs=2169 q_w=0.6690 angle=96.0deg beta=0.0330
-[component_container_isolated-16] [INFO] [1782640123.129910042] [behavior_server]: wait completed successfully
-[competition_master_stage3.py-17] [INFO] [1782640123.202492168] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.89,-2.03) yaw=174deg cmd=(vx=0.00 wz=0.00) elapsed=84.6s plan[45pts 6.2m] (3.10,-1.95)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=81C cpu=57% mem=18%
-[component_container_isolated-16] [WARN] [1782640124.290878564] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.1582 Hz
-[component_container_isolated-16] [INFO] [1782640124.430990644] [controller_server]: Received a goal, begin computing control effort.
-[competition_master_stage3.py-17] [INFO] [1782640125.203270587] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.89,-2.03) yaw=174deg cmd=(vx=0.40 wz=0.34) elapsed=86.6s plan[44pts 5.9m] (3.00,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=66% mem=18%
-[component_container_isolated-16] [WARN] [1782640126.290884190] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3111 Hz
-[component_container_isolated-16] [INFO] [1782640126.431399103] [controller_server]: Passing new path to controller.
-[competition_master_stage3.py-17] [INFO] [1782640127.201882752] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.51,-2.00) yaw=168deg cmd=(vx=0.40 wz=-0.16) elapsed=88.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=57% mem=18%
-[component_container_isolated-16] [WARN] [1782640128.283951430] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782640128.284196555] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.07, -0.73)
-[component_container_isolated-16] [WARN] [1782640128.284292930] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640128.425893970] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640128.434123896] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640128.454069836] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640128.454245295] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782640128.457187507] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640128.457555799] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [WARN] [1782640128.472000149] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[competition_master_stage3.py-17] [INFO] [1782640129.201550332] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.10,-1.79) yaw=147deg cmd=(vx=-0.30 wz=0.04) elapsed=90.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=81C cpu=50% mem=18%
-[component_container_isolated-16] [WARN] [1782640129.290888853] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782640129.291146561] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.07, -0.73)
-[component_container_isolated-16] [WARN] [1782640129.291238145] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640129.431401141] [controller_server]: Goal was canceled. Stopping the robot.
-[component_container_isolated-16] [INFO] [1782640129.431727558] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
-[component_container_isolated-16] [INFO] [1782640129.432810810] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
-[component_container_isolated-16] [INFO] [1782640129.448292411] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640129.453685334] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640129.453862126] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640129.453949293] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640129.472826315] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640129.474205941] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640129.479917489] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640129.480431907] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [INFO] [1782640129.487007414] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640129.487204790] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640129.499667096] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640129.726182193] [behavior_server]: Running backup
-[component_container_isolated-16] [WARN] [1782640129.726805027] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
-[component_container_isolated-16] [WARN] [1782640129.726925610] [behavior_server]: backup failed
-[component_container_isolated-16] [WARN] [1782640129.726990485] [behavior_server]: [backup] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640130.025708625] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
-[component_container_isolated-16] [INFO] [1782640130.035627137] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640130.047956276] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640130.048325443] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640130.048445485] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640130.060178707] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640130.068248091] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640130.075845267] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640130.076149934] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [INFO] [1782640130.079624688] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640130.079787563] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640130.091752452] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640130.326076266] [behavior_server]: Running backup
-[component_container_isolated-16] [WARN] [1782640130.327846935] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
-[component_container_isolated-16] [WARN] [1782640130.328006352] [behavior_server]: backup failed
-[component_container_isolated-16] [WARN] [1782640130.328078185] [behavior_server]: [backup] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640130.626631741] [behavior_server]: Running wait
-[competition_master_stage3.py-17] [INFO] [1782640131.204824372] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.24,-1.86) yaw=153deg cmd=(vx=0.00 wz=0.00) elapsed=92.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=81C cpu=50% mem=18%
-[vision_ai_node-12] [INFO] [1782640131.974580351] [vision_ai_node]: AI Analysis Result: 这张图片展示了**室内电梯区域的临时布置场景**，疑似处于施工保护或场地筹备状态，细节如下：
-[vision_ai_node-12]
-[vision_ai_node-12]
-[vision_ai_node-12] ### 场景与布局
-[vision_ai_node-12] 画面聚焦建筑内部的电梯厅区域，地面铺有**浅色（浅黄/白色）反光塑料布**（施工用地面保护膜，表面带褶皱、反光明显），整体氛围偏向“临时布置”（如施工、活动筹备）。
-[vision_ai_node-12]
-[vision_ai_node-12]
-[vision_ai_node-12] ### 核心物体与细节
-[vision_ai_node-12] 1. **电梯与按钮**：
-[vision_ai_node-12]    - 左侧是**银色电梯门**，两侧门框为**黑色大理石质感**（纹理清晰）。
-[vision_ai_node-12]    - 电梯旁的墙面上，装有**银色电梯按钮面板**，嵌有黑色按钮（可见“上行/下行”标识），用于操控电梯。
-[vision_ai_node-12]
-[vision_ai_node-12] 2. **墙面海报**：
-[vision_ai_node-12]    电梯上方的墙面上，张贴着一张**蓝白主色调的海报**，展示一栋现代建筑及周边环境（疑似宣传该建筑或场所）。
-[vision_ai_node-12]
-[vision_ai_node-12] 3. **黄色物体**：
-[vision_ai_node-12]    前景中有至少3个**明亮的黄色物体**（塑料或木质质感）：
-[vision_ai_node-12]    - 左侧：一个亮黄色长方体（受光面更亮，视觉上更醒目）。
-[vision_ai_node-12]    - 中间：一个黄色正方体（或长方体），体积稍小。
-[vision_ai_node-12]    - 后方（电梯墙前）：一个黄色物体（高度与中间物体相近，呈立放状态）。
-[vision_ai_node-12]
-[vision_ai_node-12] 4. **蓝色布帘**：
-[vision_ai_node-12]    右侧是一块**深蓝色的大型布帘**，布料质感明显，覆盖在某个物体表面（遮挡作用），占据画面右侧大部分空间。
-[vision_ai_node-12]
-[vision_ai_node-12]
-[vision_ai_node-12] ### 色彩与氛围
-[vision_ai_node-12] 色彩对比强烈：**银色电梯门**、**黑色门框/按钮**、**蓝白海报**、**明黄色物体**、**深蓝色布帘**、**浅色反光塑料布**，共同营造出“临时布置”的视觉效果（如施工保护、活动道具筹备）。
-[vision_ai_node-12]
-[vision_ai_node-12]
-[vision_ai_node-12] ### 整体感受
-[vision_ai_node-12] 场景似在进行**施工保护**（地面铺保护膜）或**活动场地布置**（黄/蓝物体、布帘为临时道具/遮挡），色彩鲜明的物体与反光地面，传递出“临时、筹备中”的氛围。
-[vision_ai_node-12]
-[vision_ai_node-12]
-[vision_ai_node-12] （注：黄色物体、蓝色布帘的具体用途暂不明确，推测为“临时遮挡/道具”；地面塑料布为施工常用的“地面保护膜”，防止作业弄脏地面。）
-[competition_master_stage3.py-17] [INFO] [1782640131.990409495] [competition_master_stage3]: [VLM] 后台收到推理结果: 这张图片展示了**室内电梯区域的临时布置场景**，疑似处于施工保护或场地筹备状态，细节如下：
-[competition_master_stage3.py-17]
-[competition_master_stage3.py-17]
-[competition_master_stage3.py-17] ### 场景与布局
-[competition_master_stage3.py-17] 画面聚焦建筑内部的电梯厅区域，地面铺有**浅色（浅黄/白色）反光塑料布**（施工用地面保护膜，表面带褶皱、反光明显...
-[vision_ai_node-12] [INFO] [1782640131.989420827] [vision_ai_node]: Unsubscribed from image topic
-[imu_madgwick_filter.py-6] [INFO] [1782640132.313067286] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=6239 q_w=-0.3948 angle=226.5deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782640132.333081893] [imu_madgwick_filter]: [imu_madgwick ->] msgs=2367 q_w=0.5674 angle=110.9deg beta=0.0330
-[competition_master_stage3.py-17] [INFO] [1782640133.203271696] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.24,-1.86) yaw=153deg cmd=(vx=0.00 wz=0.00) elapsed=94.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=25% mem=18%
-[component_container_isolated-16] [INFO] [1782640133.627176647] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [WARN] [1782640134.284053244] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782640134.284309578] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.07, -0.73)
-[component_container_isolated-16] [WARN] [1782640134.284464328] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640134.425582158] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640134.432179624] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640134.437773631] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640134.438181756] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [INFO] [1782640134.447779976] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640134.447940518] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640134.453350066] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[competition_master_stage3.py-17] [INFO] [1782640135.201887893] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.24,-1.86) yaw=153deg cmd=(vx=0.00 wz=0.00) elapsed=96.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=50% mem=18%
-[component_container_isolated-16] [WARN] [1782640135.289211536] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782640135.289465287] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.07, -0.73)
-[component_container_isolated-16] [WARN] [1782640135.289556454] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640135.425653487] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
-[component_container_isolated-16] [INFO] [1782640135.431513952] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640135.437113583] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640135.437885126] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640135.438063751] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640135.448703763] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640135.453374227] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640135.462553904] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640135.462839238] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [INFO] [1782640135.465002657] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640135.465162824] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640135.477266171] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640135.726081294] [behavior_server]: Running backup
-[component_container_isolated-16] [WARN] [1782640135.728115921] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
-[component_container_isolated-16] [WARN] [1782640135.728264755] [behavior_server]: backup failed
-[component_container_isolated-16] [WARN] [1782640135.728424463] [behavior_server]: [backup] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640136.025634725] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
-[component_container_isolated-16] [INFO] [1782640136.033614567] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640136.039817741] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640136.042740328] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640136.042925120] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640136.053207882] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640136.058259679] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640136.067951816] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640136.068304191] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [INFO] [1782640136.071019527] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640136.071203069] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640136.083335958] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640136.326490407] [behavior_server]: Running backup
-[component_container_isolated-16] [WARN] [1782640136.328276993] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
-[component_container_isolated-16] [WARN] [1782640136.328439951] [behavior_server]: backup failed
-[component_container_isolated-16] [WARN] [1782640136.328679535] [behavior_server]: [backup] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640136.626729631] [behavior_server]: Running wait
-[competition_master_stage3.py-17] [INFO] [1782640137.210347808] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.24,-1.86) yaw=153deg cmd=(vx=0.00 wz=0.00) elapsed=98.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=50% mem=18%
-[competition_master_stage3.py-17] [INFO] [1782640139.200446407] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.24,-1.86) yaw=153deg cmd=(vx=0.00 wz=0.00) elapsed=100.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=12% mem=18%
-[component_container_isolated-16] [INFO] [1782640139.627279235] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [WARN] [1782640140.283745662] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782640140.284077079] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.07, -0.73)
-[component_container_isolated-16] [WARN] [1782640140.284300580] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640140.431769875] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640140.441777929] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640140.448132228] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640140.448269353] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640140.454609402] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640140.463633246] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640140.463943704] [behavior_server]: wait completed successfully
-[competition_master_stage3.py-17] [INFO] [1782640141.202068393] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.24,-1.86) yaw=153deg cmd=(vx=0.00 wz=0.00) elapsed=102.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=16% mem=18%
-[component_container_isolated-16] [WARN] [1782640141.289809536] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782640141.290051494] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.07, -0.73)
-[component_container_isolated-16] [WARN] [1782640141.290149619] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640141.425613276] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
-[component_container_isolated-16] [INFO] [1782640141.431557908] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640141.439955793] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640141.441497003] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640141.443319422] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782640141.446937551] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640141.462811403] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640141.462949445] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640141.467347200] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [WARN] [1782640141.467611658] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640141.469213535] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640141.469516785] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [INFO] [1782640141.726936875] [behavior_server]: Running backup
-[component_container_isolated-16] [WARN] [1782640141.731163255] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
-[component_container_isolated-16] [WARN] [1782640141.731318297] [behavior_server]: backup failed
-[component_container_isolated-16] [WARN] [1782640141.731392922] [behavior_server]: [backup] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640142.025589429] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
-[component_container_isolated-16] [INFO] [1782640142.035601607] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640142.040249696] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640142.047262996] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640142.047436080] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640142.064776183] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640142.071958608] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640142.077939823] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640142.078190990] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [INFO] [1782640142.083247579] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640142.083397913] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640142.095629635] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[imu_madgwick_filter.py-6] [INFO] [1782640142.310511759] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=6780 q_w=-0.3934 angle=226.3deg beta=0.0030
-[component_container_isolated-16] [INFO] [1782640142.326696278] [behavior_server]: Running backup
-[component_container_isolated-16] [WARN] [1782640142.328487780] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
-[component_container_isolated-16] [WARN] [1782640142.328657988] [behavior_server]: backup failed
-[component_container_isolated-16] [WARN] [1782640142.328736780] [behavior_server]: [backup] [ActionServer] Aborting handle.
-[imu_madgwick_filter.py-4] [INFO] [1782640142.333011827] [imu_madgwick_filter]: [imu_madgwick ->] msgs=2567 q_w=0.6352 angle=101.1deg beta=0.0330
-[component_container_isolated-16] [INFO] [1782640142.626655750] [behavior_server]: Running wait
-[competition_master_stage3.py-17] [INFO] [1782640143.204377585] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.27,-1.89) yaw=154deg cmd=(vx=0.00 wz=0.00) elapsed=104.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=33% mem=18%
-[competition_master_stage3.py-17] [INFO] [1782640145.201645102] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.27,-1.89) yaw=154deg cmd=(vx=0.00 wz=0.00) elapsed=106.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=0% mem=18%
-[component_container_isolated-16] [INFO] [1782640145.627041844] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [WARN] [1782640146.283731561] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782640146.284151520] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.07, -0.73)
-[component_container_isolated-16] [WARN] [1782640146.284251270] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640146.425671808] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640146.439638366] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640146.445782748] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640146.446072415] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [INFO] [1782640146.450920254] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640146.451128962] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640146.461671808] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[competition_master_stage3.py-17] [INFO] [1782640147.203600415] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.27,-1.89) yaw=154deg cmd=(vx=0.00 wz=0.00) elapsed=108.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=44% mem=18%
-[component_container_isolated-16] [WARN] [1782640147.289224555] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782640147.289486055] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.07, -0.73)
-[component_container_isolated-16] [WARN] [1782640147.289707972] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640147.425604254] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
-[component_container_isolated-16] [INFO] [1782640147.433664638] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640147.437358726] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640147.441702523] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640147.441916523] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640147.450181699] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640147.450933867] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640147.456264248] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640147.456531082] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [INFO] [1782640147.462082713] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640147.462234005] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640147.482695820] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640147.726286601] [behavior_server]: Running backup
-[component_container_isolated-16] [WARN] [1782640147.727095352] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
-[component_container_isolated-16] [WARN] [1782640147.727264227] [behavior_server]: backup failed
-[component_container_isolated-16] [WARN] [1782640147.727333686] [behavior_server]: [backup] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640148.025555447] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
-[component_container_isolated-16] [INFO] [1782640148.031938954] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640148.038738795] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640148.043629676] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640148.043791801] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640148.051787185] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640148.055038439] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640148.064549992] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640148.064810909] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [INFO] [1782640148.066178535] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640148.066309369] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640148.078064466] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640148.326111377] [behavior_server]: Running backup
-[component_container_isolated-16] [WARN] [1782640148.327034045] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
-[component_container_isolated-16] [WARN] [1782640148.327158336] [behavior_server]: backup failed
-[component_container_isolated-16] [WARN] [1782640148.327222961] [behavior_server]: [backup] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640148.632507105] [behavior_server]: Running wait
-[competition_master_stage3.py-17] [INFO] [1782640149.203253514] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.27,-1.89) yaw=154deg cmd=(vx=0.00 wz=0.00) elapsed=110.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=33% mem=18%
-[competition_master_stage3.py-17] [INFO] [1782640151.205341155] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.27,-1.89) yaw=154deg cmd=(vx=0.00 wz=0.00) elapsed=112.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=33% mem=18%
-[component_container_isolated-16] [INFO] [1782640151.632919231] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [WARN] [1782640152.283667189] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782640152.283930856] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.07, -0.73)
-[component_container_isolated-16] [WARN] [1782640152.284051273] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[imu_madgwick_filter.py-6] [INFO] [1782640152.309768677] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=7323 q_w=-0.3923 angle=226.2deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782640152.333241829] [imu_madgwick_filter]: [imu_madgwick ->] msgs=2767 q_w=0.6989 angle=91.3deg beta=0.0330
-[component_container_isolated-16] [INFO] [1782640152.425744852] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640152.432870277] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640152.438564284] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640152.438589076] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640152.438882034] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782640152.438857576] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [WARN] [1782640152.445603334] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[competition_master_stage3.py-17] [INFO] [1782640153.203942457] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.27,-1.89) yaw=154deg cmd=(vx=0.00 wz=0.00) elapsed=114.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=20% mem=18%
-[component_container_isolated-16] [WARN] [1782640153.291626849] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782640153.291877183] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.07, -0.73)
-[component_container_isolated-16] [WARN] [1782640153.291969850] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640153.425719129] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
-[component_container_isolated-16] [INFO] [1782640153.434372139] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640153.441701314] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640153.441872189] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640153.441966231] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640153.451357658] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640153.458724667] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640153.466578801] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640153.466841218] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [INFO] [1782640153.470023888] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640153.470156096] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640153.481949277] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640153.726206766] [behavior_server]: Running backup
-[component_container_isolated-16] [WARN] [1782640153.727599309] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
-[component_container_isolated-16] [WARN] [1782640153.727721310] [behavior_server]: backup failed
-[component_container_isolated-16] [WARN] [1782640153.727786060] [behavior_server]: [backup] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640154.025675986] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
-[component_container_isolated-16] [INFO] [1782640154.032443869] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640154.039327502] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640154.043892465] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640154.044058132] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782640154.052146225] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [WARN] [1782640154.058532732] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640154.063269821] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640154.063406321] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782640154.063742905] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640154.064017738] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [WARN] [1782640154.075396293] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640154.326992499] [behavior_server]: Running backup
-[component_container_isolated-16] [WARN] [1782640154.329291043] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
-[component_container_isolated-16] [WARN] [1782640154.329470169] [behavior_server]: backup failed
-[component_container_isolated-16] [WARN] [1782640154.329553335] [behavior_server]: [backup] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640154.626523177] [behavior_server]: Running wait
-[competition_master_stage3.py-17] [INFO] [1782640155.200570462] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.31,-1.90) yaw=154deg cmd=(vx=0.00 wz=0.00) elapsed=116.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=44% mem=18%
-[competition_master_stage3.py-17] [INFO] [1782640157.204671891] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.31,-1.90) yaw=154deg cmd=(vx=0.00 wz=0.00) elapsed=118.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=71% mem=18%
-[component_container_isolated-16] [INFO] [1782640157.631697840] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [WARN] [1782640158.285030007] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782640158.285259090] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.07, -0.73)
-[component_container_isolated-16] [WARN] [1782640158.285364424] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640158.425639710] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640158.434204845] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640158.446730026] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640158.446895818] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782640158.453139825] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640158.453499117] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [WARN] [1782640158.558041195] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[competition_master_stage3.py-17] [INFO] [1782640159.223930543] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.31,-1.90) yaw=154deg cmd=(vx=0.00 wz=0.00) elapsed=120.7s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=60% mem=18%
-[component_container_isolated-16] [WARN] [1782640159.289580327] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782640159.289818994] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.07, -0.73)
-[component_container_isolated-16] [WARN] [1782640159.289943160] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640159.425630566] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
-[component_container_isolated-16] [INFO] [1782640159.434025201] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640159.439413499] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640159.441988793] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640159.442164002] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640159.451917346] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640159.456350810] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640159.463948318] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640159.464931528] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [INFO] [1782640159.467710281] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640159.467868406] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640159.480825713] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640159.727052412] [behavior_server]: Running backup
-[component_container_isolated-16] [WARN] [1782640159.727907455] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
-[component_container_isolated-16] [WARN] [1782640159.728275705] [behavior_server]: backup failed
-[component_container_isolated-16] [WARN] [1782640159.728371539] [behavior_server]: [backup] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640160.025587338] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
-[component_container_isolated-16] [INFO] [1782640160.035443641] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640160.044219734] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640160.044407735] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782640160.044447110] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [WARN] [1782640160.058447709] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640160.064603758] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640160.072420683] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640160.073607851] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [INFO] [1782640160.075756562] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640160.075969729] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640160.087905784] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640160.326315558] [behavior_server]: Running backup
-[component_container_isolated-16] [WARN] [1782640160.327789643] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
-[component_container_isolated-16] [WARN] [1782640160.327944018] [behavior_server]: backup failed
-[component_container_isolated-16] [WARN] [1782640160.328042102] [behavior_server]: [backup] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640160.626212652] [behavior_server]: Running wait
-[competition_master_stage3.py-17] [INFO] [1782640161.205125274] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.31,-1.90) yaw=154deg cmd=(vx=0.00 wz=0.00) elapsed=122.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=0% mem=18%
-[imu_madgwick_filter.py-6] [INFO] [1782640162.310444875] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=7883 q_w=-0.3912 angle=226.1deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782640162.333042775] [imu_madgwick_filter]: [imu_madgwick ->] msgs=2967 q_w=0.7580 angle=81.4deg beta=0.0330
-[competition_master_stage3.py-17] [INFO] [1782640163.203062939] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.31,-1.90) yaw=154deg cmd=(vx=0.00 wz=0.00) elapsed=124.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=37% mem=18%
-[component_container_isolated-16] [INFO] [1782640163.628588510] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [INFO] [1782640164.177578680] [local_costmap.local_costmap]: Message Filter dropping message: frame 'laser_link' at time 1782640163.875 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
-[component_container_isolated-16] [WARN] [1782640164.283710927] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782640164.283925927] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.07, -0.73)
-[component_container_isolated-16] [WARN] [1782640164.284025802] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640164.425673923] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640164.430266136] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640164.435598392] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640164.435666351] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640164.435894893] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782640164.437029811] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [WARN] [1782640164.444525486] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[competition_master_stage3.py-17] [INFO] [1782640165.204614606] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.31,-1.90) yaw=154deg cmd=(vx=0.00 wz=0.00) elapsed=126.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=33% mem=18%
-[component_container_isolated-16] [WARN] [1782640165.289584578] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782640165.289861745] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.07, -0.73)
-[component_container_isolated-16] [WARN] [1782640165.289988745] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640165.425710317] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
-[component_container_isolated-16] [INFO] [1782640165.436144537] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640165.451605472] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640165.451932681] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640165.452049389] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782640165.459096897] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [WARN] [1782640165.469692743] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640165.474068081] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640165.474222373] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782640165.474795457] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640165.475044582] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [WARN] [1782640165.486658095] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640165.737228632] [behavior_server]: Running backup
-[component_container_isolated-16] [WARN] [1782640165.738191591] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
-[component_container_isolated-16] [WARN] [1782640165.738334425] [behavior_server]: backup failed
-[component_container_isolated-16] [WARN] [1782640165.738422675] [behavior_server]: [backup] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640166.025574545] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
-[component_container_isolated-16] [INFO] [1782640166.032842262] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640166.038233060] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640166.039335978] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640166.039625603] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640166.049424406] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640166.050321324] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640166.057341457] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640166.057598374] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [INFO] [1782640166.062363879] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640166.062606546] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640166.075846478] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640166.331232603] [behavior_server]: Running backup
-[component_container_isolated-16] [WARN] [1782640166.332570313] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
-[component_container_isolated-16] [WARN] [1782640166.332704438] [behavior_server]: backup failed
-[component_container_isolated-16] [WARN] [1782640166.332771313] [behavior_server]: [backup] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640166.626370816] [behavior_server]: Running wait
-[competition_master_stage3.py-17] [INFO] [1782640167.201893141] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.26,-1.88) yaw=153deg cmd=(vx=0.00 wz=0.00) elapsed=128.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=28% mem=18%
-[competition_master_stage3.py-17] [INFO] [1782640169.202178802] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.26,-1.88) yaw=153deg cmd=(vx=0.00 wz=0.00) elapsed=130.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=55% mem=18%
-[component_container_isolated-16] [INFO] [1782640169.626750411] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [WARN] [1782640170.283409495] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782640170.283665953] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.07, -0.73)
-[component_container_isolated-16] [WARN] [1782640170.283774037] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640170.426075199] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640170.433922541] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640170.440016757] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640170.440182674] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782640170.446801348] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640170.447341432] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [WARN] [1782640170.450393144] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[competition_master_stage3.py-17] [INFO] [1782640171.203222794] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.26,-1.88) yaw=153deg cmd=(vx=0.00 wz=0.00) elapsed=132.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=50% mem=18%
-[component_container_isolated-16] [WARN] [1782640171.290409561] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782640171.290669769] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.07, -0.73)
-[component_container_isolated-16] [WARN] [1782640171.290784186] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640171.425896340] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
-[component_container_isolated-16] [INFO] [1782640171.438440146] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640171.448850533] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640171.451671911] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640171.451839120] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782640171.458691503] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [WARN] [1782640171.471237600] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640171.474717271] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640171.474860021] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782640171.475045938] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640171.475252938] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [WARN] [1782640171.487315910] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640171.639678751] [behavior_server]: Running backup
-[component_container_isolated-16] [WARN] [1782640171.640767835] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
-[component_container_isolated-16] [WARN] [1782640171.640910752] [behavior_server]: backup failed
-[component_container_isolated-16] [WARN] [1782640171.641016336] [behavior_server]: [backup] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640171.925584202] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
-[component_container_isolated-16] [INFO] [1782640171.932861960] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640171.941078095] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640171.941159970] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640171.941354428] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640171.950605397] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640171.956700988] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640171.965323247] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640171.965765706] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [INFO] [1782640171.968105209] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640171.968262876] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640171.980445140] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640172.226534295] [behavior_server]: Running backup
-[component_container_isolated-16] [WARN] [1782640172.230510133] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
-[component_container_isolated-16] [WARN] [1782640172.233786262] [behavior_server]: backup failed
-[component_container_isolated-16] [WARN] [1782640172.233902679] [behavior_server]: [backup] [ActionServer] Aborting handle.
-[imu_madgwick_filter.py-6] [INFO] [1782640172.310230932] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=8440 q_w=-0.3897 angle=225.9deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782640172.333587834] [imu_madgwick_filter]: [imu_madgwick ->] msgs=3167 q_w=0.8113 angle=71.6deg beta=0.0330
-[component_container_isolated-16] [INFO] [1782640172.526984055] [behavior_server]: Running wait
-[competition_master_stage3.py-17] [INFO] [1782640173.203939368] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.26,-1.88) yaw=153deg cmd=(vx=0.00 wz=0.00) elapsed=134.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=40% mem=18%
-[competition_master_stage3.py-17] [INFO] [1782640175.204259564] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.26,-1.88) yaw=153deg cmd=(vx=0.00 wz=0.00) elapsed=136.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=64% mem=18%
-[component_container_isolated-16] [INFO] [1782640175.527377599] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [WARN] [1782640176.284165919] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782640176.284486586] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.07, -0.73)
-[component_container_isolated-16] [WARN] [1782640176.284630794] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640176.425619580] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640176.431652545] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640176.438090136] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640176.438336969] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640176.438434761] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782640176.438391094] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [WARN] [1782640176.447032563] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[competition_master_stage3.py-17] [INFO] [1782640177.204411091] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.26,-1.88) yaw=153deg cmd=(vx=0.00 wz=0.00) elapsed=138.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=75% mem=18%
-[component_container_isolated-16] [WARN] [1782640177.290525731] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782640177.290751606] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.07, -0.73)
-[component_container_isolated-16] [WARN] [1782640177.290839898] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640177.425689343] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
-[component_container_isolated-16] [INFO] [1782640177.434514770] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640177.437655315] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640177.447993452] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640177.448063577] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640177.448377994] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [INFO] [1782640177.459636715] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640177.459959132] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [INFO] [1782640177.463034511] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640177.463186052] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640177.464028803] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [WARN] [1782640177.475632525] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640177.726315977] [behavior_server]: Running backup
-[component_container_isolated-16] [WARN] [1782640177.727390728] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
-[component_container_isolated-16] [WARN] [1782640177.727543353] [behavior_server]: backup failed
-[component_container_isolated-16] [WARN] [1782640177.727929229] [behavior_server]: [backup] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640178.025619109] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
-[component_container_isolated-16] [INFO] [1782640178.034837536] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640178.043493254] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640178.043513379] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640178.044607755] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640178.057912812] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640178.060212940] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640178.070133993] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640178.070444410] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [INFO] [1782640178.071459619] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640178.071674828] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640178.083806842] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640178.326582409] [behavior_server]: Running backup
-[component_container_isolated-16] [WARN] [1782640178.328170995] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
-[component_container_isolated-16] [WARN] [1782640178.328337828] [behavior_server]: backup failed
-[component_container_isolated-16] [WARN] [1782640178.328817829] [behavior_server]: [backup] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640178.627218668] [behavior_server]: Running wait
-[competition_master_stage3.py-17] [INFO] [1782640179.207968953] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.27,-1.89) yaw=154deg cmd=(vx=0.00 wz=0.00) elapsed=140.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=55% mem=18%
-[competition_master_stage3.py-17] [INFO] [1782640181.204734264] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.27,-1.89) yaw=154deg cmd=(vx=0.00 wz=0.00) elapsed=142.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=61% mem=18%
-[component_container_isolated-16] [INFO] [1782640181.627641869] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [WARN] [1782640182.299715590] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782640182.300003049] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.07, -0.73)
-[component_container_isolated-16] [WARN] [1782640182.300123716] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[imu_madgwick_filter.py-6] [INFO] [1782640182.317762028] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=8985 q_w=-0.3881 angle=225.7deg beta=0.0030
-[imu_madgwick_filter.py-4] [INFO] [1782640182.333216045] [imu_madgwick_filter]: [imu_madgwick ->] msgs=3367 q_w=0.8587 angle=61.7deg beta=0.0330
-[component_container_isolated-16] [INFO] [1782640182.425633858] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640182.431618490] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640182.436342787] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640182.436622787] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [INFO] [1782640182.439109624] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640182.439294124] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640182.449967136] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[competition_master_stage3.py-17] [INFO] [1782640183.204364617] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.27,-1.89) yaw=154deg cmd=(vx=0.00 wz=0.00) elapsed=144.6s plan[40pts 5.5m] (2.60,-2.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=80C cpu=63% mem=18%
-[component_container_isolated-16] [WARN] [1782640183.288811588] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
-[component_container_isolated-16] [WARN] [1782640183.289026255] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.07, -0.73)
-[component_container_isolated-16] [WARN] [1782640183.289136547] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640183.425769910] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
-[component_container_isolated-16] [INFO] [1782640183.434176461] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640183.442373262] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640183.442740679] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640183.442919846] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640183.453962317] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640183.459363990] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640183.470148169] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640183.470436127] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [INFO] [1782640183.471845046] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640183.471981504] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640183.483674476] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640183.726477459] [behavior_server]: Running backup
-[component_container_isolated-16] [WARN] [1782640183.727775253] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
-[component_container_isolated-16] [WARN] [1782640183.728047044] [behavior_server]: backup failed
-[component_container_isolated-16] [WARN] [1782640183.728141545] [behavior_server]: [backup] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640184.025570549] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
-[component_container_isolated-16] [INFO] [1782640184.037253479] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640184.043233944] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
-[component_container_isolated-16] [INFO] [1782640184.043362944] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640184.043492819] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640184.052186871] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640184.060208671] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
-[component_container_isolated-16] [INFO] [1782640184.068723264] [behavior_server]: Running wait
-[component_container_isolated-16] [INFO] [1782640184.070850975] [behavior_server]: wait completed successfully
-[component_container_isolated-16] [INFO] [1782640184.071773059] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
-[component_container_isolated-16] [INFO] [1782640184.071911893] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
-[component_container_isolated-16] [WARN] [1782640184.083965782] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
-[component_container_isolated-16] [INFO] [1782640184.326069764] [behavior_server]: Running backup
-[component_container_isolated-16] [WARN] [1782640184.328109933] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
-[component_container_isolated-16] [WARN] [1782640184.328262559] [behavior_server]: backup failed
-[component_container_isolated-16] [WARN] [1782640184.328338767] [behavior_server]: [backup] [ActionServer] Aborting handle.
+[INFO] [qr_decoder-10]: process has finished cleanly [pid 22575]
+[tracker_node-19] [INFO] [1783057386.056951882] [tracker_node]: Tracker initialized at (-0.06, 0.00)
+[tracker_node-19] [WARN] [1783057386.257094292] [tracker_node]: Measurement timeout (4.2s), pausing tracking
+[tracker_node-19] [INFO] [1783057386.456506202] [tracker_node]: Tracker initialized at (-0.06, 0.00)
+[tracker_node-19] [WARN] [1783057386.657206321] [tracker_node]: Measurement timeout (4.6s), pausing tracking
+[ERROR] [qr_decision-11]: process has died [pid 22577, exit code 1, cmd '/userdata/dev_ws/install/origincar_qr/lib/origincar_qr/qr_decision --ros-args -r __node:=qr_decision --params-file /tmp/launch_params_u5b8gw2c'].
+[tracker_node-19] [INFO] [1783057386.856346482] [tracker_node]: Tracker initialized at (-0.06, 0.00)
+[tracker_node-19] [WARN] [1783057387.056925392] [tracker_node]: Measurement timeout (5.0s), pausing tracking
+[competition_master_stage3.py-21] [INFO] [1783057387.070384228] [competition_master_stage3]: [DIAG] state=BACKING_UP pos=(-0.25,-2.28) yaw=-54deg cmd=(vx=-0.15 wz=0.80) elapsed=24.5s plan[11pts 1.5m] (-0.50,-1.95)→(0.40,-3.15) cpuFreq=1500MHz cpuT=76C cpu=88% mem=21%
+[tracker_node-19] [INFO] [1783057387.257729761] [tracker_node]: Tracker initialized at (-0.06, 0.00)
+[hobot_codec_republish-13] [WARN] [1783057387.425622333] [vlm_jpeg_encoder]: Sub imgRaw fps [12.66]
+[hobot_codec_republish-13] [WARN] [1783057387.428010250] [vlm_jpeg_encoder]: Pub img fps [12.67]
+[tracker_node-19] [WARN] [1783057387.456782838] [tracker_node]: Measurement timeout (5.4s), pausing tracking
+[tracker_node-19] [INFO] [1783057387.656474666] [tracker_node]: Tracker initialized at (-0.06, 0.00)
+[tracker_node-19] [WARN] [1783057387.862476161] [tracker_node]: Measurement timeout (5.8s), pausing tracking
+[tracker_node-19] [INFO] [1783057388.056816570] [tracker_node]: Tracker initialized at (-0.06, 0.00)
+[competition_master_stage3.py-21] [INFO] [1783057389.072410168] [competition_master_stage3]: [DIAG] state=BACKING_UP pos=(-0.13,-2.42) yaw=-35deg cmd=(vx=-0.15 wz=0.80) elapsed=26.5s plan[11pts 1.5m] (-0.50,-1.95)→(0.40,-3.15) cpuFreq=1500MHz cpuT=76C cpu=80% mem=21%
+[competition_master_stage3.py-21] [INFO] [1783057391.075601235] [competition_master_stage3]: [DIAG] state=BACKING_UP pos=(-0.42,-2.36) yaw=24deg cmd=(vx=-0.15 wz=0.80) elapsed=28.5s plan[11pts 1.5m] (-0.50,-1.95)→(0.40,-3.15) cpuFreq=1500MHz cpuT=76C cpu=90% mem=21%
+[tracker_node-19] [WARN] [1783057391.257134976] [tracker_node]: Measurement timeout (3.1s), pausing tracking
+[tracker_node-19] [INFO] [1783057391.457829262] [tracker_node]: Tracker initialized at (0.03, 0.00)
+[competition_master_stage3.py-21] [INFO] [1783057391.583417243] [competition_master_stage3]: [状态机] BACKING_UP → CRUISE_CHANNEL
+[competition_master_stage3.py-21] [INFO] [1783057391.587943827] [competition_master_stage3]: [CRUISE] 方向: CCW (逆时针, even QR), 路点: (0.25,-1.17), (1.66,-1.50), (2.90,-0.90), (2.17,0.69)
+[competition_master_stage3.py-21] [INFO] [1783057391.611541040] [competition_master_stage3]: [CRUISE] NavigateThroughPoses: (0.38,-1.10), (0.25,-1.17), (1.66,-1.50), (2.90,-0.90), (2.17,0.69)
+[component_container_isolated-17] [INFO] [1783057391.617981958] [bt_navigator]: Begin navigating from current location through 5 poses to (2.17, 0.69)
+[component_container_isolated-17] [INFO] [1783057391.619144291] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057391.635078127] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[competition_master_stage3.py-21] [INFO] [1783057391.642334795] [competition_master_stage3]: NavigateThroughPoses 已接受, 巡航中...
+[component_container_isolated-17] [INFO] [1783057391.647732546] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057391.647902880] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[tracker_node-19] [WARN] [1783057391.656890131] [tracker_node]: Measurement timeout (3.5s), pausing tracking
+[component_container_isolated-17] [WARN] [1783057391.677511468] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[tracker_node-19] [INFO] [1783057391.857675626] [tracker_node]: Tracker initialized at (0.03, 0.00)
+[tracker_node-19] [WARN] [1783057392.056249495] [tracker_node]: Measurement timeout (3.9s), pausing tracking
+[tracker_node-19] [INFO] [1783057392.256849448] [tracker_node]: Tracker initialized at (0.03, 0.00)
+[component_container_isolated-17] [WARN] [1783057392.413849309] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3163 Hz
+[hobot_codec_republish-13] [WARN] [1783057392.432363396] [vlm_jpeg_encoder]: Sub imgRaw fps [13.58]
+[hobot_codec_republish-13] [WARN] [1783057392.435303021] [vlm_jpeg_encoder]: Pub img fps [13.58]
+[path_optimizer_node.py-22] [INFO] [1783057392.455287192] [path_optimizer_node]: Path optimised (67 pts, 9.8 ms): mean |kappa| 2.0306 -> 3.5071 (-72.7%), max |kappa| 13.2078 -> 17.6561 (-33.7%), max shift 0.080 m
+[tracker_node-19] [WARN] [1783057392.456003025] [tracker_node]: Measurement timeout (4.3s), pausing tracking
+[speed_profile_node.py-23] [INFO] [1783057392.514619077] [speed_profile_node]: Plan received: 67 poses, mean|κ|=3.4977 m⁻¹, max|κ|=11.3340 m⁻¹, mean_v=0.244 m/s, min_v=0.150 m/s, max_v=0.478 m/s
+[component_container_isolated-17] [INFO] [1783057392.523496787] [controller_server]: Received a goal, begin computing control effort.
+[tracker_node-19] [INFO] [1783057392.656335811] [tracker_node]: Tracker initialized at (0.03, 0.00)
+[tracker_node-19] [WARN] [1783057392.857263889] [tracker_node]: Measurement timeout (4.7s), pausing tracking
+[tracker_node-19] [INFO] [1783057393.057355925] [tracker_node]: Tracker initialized at (0.03, 0.00)
+[competition_master_stage3.py-21] [INFO] [1783057393.077675512] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(-0.54,-2.45) yaw=52deg cmd=(vx=-0.30 wz=-0.34) elapsed=30.5s plan[67pts 9.2m] (-0.60,-2.45)→(2.20,0.65) cpuFreq=1500MHz cpuT=76C cpu=88% mem=21%
+[tracker_node-19] [WARN] [1783057393.257508170] [tracker_node]: Measurement timeout (5.1s), pausing tracking
+[imu_madgwick_filter.py-6] [INFO] [1783057393.438115661] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=2690 q_w=0.9530 angle=35.3deg beta=0.0030
+[imu_madgwick_filter.py-4] [INFO] [1783057393.440859161] [imu_madgwick_filter]: [imu_madgwick ->] msgs=1167 q_w=0.8402 angle=65.7deg beta=0.0330
+[tracker_node-19] [INFO] [1783057393.456808164] [tracker_node]: Tracker initialized at (0.03, 0.00)
+[component_container_isolated-17] [INFO] [1783057393.619079319] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057393.629398820] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057393.636975738] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057393.637134155] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057393.643767906] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057394.413108337] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2894 Hz
+[path_optimizer_node.py-22] [INFO] [1783057394.444880260] [path_optimizer_node]: Path optimised (71 pts, 6.5 ms): mean |kappa| 2.0849 -> 3.2394 (-55.4%), max |kappa| 13.2078 -> 17.1029 (-29.5%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057394.518732607] [speed_profile_node]: Plan received: 71 poses, mean|κ|=3.2480 m⁻¹, max|κ|=11.3340 m⁻¹, mean_v=0.243 m/s, min_v=0.150 m/s, max_v=0.478 m/s
+[component_container_isolated-17] [INFO] [1783057394.526060066] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057395.074067832] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(-0.72,-2.66) yaw=53deg cmd=(vx=-0.30 wz=-0.50) elapsed=32.5s plan[71pts 9.6m] (-0.70,-2.65)→(2.20,0.65) cpuFreq=1500MHz cpuT=76C cpu=90% mem=21%
+[component_container_isolated-17] [INFO] [1783057395.619997682] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057395.633244142] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057395.644938769] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057395.645106144] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057395.656837355] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057396.403071658] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3246 Hz
+[path_optimizer_node.py-22] [INFO] [1783057396.461490793] [path_optimizer_node]: Path optimised (66 pts, 6.4 ms): mean |kappa| 1.8118 -> 3.1246 (-72.5%), max |kappa| 13.2078 -> 13.3284 (-0.9%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057396.508700343] [speed_profile_node]: Plan received: 66 poses, mean|κ|=3.0338 m⁻¹, max|κ|=11.3340 m⁻¹, mean_v=0.269 m/s, min_v=0.150 m/s, max_v=0.500 m/s
+[component_container_isolated-17] [INFO] [1783057396.523969180] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057397.080124864] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(-0.68,-2.58) yaw=54deg cmd=(vx=0.40 wz=0.24) elapsed=34.5s plan[66pts 9.0m] (-0.70,-2.65)→(2.20,0.65) cpuFreq=1500MHz cpuT=76C cpu=80% mem=21%
+[hobot_codec_republish-13] [WARN] [1783057397.436059971] [vlm_jpeg_encoder]: Sub imgRaw fps [12.99]
+[hobot_codec_republish-13] [WARN] [1783057397.438927013] [vlm_jpeg_encoder]: Pub img fps [12.99]
+[component_container_isolated-17] [INFO] [1783057397.619004505] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057397.627747881] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057397.638995342] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057397.639168842] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057397.651695094] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057398.413376817] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2922 Hz
+[path_optimizer_node.py-22] [INFO] [1783057398.451938199] [path_optimizer_node]: Path optimised (64 pts, 5.5 ms): mean |kappa| 2.1202 -> 3.5695 (-68.4%), max |kappa| 13.2078 -> 18.9465 (-43.4%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057398.521819503] [speed_profile_node]: Plan received: 64 poses, mean|κ|=3.4620 m⁻¹, max|κ|=11.3339 m⁻¹, mean_v=0.264 m/s, min_v=0.150 m/s, max_v=0.499 m/s
+[component_container_isolated-17] [INFO] [1783057398.523960004] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057399.076797147] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(-0.66,-2.51) yaw=50deg cmd=(vx=0.40 wz=-0.10) elapsed=36.5s plan[64pts 9.0m] (-0.60,-2.55)→(2.20,0.65) cpuFreq=1500MHz cpuT=76C cpu=87% mem=21%
+[component_container_isolated-17] [INFO] [1783057399.619001038] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057399.635355624] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057399.649269710] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057399.649436002] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057399.661868213] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057400.413895934] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3044 Hz
+[path_optimizer_node.py-22] [INFO] [1783057400.451079025] [path_optimizer_node]: Path optimised (60 pts, 5.7 ms): mean |kappa| 1.9900 -> 3.6407 (-82.9%), max |kappa| 13.2078 -> 18.9310 (-43.3%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057400.507894952] [speed_profile_node]: Plan received: 60 poses, mean|κ|=3.5237 m⁻¹, max|κ|=11.3340 m⁻¹, mean_v=0.247 m/s, min_v=0.150 m/s, max_v=0.498 m/s
+[component_container_isolated-17] [INFO] [1783057400.523980038] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057401.078050349] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(-0.27,-1.87) yaw=61deg cmd=(vx=0.40 wz=0.09) elapsed=38.5s plan[60pts 8.2m] (-0.30,-1.85)→(2.20,0.65) cpuFreq=1500MHz cpuT=76C cpu=60% mem=21%
+[component_container_isolated-17] [INFO] [1783057401.619200115] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057401.630368826] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057401.639560327] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057401.639755119] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057401.649244663] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057402.403598261] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3105 Hz
+[path_optimizer_node.py-22] [INFO] [1783057402.430919224] [path_optimizer_node]: Path optimised (58 pts, 5.6 ms): mean |kappa| 2.0390 -> 3.4151 (-67.5%), max |kappa| 13.2078 -> 14.4026 (-9.0%), max shift 0.080 m
+[hobot_codec_republish-13] [WARN] [1783057402.452628311] [vlm_jpeg_encoder]: Sub imgRaw fps [13.36]
+[speed_profile_node.py-23] [INFO] [1783057402.486770276] [speed_profile_node]: Plan received: 58 poses, mean|κ|=3.3017 m⁻¹, max|κ|=11.3340 m⁻¹, mean_v=0.242 m/s, min_v=0.150 m/s, max_v=0.496 m/s
+[component_container_isolated-17] [INFO] [1783057402.523967866] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057403.074080135] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(-0.12,-1.61) yaw=53deg cmd=(vx=0.40 wz=-0.26) elapsed=40.5s plan[58pts 7.9m] (-0.20,-1.65)→(2.20,0.65) cpuFreq=1500MHz cpuT=76C cpu=100% mem=21%
+[hobot_codec_republish-13] [WARN] [1783057403.177498237] [vlm_jpeg_encoder]: Pub img fps [11.68]
+[imu_madgwick_filter.py-6] [INFO] [1783057403.417633699] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=3185 q_w=0.9693 angle=28.5deg beta=0.0030
+[imu_madgwick_filter.py-4] [INFO] [1783057403.439692244] [imu_madgwick_filter]: [imu_madgwick ->] msgs=1360 q_w=0.8473 angle=64.2deg beta=0.0330
+[component_container_isolated-17] [INFO] [1783057403.619261570] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057403.633160072] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057403.643408032] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057403.643575657] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057403.655519160] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057404.398040881] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3421 Hz
+[path_optimizer_node.py-22] [INFO] [1783057404.422298677] [path_optimizer_node]: Path optimised (48 pts, 4.9 ms): mean |kappa| 2.2456 -> 2.9408 (-31.0%), max |kappa| 13.2078 -> 13.3289 (-0.9%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057404.475013395] [speed_profile_node]: Plan received: 48 poses, mean|κ|=2.8251 m⁻¹, max|κ|=11.3339 m⁻¹, mean_v=0.268 m/s, min_v=0.150 m/s, max_v=0.485 m/s
+[component_container_isolated-17] [INFO] [1783057404.523974196] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057405.073590799] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(0.21,-1.25) yaw=37deg cmd=(vx=0.40 wz=-0.90) elapsed=42.5s plan[48pts 6.7m] (0.30,-1.15)→(2.20,0.65) cpuFreq=1500MHz cpuT=76C cpu=87% mem=21%
+[component_container_isolated-17] [INFO] [1783057405.619699317] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057405.636011987] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057405.645832697] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057405.645985489] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057405.655604949] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057406.389307545] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3531 Hz
+[path_optimizer_node.py-22] [INFO] [1783057406.417305092] [path_optimizer_node]: Path optimised (46 pts, 5.2 ms): mean |kappa| 2.8849 -> 3.6811 (-27.6%), max |kappa| 13.2078 -> 13.3289 (-0.9%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057406.460227100] [speed_profile_node]: Plan received: 46 poses, mean|κ|=3.5533 m⁻¹, max|κ|=11.3342 m⁻¹, mean_v=0.234 m/s, min_v=0.150 m/s, max_v=0.478 m/s
+[component_container_isolated-17] [INFO] [1783057406.523975778] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057407.070276672] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(0.68,-1.09) yaw=-7deg cmd=(vx=0.20 wz=0.97) elapsed=44.5s plan[46pts 6.7m] (0.60,-1.05)→(2.20,0.65) cpuFreq=1500MHz cpuT=76C cpu=85% mem=21%
+[component_container_isolated-17] [INFO] [1783057407.618953109] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057407.629091236] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057407.639635654] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057407.639768571] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057407.647573197] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[hobot_codec_republish-13] [WARN] [1783057408.184275340] [vlm_jpeg_encoder]: Sub imgRaw fps [14.93]
+[component_container_isolated-17] [WARN] [1783057408.395410671] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3238 Hz
+[path_optimizer_node.py-22] [INFO] [1783057408.430306511] [path_optimizer_node]: Path optimised (45 pts, 4.8 ms): mean |kappa| 2.5837 -> 3.7276 (-44.3%), max |kappa| 13.2078 -> 13.3286 (-0.9%), max shift 0.080 m
+[component_container_isolated-17] [INFO] [1783057408.523963029] [controller_server]: Passing new path to controller.
+[hobot_codec_republish-13] [WARN] [1783057408.678013766] [vlm_jpeg_encoder]: Pub img fps [13.64]
+[speed_profile_node.py-23] [INFO] [1783057408.745084404] [speed_profile_node]: Plan received: 45 poses, mean|κ|=3.5915 m⁻¹, max|κ|=11.3344 m⁻¹, mean_v=0.231 m/s, min_v=0.150 m/s, max_v=0.478 m/s
+[competition_master_stage3.py-21] [INFO] [1783057409.086729218] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(0.77,-1.08) yaw=-16deg cmd=(vx=0.40 wz=0.39) elapsed=46.5s plan[45pts 6.4m] (0.90,-1.15)→(2.20,0.65) cpuFreq=1500MHz cpuT=76C cpu=100% mem=21%
+[component_container_isolated-17] [INFO] [1783057409.619031111] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057409.632209030] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057409.644436240] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057409.644599365] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057409.652961159] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057410.395737007] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3322 Hz
+[path_optimizer_node.py-22] [INFO] [1783057410.423862763] [path_optimizer_node]: Path optimised (45 pts, 7.3 ms): mean |kappa| 2.9610 -> 3.7298 (-26.0%), max |kappa| 13.2078 -> 13.3288 (-0.9%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057410.476289564] [speed_profile_node]: Plan received: 45 poses, mean|κ|=3.6500 m⁻¹, max|κ|=11.3341 m⁻¹, mean_v=0.238 m/s, min_v=0.150 m/s, max_v=0.478 m/s
+[component_container_isolated-17] [INFO] [1783057410.523967032] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057411.075096136] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.10,-1.09) yaw=8deg cmd=(vx=-0.24 wz=0.33) elapsed=48.5s plan[45pts 6.5m] (1.00,-1.15)→(2.20,0.65) cpuFreq=1500MHz cpuT=76C cpu=88% mem=21%
+[component_container_isolated-17] [INFO] [1783057411.619085073] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057411.636904909] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057411.743992971] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057411.744255971] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057411.753791682] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057412.411625265] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3158 Hz
+[path_optimizer_node.py-22] [INFO] [1783057412.415059891] [path_optimizer_node]: Path optimised (42 pts, 4.6 ms): mean |kappa| 2.5646 -> 3.1319 (-22.1%), max |kappa| 13.2078 -> 13.3289 (-0.9%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057412.455351273] [speed_profile_node]: Plan received: 42 poses, mean|κ|=2.9944 m⁻¹, max|κ|=11.3341 m⁻¹, mean_v=0.261 m/s, min_v=0.150 m/s, max_v=0.478 m/s
+[component_container_isolated-17] [INFO] [1783057412.523978203] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057413.074778891] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.06,-1.13) yaw=26deg cmd=(vx=0.30 wz=-0.87) elapsed=50.5s plan[42pts 6.0m] (1.10,-1.05)→(2.20,0.65) cpuFreq=1500MHz cpuT=76C cpu=100% mem=21%
+[imu_madgwick_filter.py-6] [INFO] [1783057413.415790498] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=3686 q_w=0.9944 angle=12.2deg beta=0.0030
+[imu_madgwick_filter.py-4] [INFO] [1783057413.440156586] [imu_madgwick_filter]: [imu_madgwick ->] msgs=1555 q_w=0.9007 angle=51.5deg beta=0.0330
+[component_container_isolated-17] [INFO] [1783057413.618983953] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057413.629291622] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057413.638838499] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057413.638990207] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057413.654561377] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[hobot_codec_republish-13] [WARN] [1783057413.732899308] [vlm_jpeg_encoder]: Sub imgRaw fps [14.81]
+[hobot_codec_republish-13] [WARN] [1783057413.736522601] [vlm_jpeg_encoder]: Pub img fps [14.83]
+[component_container_isolated-17] [WARN] [1783057414.402033270] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3182 Hz
+[path_optimizer_node.py-22] [INFO] [1783057414.434675692] [path_optimizer_node]: Path optimised (41 pts, 6.5 ms): mean |kappa| 2.5245 -> 3.1776 (-25.9%), max |kappa| 13.2078 -> 13.3287 (-0.9%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057414.468232199] [speed_profile_node]: Plan received: 41 poses, mean|κ|=3.0403 m⁻¹, max|κ|=11.3342 m⁻¹, mean_v=0.257 m/s, min_v=0.150 m/s, max_v=0.478 m/s
+[component_container_isolated-17] [INFO] [1783057414.523965335] [controller_server]: Passing new path to controller.
+[tracker_node-19] [WARN] [1783057414.856369940] [tracker_node]: Measurement timeout (3.0s), pausing tracking
+[tracker_node-19] [INFO] [1783057415.057006728] [tracker_node]: Tracker initialized at (0.10, 0.00)
+[competition_master_stage3.py-21] [INFO] [1783057415.075249982] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.35,-1.09) yaw=-17deg cmd=(vx=0.21 wz=-0.97) elapsed=52.5s plan[41pts 5.8m] (1.30,-1.05)→(2.20,0.65) cpuFreq=1500MHz cpuT=76C cpu=94% mem=21%
+[tracker_node-19] [WARN] [1783057415.255853350] [tracker_node]: Measurement timeout (3.4s), pausing tracking
+[tracker_node-19] [INFO] [1783057415.456432471] [tracker_node]: Tracker initialized at (0.10, 0.00)
+[component_container_isolated-17] [INFO] [1783057415.619178836] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057415.637526423] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057415.647642550] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057415.647793550] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[tracker_node-19] [WARN] [1783057415.657143177] [tracker_node]: Measurement timeout (3.8s), pausing tracking
+[component_container_isolated-17] [WARN] [1783057415.670184096] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[tracker_node-19] [INFO] [1783057415.857064382] [tracker_node]: Tracker initialized at (0.10, 0.00)
+[tracker_node-19] [WARN] [1783057416.056496128] [tracker_node]: Measurement timeout (4.2s), pausing tracking
+[tracker_node-19] [INFO] [1783057416.256100000] [tracker_node]: Tracker initialized at (-0.01, 0.00)
+[component_container_isolated-17] [WARN] [1783057416.394091068] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3555 Hz
+[path_optimizer_node.py-22] [INFO] [1783057416.429450658] [path_optimizer_node]: Path optimised (42 pts, 5.8 ms): mean |kappa| 2.4060 -> 3.2319 (-34.3%), max |kappa| 12.7282 -> 18.2927 (-43.7%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057416.473768542] [speed_profile_node]: Plan received: 42 poses, mean|κ|=3.1603 m⁻¹, max|κ|=11.5263 m⁻¹, mean_v=0.265 m/s, min_v=0.150 m/s, max_v=0.478 m/s
+[component_container_isolated-17] [INFO] [1783057416.523974676] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057417.075262324] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.56,-1.27) yaw=-60deg cmd=(vx=-0.30 wz=-0.47) elapsed=54.5s plan[42pts 6.3m] (1.60,-1.25)→(2.20,0.65) cpuFreq=1500MHz cpuT=77C cpu=87% mem=21%
+[component_container_isolated-17] [INFO] [1783057417.619523179] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057417.639152808] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057417.648623935] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057417.648764476] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057417.666788396] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057418.389750078] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3514 Hz
+[path_optimizer_node.py-22] [INFO] [1783057418.432237461] [path_optimizer_node]: Path optimised (39 pts, 6.6 ms): mean |kappa| 1.9612 -> 3.0769 (-56.9%), max |kappa| 12.0193 -> 22.7565 (-89.3%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057418.476988803] [speed_profile_node]: Plan received: 39 poses, mean|κ|=2.9293 m⁻¹, max|κ|=14.4415 m⁻¹, mean_v=0.306 m/s, min_v=0.150 m/s, max_v=0.495 m/s
+[component_container_isolated-17] [INFO] [1783057418.525534520] [controller_server]: Passing new path to controller.
+[hobot_codec_republish-13] [WARN] [1783057418.785981946] [vlm_jpeg_encoder]: Sub imgRaw fps [13.46]
+[hobot_codec_republish-13] [WARN] [1783057418.788446738] [vlm_jpeg_encoder]: Pub img fps [13.46]
+[competition_master_stage3.py-21] [INFO] [1783057419.078379544] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.48,-1.08) yaw=-79deg cmd=(vx=-0.30 wz=-0.16) elapsed=56.5s plan[39pts 5.8m] (1.50,-0.95)→(2.20,0.65) cpuFreq=1500MHz cpuT=77C cpu=87% mem=21%
+[tracker_node-19] [WARN] [1783057419.255997662] [tracker_node]: Measurement timeout (3.2s), pausing tracking
+[tracker_node-19] [INFO] [1783057419.457626784] [tracker_node]: Tracker initialized at (-0.01, 0.00)
+[component_container_isolated-17] [INFO] [1783057419.531645173] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057419.541553092] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057419.552717386] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057419.552860636] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057419.573152348] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[tracker_node-19] [WARN] [1783057419.656689031] [tracker_node]: Measurement timeout (3.6s), pausing tracking
+[tracker_node-19] [INFO] [1783057419.858924279] [tracker_node]: Tracker initialized at (-0.01, 0.00)
+[component_container_isolated-17] [WARN] [1783057420.397002633] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2020 Hz
+[path_optimizer_node.py-22] [INFO] [1783057420.444474517] [path_optimizer_node]: Path optimised (43 pts, 9.7 ms): mean |kappa| 2.4675 -> 3.7502 (-52.0%), max |kappa| 14.0941 -> 29.6818 (-110.6%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057420.486418692] [speed_profile_node]: Plan received: 43 poses, mean|κ|=3.7615 m⁻¹, max|κ|=16.2035 m⁻¹, mean_v=0.265 m/s, min_v=0.150 m/s, max_v=0.478 m/s
+[component_container_isolated-17] [INFO] [1783057420.523978658] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057421.078226849] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.43,-0.78) yaw=-84deg cmd=(vx=0.01 wz=0.14) elapsed=58.5s plan[43pts 6.2m] (1.50,-0.85)→(2.20,0.65) cpuFreq=1500MHz cpuT=77C cpu=100% mem=21%
+[component_container_isolated-17] [INFO] [1783057421.619023037] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057421.631537165] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057421.644650834] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057421.644838709] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057421.657512086] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057422.385912395] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
+[component_container_isolated-17] [WARN] [1783057422.386181103] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (2.90, -0.90)
+[component_container_isolated-17] [WARN] [1783057422.386307978] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
+[component_container_isolated-17] [INFO] [1783057422.519054754] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057422.531147757] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057422.544238426] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057422.544413176] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [INFO] [1783057422.552805886] [behavior_server]: Running wait
+[component_container_isolated-17] [WARN] [1783057422.556262678] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [INFO] [1783057422.556308845] [behavior_server]: wait completed successfully
+[component_container_isolated-17] [INFO] [1783057422.819158313] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057422.825922439] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057422.840307317] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057422.840484900] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057422.852101694] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[tracker_node-19] [WARN] [1783057423.056533776] [tracker_node]: Measurement timeout (3.1s), pausing tracking
+[competition_master_stage3.py-21] [INFO] [1783057423.074978279] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.44,-0.77) yaw=-57deg cmd=(vx=-0.17 wz=-0.97) elapsed=60.5s plan[43pts 6.2m] (1.50,-0.85)→(2.20,0.65) cpuFreq=1500MHz cpuT=77C cpu=85% mem=21%
+[tracker_node-19] [INFO] [1783057423.256620565] [tracker_node]: Tracker initialized at (0.13, 0.00)
+[component_container_isolated-17] [WARN] [1783057423.382808715] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
+[component_container_isolated-17] [WARN] [1783057423.383105506] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (2.90, -0.90)
+[component_container_isolated-17] [WARN] [1783057423.383239340] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
+[imu_madgwick_filter.py-6] [INFO] [1783057423.415877763] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=4166 q_w=0.8520 angle=63.2deg beta=0.0030
+[imu_madgwick_filter.py-4] [INFO] [1783057423.439769559] [imu_madgwick_filter]: [imu_madgwick ->] msgs=1752 q_w=0.9875 angle=18.1deg beta=0.0330
+[tracker_node-19] [WARN] [1783057423.456983271] [tracker_node]: Measurement timeout (3.5s), pausing tracking
+[component_container_isolated-17] [INFO] [1783057423.523985284] [controller_server]: Goal was canceled. Stopping the robot.
+[component_container_isolated-17] [INFO] [1783057423.524174784] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[component_container_isolated-17] [INFO] [1783057423.524941201] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[component_container_isolated-17] [INFO] [1783057423.545006121] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057423.563042667] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057423.564772750] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [INFO] [1783057423.566624542] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [WARN] [1783057423.579873128] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [INFO] [1783057423.590074630] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057423.595148131] [behavior_server]: Running wait
+[component_container_isolated-17] [INFO] [1783057423.595427173] [behavior_server]: wait completed successfully
+[component_container_isolated-17] [INFO] [1783057423.604694175] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057423.604862008] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057423.617743136] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[tracker_node-19] [INFO] [1783057423.658016477] [tracker_node]: Tracker initialized at (0.13, 0.00)
+[component_container_isolated-17] [INFO] [1783057423.820087092] [behavior_server]: Running backup
+[component_container_isolated-17] [INFO] [1783057423.821063217] [behavior_server]: DriveOnHeading: no acceleration or deceleration limits set
+[tracker_node-19] [WARN] [1783057423.862874142] [tracker_node]: Measurement timeout (3.9s), pausing tracking
+[hobot_codec_republish-13] [WARN] [1783057423.931576405] [vlm_jpeg_encoder]: Sub imgRaw fps [12.44]
+[hobot_codec_republish-13] [WARN] [1783057423.934577448] [vlm_jpeg_encoder]: Pub img fps [12.44]
+[tracker_node-19] [INFO] [1783057424.062590056] [tracker_node]: Tracker initialized at (-0.05, 0.00)
+[imu_madgwick_filter.py-4] [WARN] [1783057424.366450699] [imu_madgwick_filter]: [imu_madgwick] dt outlier: 0.1501s > 0.15s, capping
+[competition_master_stage3.py-21] [INFO] [1783057425.069063837] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.44,-0.77) yaw=-57deg cmd=(vx=-0.12 wz=0.00) elapsed=62.5s plan[43pts 6.2m] (1.50,-0.85)→(2.20,0.65) cpuFreq=1500MHz cpuT=77C cpu=75% mem=21%
+[tracker_node-19] [WARN] [1783057427.058665812] [tracker_node]: Measurement timeout (3.1s), pausing tracking
+[competition_master_stage3.py-21] [INFO] [1783057427.073539773] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.44,-0.77) yaw=-54deg cmd=(vx=-0.12 wz=0.00) elapsed=64.5s plan[43pts 6.2m] (1.50,-0.85)→(2.20,0.65) cpuFreq=1500MHz cpuT=76C cpu=87% mem=21%
+[tracker_node-19] [INFO] [1783057427.260829185] [tracker_node]: Tracker initialized at (-0.05, 0.00)
+[hobot_codec_republish-13] [WARN] [1783057428.970240565] [vlm_jpeg_encoder]: Sub imgRaw fps [13.70]
+[hobot_codec_republish-13] [WARN] [1783057428.976737566] [vlm_jpeg_encoder]: Pub img fps [13.69]
+[competition_master_stage3.py-21] [INFO] [1783057429.070574668] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.33,-0.61) yaw=-57deg cmd=(vx=-0.12 wz=0.00) elapsed=66.5s plan[43pts 6.2m] (1.50,-0.85)→(2.20,0.65) cpuFreq=1500MHz cpuT=76C cpu=88% mem=21%
+[component_container_isolated-17] [WARN] [1783057430.821409266] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
+[component_container_isolated-17] [WARN] [1783057430.821581057] [behavior_server]: backup failed
+[component_container_isolated-17] [WARN] [1783057430.821687724] [behavior_server]: [backup] [ActionServer] Aborting handle.
+[competition_master_stage3.py-21] [INFO] [1783057431.070463190] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.21,-0.43) yaw=-59deg cmd=(vx=0.00 wz=0.00) elapsed=68.5s plan[43pts 6.2m] (1.50,-0.85)→(2.20,0.65) cpuFreq=1500MHz cpuT=76C cpu=90% mem=21%
+[component_container_isolated-17] [INFO] [1783057431.121661909] [behavior_server]: Running wait
+[imu_madgwick_filter.py-4] [WARN] [1783057431.565247830] [imu_madgwick_filter]: [imu_madgwick] dt outlier: 0.1501s > 0.15s, capping
+[competition_master_stage3.py-21] [INFO] [1783057433.074363715] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.08,-0.24) yaw=-62deg cmd=(vx=0.00 wz=0.00) elapsed=70.5s plan[43pts 6.2m] (1.50,-0.85)→(2.20,0.65) cpuFreq=1500MHz cpuT=76C cpu=85% mem=21%
+[imu_madgwick_filter.py-6] [INFO] [1783057433.416627242] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=4670 q_w=0.7834 angle=76.9deg beta=0.0030
+[imu_madgwick_filter.py-4] [INFO] [1783057433.439470955] [imu_madgwick_filter]: [imu_madgwick ->] msgs=1945 q_w=0.9722 angle=27.1deg beta=0.0330
+[hobot_codec_republish-13] [WARN] [1783057434.014661779] [vlm_jpeg_encoder]: Sub imgRaw fps [13.88]
+[hobot_codec_republish-13] [WARN] [1783057434.021982572] [vlm_jpeg_encoder]: Pub img fps [13.88]
+[component_container_isolated-17] [INFO] [1783057434.122569134] [behavior_server]: wait completed successfully
+[component_container_isolated-17] [INFO] [1783057434.419224443] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057434.430068445] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057434.442494364] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057434.442628073] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057434.455977701] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[competition_master_stage3.py-21] [INFO] [1783057435.073078783] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.08,-0.24) yaw=-62deg cmd=(vx=0.00 wz=0.00) elapsed=72.5s plan[43pts 6.2m] (1.50,-0.85)→(2.20,0.65) cpuFreq=1500MHz cpuT=77C cpu=87% mem=21%
+[component_container_isolated-17] [WARN] [1783057435.413458685] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.0347 Hz
+[path_optimizer_node.py-22] [INFO] [1783057435.475628280] [path_optimizer_node]: Path optimised (44 pts, 16.4 ms): mean |kappa| 1.6597 -> 2.3996 (-44.6%), max |kappa| 13.1477 -> 12.2759 (6.6%), max shift 0.080 m
+[component_container_isolated-17] [INFO] [1783057435.520547581] [controller_server]: Received a goal, begin computing control effort.
+[speed_profile_node.py-23] [INFO] [1783057435.520578206] [speed_profile_node]: Plan received: 44 poses, mean|κ|=2.2937 m⁻¹, max|κ|=11.1233 m⁻¹, mean_v=0.327 m/s, min_v=0.150 m/s, max_v=0.496 m/s
+[component_container_isolated-17] [INFO] [1783057436.618988178] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057436.633327264] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057436.646931142] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057436.647275725] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057436.656404810] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[competition_master_stage3.py-21] [INFO] [1783057437.079701104] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.08,-0.24) yaw=-62deg cmd=(vx=0.40 wz=0.12) elapsed=74.5s plan[44pts 6.4m] (1.10,-0.25)→(2.20,0.65) cpuFreq=1500MHz cpuT=77C cpu=100% mem=21%
+[component_container_isolated-17] [WARN] [1783057437.425580757] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3042 Hz
+[path_optimizer_node.py-22] [INFO] [1783057437.455700263] [path_optimizer_node]: Path optimised (42 pts, 7.0 ms): mean |kappa| 1.7186 -> 2.8262 (-64.4%), max |kappa| 13.7223 -> 13.8513 (-0.9%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057437.494787146] [speed_profile_node]: Plan received: 42 poses, mean|κ|=2.6936 m⁻¹, max|κ|=11.7092 m⁻¹, mean_v=0.302 m/s, min_v=0.150 m/s, max_v=0.496 m/s
+[component_container_isolated-17] [INFO] [1783057437.629073548] [controller_server]: Passing new path to controller.
+[component_container_isolated-17] [INFO] [1783057438.719063811] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057438.730882396] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057438.749674900] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057438.750039734] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057438.766918362] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[hobot_codec_republish-13] [WARN] [1783057439.055132087] [vlm_jpeg_encoder]: Sub imgRaw fps [12.70]
+[hobot_codec_republish-13] [WARN] [1783057439.057933171] [vlm_jpeg_encoder]: Pub img fps [12.71]
+[competition_master_stage3.py-21] [INFO] [1783057439.074489674] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.45,-1.11) yaw=-50deg cmd=(vx=0.13 wz=-0.18) elapsed=76.5s plan[42pts 5.8m] (1.20,-0.65)→(2.20,0.65) cpuFreq=1500MHz cpuT=77C cpu=88% mem=21%
+[component_container_isolated-17] [WARN] [1783057439.399366782] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.5383 Hz
+[path_optimizer_node.py-22] [INFO] [1783057439.427499788] [path_optimizer_node]: Path optimised (37 pts, 5.3 ms): mean |kappa| 2.2662 -> 2.9687 (-31.0%), max |kappa| 13.1709 -> 13.8029 (-4.8%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057439.463908337] [speed_profile_node]: Plan received: 37 poses, mean|κ|=2.8181 m⁻¹, max|κ|=11.5242 m⁻¹, mean_v=0.294 m/s, min_v=0.150 m/s, max_v=0.478 m/s
+[component_container_isolated-17] [INFO] [1783057439.529089767] [controller_server]: Passing new path to controller.
+[component_container_isolated-17] [INFO] [1783057440.619133988] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057440.634985575] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057440.641910785] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057440.642078201] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057440.651773203] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[competition_master_stage3.py-21] [INFO] [1783057441.075051540] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.65,-1.30) yaw=-55deg cmd=(vx=0.40 wz=0.16) elapsed=78.5s plan[37pts 5.5m] (1.50,-1.25)→(2.20,0.65) cpuFreq=1500MHz cpuT=77C cpu=77% mem=21%
+[component_container_isolated-17] [WARN] [1783057441.389742895] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3383 Hz
+[imu_madgwick_filter.py-4] [WARN] [1783057441.413769442] [imu_madgwick_filter]: [imu_madgwick] dt outlier: 0.1501s > 0.15s, capping
+[path_optimizer_node.py-22] [INFO] [1783057441.417638859] [path_optimizer_node]: Path optimised (33 pts, 6.1 ms): mean |kappa| 2.2766 -> 2.7220 (-19.6%), max |kappa| 12.7282 -> 12.2114 (4.1%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057441.462701202] [speed_profile_node]: Plan received: 33 poses, mean|κ|=2.5675 m⁻¹, max|κ|=10.9598 m⁻¹, mean_v=0.306 m/s, min_v=0.150 m/s, max_v=0.479 m/s
+[component_container_isolated-17] [INFO] [1783057441.529083299] [controller_server]: Passing new path to controller.
+[component_container_isolated-17] [INFO] [1783057442.619137938] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057442.633314149] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057442.645834944] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057442.646009235] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057442.666877490] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[competition_master_stage3.py-21] [INFO] [1783057443.070410822] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.97,-1.88) yaw=-47deg cmd=(vx=0.13 wz=-0.10) elapsed=80.5s plan[33pts 4.9m] (1.70,-1.55)→(2.20,0.65) cpuFreq=1500MHz cpuT=77C cpu=88% mem=21%
+[component_container_isolated-17] [WARN] [1783057443.385636220] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
+[component_container_isolated-17] [WARN] [1783057443.385862637] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (2.90, -0.90)
+[component_container_isolated-17] [WARN] [1783057443.385989095] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
+[imu_madgwick_filter.py-6] [INFO] [1783057443.416699851] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=5163 q_w=0.9180 angle=46.7deg beta=0.0030
+[imu_madgwick_filter.py-4] [INFO] [1783057443.440046815] [imu_madgwick_filter]: [imu_madgwick ->] msgs=2138 q_w=0.9981 angle=7.0deg beta=0.0330
+[tracker_node-19] [WARN] [1783057443.456704735] [tracker_node]: Measurement timeout (3.1s), pausing tracking
+[component_container_isolated-17] [INFO] [1783057443.519268123] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057443.533878376] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057443.547957253] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057443.548274587] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [INFO] [1783057443.560552381] [behavior_server]: Running wait
+[component_container_isolated-17] [INFO] [1783057443.560998089] [behavior_server]: wait completed successfully
+[component_container_isolated-17] [WARN] [1783057443.561571340] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[tracker_node-19] [INFO] [1783057443.656166026] [tracker_node]: Tracker initialized at (0.01, 0.00)
+[component_container_isolated-17] [INFO] [1783057443.819134517] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057443.832315645] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057443.851060441] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057443.851257774] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057443.864807985] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[tracker_node-19] [WARN] [1783057443.865560027] [tracker_node]: Measurement timeout (3.5s), pausing tracking
+[tracker_node-19] [INFO] [1783057444.058640358] [tracker_node]: Tracker initialized at (0.01, 0.00)
+[hobot_codec_republish-13] [WARN] [1783057444.099148533] [vlm_jpeg_encoder]: Sub imgRaw fps [13.29]
+[hobot_codec_republish-13] [WARN] [1783057444.105045784] [vlm_jpeg_encoder]: Pub img fps [13.28]
+[tracker_node-19] [WARN] [1783057444.256374399] [tracker_node]: Measurement timeout (3.9s), pausing tracking
+[component_container_isolated-17] [WARN] [1783057444.393471385] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.8500 Hz
+[path_optimizer_node.py-22] [INFO] [1783057444.425359433] [path_optimizer_node]: Path optimised (34 pts, 9.1 ms): mean |kappa| 3.3220 -> 4.0578 (-22.1%), max |kappa| 15.1323 -> 16.0294 (-5.9%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057444.455660648] [speed_profile_node]: Plan received: 34 poses, mean|κ|=3.8375 m⁻¹, max|κ|=13.8852 m⁻¹, mean_v=0.269 m/s, min_v=0.150 m/s, max_v=0.479 m/s
+[tracker_node-19] [INFO] [1783057444.457004732] [tracker_node]: Tracker initialized at (0.01, 0.00)
+[component_container_isolated-17] [INFO] [1783057444.529080330] [controller_server]: Passing new path to controller.
+[tracker_node-19] [WARN] [1783057444.658444565] [tracker_node]: Measurement timeout (4.3s), pausing tracking
+[tracker_node-19] [INFO] [1783057444.862375232] [tracker_node]: Tracker initialized at (0.06, 0.00)
+[competition_master_stage3.py-21] [INFO] [1783057445.070241941] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(2.21,-1.97) yaw=-37deg cmd=(vx=0.40 wz=-0.70) elapsed=82.5s plan[34pts 5.0m] (2.20,-2.05)→(2.20,0.65) cpuFreq=1500MHz cpuT=77C cpu=87% mem=21%
+[component_container_isolated-17] [INFO] [1783057445.619067304] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057445.630605015] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057445.645209893] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057445.645376726] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057445.664525230] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057446.381694086] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
+[component_container_isolated-17] [WARN] [1783057446.381962503] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (2.90, -0.90)
+[component_container_isolated-17] [WARN] [1783057446.382111419] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
+[component_container_isolated-17] [INFO] [1783057446.519114114] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057446.532103825] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057446.540765327] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057446.540915744] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [INFO] [1783057446.541499952] [behavior_server]: Running wait
+[component_container_isolated-17] [INFO] [1783057446.541798244] [behavior_server]: wait completed successfully
+[component_container_isolated-17] [WARN] [1783057446.550505954] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [INFO] [1783057446.819407510] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057446.844397807] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057446.853333725] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057446.853500433] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057446.863357894] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[competition_master_stage3.py-21] [INFO] [1783057447.071223312] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(2.38,-2.30) yaw=-65deg cmd=(vx=0.31 wz=0.41) elapsed=84.5s plan[34pts 5.0m] (2.20,-2.05)→(2.20,0.65) cpuFreq=1500MHz cpuT=77C cpu=87% mem=21%
+[component_container_isolated-17] [WARN] [1783057447.396673171] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.8816 Hz
+[path_optimizer_node.py-22] [INFO] [1783057447.431505595] [path_optimizer_node]: Path optimised (32 pts, 4.5 ms): mean |kappa| 2.7636 -> 3.3139 (-19.9%), max |kappa| 15.0174 -> 22.6157 (-50.6%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057447.471736478] [speed_profile_node]: Plan received: 32 poses, mean|κ|=3.2150 m⁻¹, max|κ|=12.6043 m⁻¹, mean_v=0.292 m/s, min_v=0.150 m/s, max_v=0.478 m/s
+[component_container_isolated-17] [INFO] [1783057447.529085240] [controller_server]: Passing new path to controller.
+[tracker_node-19] [WARN] [1783057447.858017933] [tracker_node]: Measurement timeout (3.1s), pausing tracking
+[tracker_node-19] [INFO] [1783057448.057283266] [tracker_node]: Tracker initialized at (0.06, 0.00)
+[tracker_node-19] [WARN] [1783057448.256833682] [tracker_node]: Measurement timeout (3.5s), pausing tracking
+[tracker_node-19] [INFO] [1783057448.458114224] [tracker_node]: Tracker initialized at (0.06, 0.00)
+[component_container_isolated-17] [INFO] [1783057448.620137841] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057448.645200762] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[tracker_node-19] [WARN] [1783057448.666119517] [tracker_node]: Measurement timeout (3.9s), pausing tracking
+[component_container_isolated-17] [INFO] [1783057448.666593100] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057448.666735767] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057448.688706688] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[tracker_node-19] [INFO] [1783057448.860463390] [tracker_node]: Tracker initialized at (0.06, 0.00)
+[tracker_node-19] [WARN] [1783057449.057345765] [tracker_node]: Measurement timeout (4.3s), pausing tracking
+[competition_master_stage3.py-21] [INFO] [1783057449.082187436] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(2.46,-2.44) yaw=-55deg cmd=(vx=-0.03 wz=-0.30) elapsed=86.5s plan[32pts 4.3m] (2.50,-2.35)→(2.20,0.65) cpuFreq=1500MHz cpuT=78C cpu=77% mem=21%
+[hobot_codec_republish-13] [WARN] [1783057449.119216027] [vlm_jpeg_encoder]: Sub imgRaw fps [11.95]
+[hobot_codec_republish-13] [WARN] [1783057449.123890028] [vlm_jpeg_encoder]: Pub img fps [11.96]
+[tracker_node-19] [INFO] [1783057449.257972556] [tracker_node]: Tracker initialized at (0.06, 0.00)
+[component_container_isolated-17] [WARN] [1783057449.390911292] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3931 Hz
+[path_optimizer_node.py-22] [INFO] [1783057449.438626260] [path_optimizer_node]: Path optimised (32 pts, 15.7 ms): mean |kappa| 2.7279 -> 3.5778 (-31.2%), max |kappa| 14.0358 -> 22.3983 (-59.6%), max shift 0.080 m
+[tracker_node-19] [WARN] [1783057449.457708473] [tracker_node]: Measurement timeout (4.7s), pausing tracking
+[speed_profile_node.py-23] [INFO] [1783057449.502422274] [speed_profile_node]: Plan received: 32 poses, mean|κ|=3.4524 m⁻¹, max|κ|=12.2840 m⁻¹, mean_v=0.269 m/s, min_v=0.150 m/s, max_v=0.478 m/s
+[component_container_isolated-17] [INFO] [1783057449.529180654] [controller_server]: Passing new path to controller.
+[tracker_node-19] [INFO] [1783057449.656947556] [tracker_node]: Tracker initialized at (0.06, 0.00)
+[component_container_isolated-17] [INFO] [1783057450.619025631] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057450.633547509] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057450.645249595] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057450.645538595] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057450.658350014] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[competition_master_stage3.py-21] [INFO] [1783057451.074370559] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(2.34,-2.16) yaw=-72deg cmd=(vx=-0.30 wz=0.97) elapsed=88.5s plan[32pts 4.3m] (2.30,-2.15)→(2.20,0.65) cpuFreq=1500MHz cpuT=78C cpu=100% mem=21%
+[component_container_isolated-17] [WARN] [1783057451.398605877] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3284 Hz
+[path_optimizer_node.py-22] [INFO] [1783057451.431928134] [path_optimizer_node]: Path optimised (37 pts, 5.3 ms): mean |kappa| 2.8143 -> 3.7234 (-32.3%), max |kappa| 12.7282 -> 13.8778 (-9.0%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057451.463188973] [speed_profile_node]: Plan received: 37 poses, mean|κ|=3.6356 m⁻¹, max|κ|=11.4381 m⁻¹, mean_v=0.250 m/s, min_v=0.150 m/s, max_v=0.478 m/s
+[component_container_isolated-17] [INFO] [1783057451.529083487] [controller_server]: Passing new path to controller.
+[component_container_isolated-17] [INFO] [1783057452.619060465] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057452.638616677] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057452.650350971] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057452.650507471] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057452.686329896] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[tracker_node-19] [WARN] [1783057452.855667639] [tracker_node]: Measurement timeout (3.1s), pausing tracking
+[tracker_node-19] [INFO] [1783057453.056085015] [tracker_node]: Tracker initialized at (-0.09, 0.00)
+[competition_master_stage3.py-21] [INFO] [1783057453.076347894] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(2.06,-1.88) yaw=-12deg cmd=(vx=0.22 wz=0.34) elapsed=90.5s plan[37pts 5.4m] (2.20,-2.05)→(2.20,0.65) cpuFreq=1500MHz cpuT=78C cpu=100% mem=21%
+[tracker_node-19] [WARN] [1783057453.255587806] [tracker_node]: Measurement timeout (3.5s), pausing tracking
+[imu_madgwick_filter.py-4] [INFO] [1783057453.439785887] [imu_madgwick_filter]: [imu_madgwick ->] msgs=2331 q_w=0.9088 angle=49.3deg beta=0.0330
+[imu_madgwick_filter.py-6] [INFO] [1783057453.439995928] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=5636 q_w=0.9928 angle=13.7deg beta=0.0030
+[component_container_isolated-17] [WARN] [1783057453.444282929] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2614 Hz
+[path_optimizer_node.py-22] [INFO] [1783057453.454550223] [path_optimizer_node]: Path optimised (33 pts, 5.2 ms): mean |kappa| 2.7434 -> 3.6543 (-33.2%), max |kappa| 12.7282 -> 20.2172 (-58.8%), max shift 0.080 m
+[tracker_node-19] [INFO] [1783057453.457204724] [tracker_node]: Tracker initialized at (-0.09, 0.00)
+[speed_profile_node.py-23] [INFO] [1783057453.503147442] [speed_profile_node]: Plan received: 33 poses, mean|κ|=3.6164 m⁻¹, max|κ|=11.9505 m⁻¹, mean_v=0.270 m/s, min_v=0.150 m/s, max_v=0.479 m/s
+[component_container_isolated-17] [INFO] [1783057453.629080760] [controller_server]: Passing new path to controller.
+[tracker_node-19] [WARN] [1783057453.656250724] [tracker_node]: Measurement timeout (3.9s), pausing tracking
+[tracker_node-19] [INFO] [1783057453.856819516] [tracker_node]: Tracker initialized at (-0.09, 0.00)
+[tracker_node-19] [WARN] [1783057454.057691891] [tracker_node]: Measurement timeout (4.3s), pausing tracking
+[hobot_codec_republish-13] [WARN] [1783057454.128189656] [vlm_jpeg_encoder]: Sub imgRaw fps [12.78]
+[hobot_codec_republish-13] [WARN] [1783057454.131718657] [vlm_jpeg_encoder]: Pub img fps [12.78]
+[tracker_node-19] [INFO] [1783057454.257465100] [tracker_node]: Tracker initialized at (-0.09, 0.00)
+[tracker_node-19] [WARN] [1783057454.459095850] [tracker_node]: Measurement timeout (4.7s), pausing tracking
+[tracker_node-19] [INFO] [1783057454.656117142] [tracker_node]: Tracker initialized at (-0.09, 0.00)
+[component_container_isolated-17] [INFO] [1783057454.719007738] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057454.727048698] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057454.746815077] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057454.746986244] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057454.760077414] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[tracker_node-19] [WARN] [1783057454.856506350] [tracker_node]: Measurement timeout (5.1s), pausing tracking
+[tracker_node-19] [INFO] [1783057455.056871809] [tracker_node]: Tracker initialized at (-0.09, 0.00)
+[competition_master_stage3.py-21] [INFO] [1783057455.076949022] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(2.00,-1.87) yaw=-9deg cmd=(vx=-0.30 wz=-0.96) elapsed=92.5s plan[33pts 4.8m] (2.00,-1.85)→(2.20,0.65) cpuFreq=1500MHz cpuT=78C cpu=90% mem=21%
+[tracker_node-19] [WARN] [1783057455.256568851] [tracker_node]: Measurement timeout (5.5s), pausing tracking
+[component_container_isolated-17] [WARN] [1783057455.395918464] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.5724 Hz
+[path_optimizer_node.py-22] [INFO] [1783057455.409837467] [path_optimizer_node]: Path optimised (32 pts, 5.4 ms): mean |kappa| 2.4984 -> 3.4913 (-39.7%), max |kappa| 12.9250 -> 25.9032 (-100.4%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057455.448263058] [speed_profile_node]: Plan received: 32 poses, mean|κ|=3.2886 m⁻¹, max|κ|=15.4062 m⁻¹, mean_v=0.306 m/s, min_v=0.150 m/s, max_v=0.478 m/s
+[tracker_node-19] [INFO] [1783057455.457701394] [tracker_node]: Tracker initialized at (-0.09, 0.00)
+[component_container_isolated-17] [INFO] [1783057455.529104617] [controller_server]: Passing new path to controller.
+[tracker_node-19] [WARN] [1783057455.656478519] [tracker_node]: Measurement timeout (5.9s), pausing tracking
+[tracker_node-19] [INFO] [1783057455.856112477] [tracker_node]: Tracker initialized at (-0.09, 0.00)
+[tracker_node-19] [WARN] [1783057456.056998978] [tracker_node]: Measurement timeout (6.3s), pausing tracking
+[tracker_node-19] [INFO] [1783057456.257483270] [tracker_node]: Tracker initialized at (-0.09, 0.00)
+[tracker_node-19] [WARN] [1783057456.456269312] [tracker_node]: Measurement timeout (6.7s), pausing tracking
+[component_container_isolated-17] [INFO] [1783057456.618995138] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057456.632662058] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057456.640843809] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057456.641066476] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[tracker_node-19] [INFO] [1783057456.657186188] [tracker_node]: Tracker initialized at (-0.09, 0.00)
+[component_container_isolated-17] [WARN] [1783057456.657392063] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[tracker_node-19] [WARN] [1783057456.865588565] [tracker_node]: Measurement timeout (7.1s), pausing tracking
+[tracker_node-19] [INFO] [1783057457.056292605] [tracker_node]: Tracker initialized at (-0.09, 0.00)
+[competition_master_stage3.py-21] [INFO] [1783057457.075845276] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(1.80,-1.82) yaw=-34deg cmd=(vx=0.40 wz=0.16) elapsed=94.5s plan[32pts 4.6m] (1.90,-1.85)→(2.20,0.65) cpuFreq=1500MHz cpuT=78C cpu=93% mem=21%
+[tracker_node-19] [WARN] [1783057457.261581940] [tracker_node]: Measurement timeout (7.5s), pausing tracking
+[component_container_isolated-17] [WARN] [1783057457.388860051] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
+[component_container_isolated-17] [WARN] [1783057457.389109217] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (2.90, -0.90)
+[component_container_isolated-17] [WARN] [1783057457.389212967] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
+[tracker_node-19] [INFO] [1783057457.457450273] [tracker_node]: Tracker initialized at (-0.09, 0.00)
+[component_container_isolated-17] [INFO] [1783057457.527210288] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057457.536363207] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057457.551207418] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057457.551383252] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [INFO] [1783057457.551393127] [behavior_server]: Running wait
+[component_container_isolated-17] [INFO] [1783057457.551838043] [behavior_server]: wait completed successfully
+[component_container_isolated-17] [WARN] [1783057457.565458005] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[tracker_node-19] [WARN] [1783057457.657339066] [tracker_node]: Measurement timeout (7.9s), pausing tracking
+[component_container_isolated-17] [INFO] [1783057457.819317517] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057457.832296311] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057457.845266689] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057457.845411897] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[tracker_node-19] [INFO] [1783057457.857020316] [tracker_node]: Tracker initialized at (-0.09, 0.00)
+[component_container_isolated-17] [WARN] [1783057457.857957983] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057458.392782680] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.8281 Hz
+[path_optimizer_node.py-22] [INFO] [1783057458.413977517] [path_optimizer_node]: Path optimised (27 pts, 6.2 ms): mean |kappa| 2.8450 -> 3.2877 (-15.6%), max |kappa| 12.7282 -> 13.1772 (-3.5%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057458.449127691] [speed_profile_node]: Plan received: 27 poses, mean|κ|=3.0723 m⁻¹, max|κ|=11.2715 m⁻¹, mean_v=0.296 m/s, min_v=0.150 m/s, max_v=0.478 m/s
+[component_container_isolated-17] [INFO] [1783057458.529072917] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057459.072513782] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(2.46,-2.04) yaw=-12deg cmd=(vx=0.28 wz=0.90) elapsed=96.5s plan[27pts 3.9m] (2.50,-2.05)→(2.20,0.65) cpuFreq=1500MHz cpuT=78C cpu=87% mem=21%
+[hobot_codec_republish-13] [WARN] [1783057459.176670762] [vlm_jpeg_encoder]: Sub imgRaw fps [13.27]
+[hobot_codec_republish-13] [WARN] [1783057459.181355805] [vlm_jpeg_encoder]: Pub img fps [13.27]
+[component_container_isolated-17] [INFO] [1783057459.619137856] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057459.635576401] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057459.643313236] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057459.643679736] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057459.650942655] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057460.394401688] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3409 Hz
+[path_optimizer_node.py-22] [INFO] [1783057460.430843904] [path_optimizer_node]: Path optimised (27 pts, 4.0 ms): mean |kappa| 3.0246 -> 4.1097 (-35.9%), max |kappa| 12.9667 -> 18.5036 (-42.7%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057460.464046702] [speed_profile_node]: Plan received: 27 poses, mean|κ|=3.8357 m⁻¹, max|κ|=11.6761 m⁻¹, mean_v=0.296 m/s, min_v=0.150 m/s, max_v=0.478 m/s
+[component_container_isolated-17] [INFO] [1783057460.529124091] [controller_server]: Passing new path to controller.
+[tracker_node-19] [WARN] [1783057461.056664453] [tracker_node]: Measurement timeout (3.0s), pausing tracking
+[competition_master_stage3.py-21] [INFO] [1783057461.072805207] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(2.77,-2.05) yaw=12deg cmd=(vx=0.40 wz=0.57) elapsed=98.5s plan[27pts 3.8m] (2.90,-2.05)→(2.20,0.65) cpuFreq=1500MHz cpuT=78C cpu=75% mem=21%
+[tracker_node-19] [INFO] [1783057461.255940537] [tracker_node]: Tracker initialized at (-0.22, 0.00)
+[tracker_node-19] [WARN] [1783057461.456658914] [tracker_node]: Measurement timeout (3.4s), pausing tracking
+[component_container_isolated-17] [INFO] [1783057461.619173907] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057461.640872744] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[tracker_node-19] [INFO] [1783057461.657405540] [tracker_node]: Tracker initialized at (-0.22, 0.00)
+[component_container_isolated-17] [INFO] [1783057461.657872248] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057461.658019498] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057461.675453835] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[tracker_node-19] [WARN] [1783057461.856183874] [tracker_node]: Measurement timeout (3.8s), pausing tracking
+[tracker_node-19] [INFO] [1783057462.055866708] [tracker_node]: Tracker initialized at (-0.22, 0.00)
+[tracker_node-19] [WARN] [1783057462.256273417] [tracker_node]: Measurement timeout (4.2s), pausing tracking
+[component_container_isolated-17] [WARN] [1783057462.397175156] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3799 Hz
+[path_optimizer_node.py-22] [INFO] [1783057462.430419871] [path_optimizer_node]: Path optimised (25 pts, 17.3 ms): mean |kappa| 2.9494 -> 4.0619 (-37.7%), max |kappa| 12.7663 -> 15.5980 (-22.2%), max shift 0.080 m
+[tracker_node-19] [INFO] [1783057462.456585377] [tracker_node]: Tracker initialized at (-0.22, 0.00)
+[speed_profile_node.py-23] [INFO] [1783057462.468164171] [speed_profile_node]: Plan received: 25 poses, mean|κ|=3.7934 m⁻¹, max|κ|=12.1373 m⁻¹, mean_v=0.281 m/s, min_v=0.150 m/s, max_v=0.478 m/s
+[component_container_isolated-17] [INFO] [1783057462.529257309] [controller_server]: Passing new path to controller.
+[tracker_node-19] [WARN] [1783057462.657326961] [tracker_node]: Measurement timeout (4.6s), pausing tracking
+[tracker_node-19] [INFO] [1783057462.858595629] [tracker_node]: Tracker initialized at (-0.05, 0.00)
+[competition_master_stage3.py-21] [INFO] [1783057463.075326009] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(3.14,-1.78) yaw=55deg cmd=(vx=0.28 wz=0.97) elapsed=100.5s plan[25pts 3.3m] (3.10,-1.85)→(2.20,0.65) cpuFreq=1500MHz cpuT=78C cpu=71% mem=21%
+[imu_madgwick_filter.py-6] [INFO] [1783057463.416286749] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=6118 q_w=0.8004 angle=73.7deg beta=0.0030
+[imu_madgwick_filter.py-4] [INFO] [1783057463.439402795] [imu_madgwick_filter]: [imu_madgwick ->] msgs=2525 q_w=0.3438 angle=139.8deg beta=0.0330
+[component_container_isolated-17] [INFO] [1783057463.619153625] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057463.630397086] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057463.646843798] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057463.647054590] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057463.667840136] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[hobot_codec_republish-13] [WARN] [1783057464.242666425] [vlm_jpeg_encoder]: Sub imgRaw fps [13.03]
+[hobot_codec_republish-13] [WARN] [1783057464.246141010] [vlm_jpeg_encoder]: Pub img fps [13.03]
+[component_container_isolated-17] [WARN] [1783057464.387414373] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3394 Hz
+[path_optimizer_node.py-22] [INFO] [1783057464.411999837] [path_optimizer_node]: Path optimised (22 pts, 6.7 ms): mean |kappa| 2.8970 -> 4.5793 (-58.1%), max |kappa| 13.9459 -> 19.5910 (-40.5%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057464.450574553] [speed_profile_node]: Plan received: 22 poses, mean|κ|=4.3215 m⁻¹, max|κ|=11.5821 m⁻¹, mean_v=0.243 m/s, min_v=0.150 m/s, max_v=0.473 m/s
+[component_container_isolated-17] [INFO] [1783057464.529186154] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057465.071627312] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(3.21,-1.34) yaw=99deg cmd=(vx=0.40 wz=0.39) elapsed=102.5s plan[22pts 3.0m] (3.20,-1.35)→(2.20,0.65) cpuFreq=1500MHz cpuT=78C cpu=88% mem=21%
+[component_container_isolated-17] [INFO] [1783057465.631177348] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057465.663385314] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057465.693040778] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057465.693227987] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057465.707913907] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[tracker_node-19] [WARN] [1783057465.856082355] [tracker_node]: Measurement timeout (3.2s), pausing tracking
+[tracker_node-19] [INFO] [1783057466.056274565] [tracker_node]: Tracker initialized at (-0.05, 0.00)
+[tracker_node-19] [WARN] [1783057466.256915316] [tracker_node]: Measurement timeout (3.6s), pausing tracking
+[component_container_isolated-17] [WARN] [1783057466.386788469] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.5017 Hz
+[path_optimizer_node.py-22] [INFO] [1783057466.403037014] [path_optimizer_node]: Path optimised (21 pts, 3.6 ms): mean |kappa| 3.6285 -> 5.2584 (-44.9%), max |kappa| 13.3223 -> 12.7495 (4.3%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057466.425604811] [speed_profile_node]: Plan received: 21 poses, mean|κ|=4.9918 m⁻¹, max|κ|=10.8523 m⁻¹, mean_v=0.189 m/s, min_v=0.150 m/s, max_v=0.400 m/s
+[tracker_node-19] [INFO] [1783057466.456371693] [tracker_node]: Tracker initialized at (-0.05, 0.00)
+[component_container_isolated-17] [INFO] [1783057466.529089083] [controller_server]: Passing new path to controller.
+[tracker_node-19] [WARN] [1783057466.661779028] [tracker_node]: Measurement timeout (4.0s), pausing tracking
+[tracker_node-19] [INFO] [1783057466.856476445] [tracker_node]: Tracker initialized at (-0.05, 0.00)
+[tracker_node-19] [WARN] [1783057467.055715863] [tracker_node]: Measurement timeout (4.4s), pausing tracking
+[competition_master_stage3.py-21] [INFO] [1783057467.082229911] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(3.06,-1.01) yaw=123deg cmd=(vx=0.17 wz=-1.69) elapsed=104.5s plan[21pts 2.7m] (3.10,-1.05)→(2.20,0.65) cpuFreq=1500MHz cpuT=78C cpu=83% mem=21%
+[tracker_node-19] [INFO] [1783057467.256396323] [tracker_node]: Tracker initialized at (-0.05, 0.00)
+[tracker_node-19] [WARN] [1783057467.456263283] [tracker_node]: Measurement timeout (4.8s), pausing tracking
+[component_container_isolated-17] [INFO] [1783057467.619096235] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057467.632264071] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057467.641812865] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057467.641973365] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057467.654193326] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[tracker_node-19] [INFO] [1783057467.656714451] [tracker_node]: Tracker initialized at (-0.05, 0.00)
+[tracker_node-19] [WARN] [1783057467.857816620] [tracker_node]: Measurement timeout (5.2s), pausing tracking
+[tracker_node-19] [INFO] [1783057468.056570204] [tracker_node]: Tracker initialized at (-0.05, 0.00)
+[tracker_node-19] [WARN] [1783057468.257060289] [tracker_node]: Measurement timeout (5.6s), pausing tracking
+[component_container_isolated-17] [WARN] [1783057468.384322317] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3647 Hz
+[path_optimizer_node.py-22] [INFO] [1783057468.397911111] [path_optimizer_node]: Path optimised (13 pts, 2.8 ms): mean |kappa| 1.6561 -> 0.2919 (82.4%), max |kappa| 12.0427 -> 0.9965 (91.7%), max shift 0.074 m
+[speed_profile_node.py-23] [INFO] [1783057468.425974159] [speed_profile_node]: Plan received: 13 poses, mean|κ|=0.2788 m⁻¹, max|κ|=0.6247 m⁻¹, mean_v=0.459 m/s, min_v=0.399 m/s, max_v=0.492 m/s
+[tracker_node-19] [INFO] [1783057468.457037166] [tracker_node]: Tracker initialized at (-0.05, 0.00)
+[component_container_isolated-17] [INFO] [1783057468.529121265] [controller_server]: Passing new path to controller.
+[tracker_node-19] [WARN] [1783057468.656221417] [tracker_node]: Measurement timeout (6.0s), pausing tracking
+[tracker_node-19] [INFO] [1783057468.856747044] [tracker_node]: Tracker initialized at (-0.05, 0.00)
+[tracker_node-19] [WARN] [1783057469.056997670] [tracker_node]: Measurement timeout (6.4s), pausing tracking
+[competition_master_stage3.py-21] [INFO] [1783057469.075905591] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(3.01,-1.00) yaw=117deg cmd=(vx=0.40 wz=0.12) elapsed=106.5s plan[13pts 1.9m] (3.00,-0.95)→(2.20,0.65) cpuFreq=1500MHz cpuT=78C cpu=100% mem=21%
+[hobot_codec_republish-13] [WARN] [1783057469.247837128] [vlm_jpeg_encoder]: Sub imgRaw fps [13.39]
+[hobot_codec_republish-13] [WARN] [1783057469.251455463] [vlm_jpeg_encoder]: Pub img fps [13.39]
+[tracker_node-19] [INFO] [1783057469.260500340] [tracker_node]: Tracker initialized at (-0.05, 0.00)
+[tracker_node-19] [WARN] [1783057469.455831549] [tracker_node]: Measurement timeout (6.8s), pausing tracking
+[component_container_isolated-17] [INFO] [1783057469.620420084] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057469.632325378] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[tracker_node-19] [INFO] [1783057469.656744925] [tracker_node]: Tracker initialized at (-0.05, 0.00)
+[component_container_isolated-17] [INFO] [1783057469.658735592] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057469.658881259] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057469.667162178] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057470.385977417] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4036 Hz
+[path_optimizer_node.py-22] [INFO] [1783057470.404858004] [path_optimizer_node]: Path optimised (14 pts, 4.0 ms): mean |kappa| 3.0330 -> 2.4772 (18.3%), max |kappa| 11.9226 -> 15.9710 (-34.0%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057470.433304385] [speed_profile_node]: Plan received: 14 poses, mean|κ|=2.6034 m⁻¹, max|κ|=7.7121 m⁻¹, mean_v=0.299 m/s, min_v=0.150 m/s, max_v=0.438 m/s
+[component_container_isolated-17] [INFO] [1783057470.529076906] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057471.070528857] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(2.77,-0.59) yaw=109deg cmd=(vx=-0.30 wz=0.58) elapsed=108.5s plan[14pts 2.1m] (2.90,-0.75)→(2.20,0.65) cpuFreq=1500MHz cpuT=78C cpu=88% mem=21%
+[component_container_isolated-17] [INFO] [1783057471.619476101] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057471.639782981] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057471.652562734] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057471.652719900] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057471.667852737] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057472.385880102] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3838 Hz
+[path_optimizer_node.py-22] [INFO] [1783057472.403002272] [path_optimizer_node]: Path optimised (11 pts, 3.9 ms): mean |kappa| 1.5155 -> 0.9135 (39.7%), max |kappa| 3.3333 -> 1.6511 (50.5%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057472.438240405] [speed_profile_node]: Plan received: 11 poses, mean|κ|=0.8301 m⁻¹, max|κ|=1.0695 m⁻¹, mean_v=0.366 m/s, min_v=0.330 m/s, max_v=0.425 m/s
+[component_container_isolated-17] [INFO] [1783057472.529082508] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057473.073685251] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(2.76,-0.60) yaw=125deg cmd=(vx=0.40 wz=-0.69) elapsed=110.5s plan[11pts 1.5m] (2.80,-0.65)→(2.20,0.65) cpuFreq=1500MHz cpuT=78C cpu=77% mem=21%
+[imu_madgwick_filter.py-6] [INFO] [1783057473.416344785] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=6597 q_w=0.4738 angle=123.4deg beta=0.0030
+[imu_madgwick_filter.py-4] [INFO] [1783057473.439695998] [imu_madgwick_filter]: [imu_madgwick ->] msgs=2717 q_w=-0.1179 angle=193.5deg beta=0.0330
+[component_container_isolated-17] [INFO] [1783057473.619236162] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057473.634120791] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057473.643672001] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057473.644287126] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057473.655419504] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[hobot_codec_republish-13] [WARN] [1783057474.275012722] [vlm_jpeg_encoder]: Sub imgRaw fps [11.94]
+[hobot_codec_republish-13] [WARN] [1783057474.280651848] [vlm_jpeg_encoder]: Pub img fps [11.93]
+[component_container_isolated-17] [WARN] [1783057474.387849705] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3457 Hz
+[path_optimizer_node.py-22] [INFO] [1783057474.400304500] [path_optimizer_node]: Path optimised (13 pts, 2.7 ms): mean |kappa| 0.4770 -> 0.4349 (8.8%), max |kappa| 1.2464 -> 0.9378 (24.8%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057474.436172299] [speed_profile_node]: Plan received: 13 poses, mean|κ|=0.4056 m⁻¹, max|κ|=0.5996 m⁻¹, mean_v=0.438 m/s, min_v=0.403 m/s, max_v=0.471 m/s
+[component_container_isolated-17] [INFO] [1783057474.529094319] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057475.077474523] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(2.74,-0.49) yaw=101deg cmd=(vx=0.40 wz=0.51) elapsed=112.5s plan[13pts 1.3m] (2.70,-0.55)→(2.20,0.65) cpuFreq=1500MHz cpuT=78C cpu=81% mem=21%
+[component_container_isolated-17] [INFO] [1783057475.619052350] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057475.634927478] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057475.648873731] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057475.649074106] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057475.661754151] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057476.390445102] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3477 Hz
+[path_optimizer_node.py-22] [INFO] [1783057476.400653105] [path_optimizer_node]: Path optimised (6 pts, 2.5 ms): mean |kappa| 3.7716 -> 0.2876 (92.4%), max |kappa| 8.5847 -> 0.5848 (93.2%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057476.416892942] [speed_profile_node]: Plan received: 6 poses, mean|κ|=0.2540 m⁻¹, max|κ|=0.3471 m⁻¹, mean_v=0.464 m/s, min_v=0.448 m/s, max_v=0.479 m/s
+[component_container_isolated-17] [INFO] [1783057476.529350758] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057477.071078752] [competition_master_stage3]: [DIAG] state=CRUISE_CHANNEL pos=(2.63,-0.06) yaw=112deg cmd=(vx=0.40 wz=0.37) elapsed=114.5s plan[6pts 0.7m] (2.60,0.15)→(2.20,0.65) cpuFreq=1500MHz cpuT=78C cpu=87% mem=21%
+[component_container_isolated-17] [INFO] [1783057477.519760726] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057477.531946728] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057477.541363147] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057477.541987981] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057477.550860857] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057478.390555167] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.1737 Hz
+[path_optimizer_node.py-22] [INFO] [1783057478.409635797] [path_optimizer_node]: Path optimised (5 pts, 4.4 ms): mean |kappa| 4.0840 -> 1.3018 (68.1%), max |kappa| 6.3043 -> 1.8344 (70.9%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057478.425160883] [speed_profile_node]: Plan received: 5 poses, mean|κ|=0.9468 m⁻¹, max|κ|=1.1953 m⁻¹, mean_v=0.349 m/s, min_v=0.314 m/s, max_v=0.385 m/s
+[component_container_isolated-17] [INFO] [1783057478.429812509] [controller_server]: Reached the goal!
+[component_container_isolated-17] [INFO] [1783057478.521104738] [controller_server]: Received a goal, begin computing control effort.
+[component_container_isolated-17] [INFO] [1783057478.522706697] [controller_server]: Reached the goal!
+[tracker_node-19] [WARN] [1783057478.656344851] [tracker_node]: Measurement timeout (3.1s), pausing tracking
+[tracker_node-19] [INFO] [1783057478.856539145] [tracker_node]: Tracker initialized at (0.07, 0.00)
+[component_container_isolated-17] [INFO] [1783057478.919299576] [bt_navigator]: Goal succeeded
+[competition_master_stage3.py-21] [INFO] [1783057478.925069244] [competition_master_stage3]: [结果回调] 巡航完成, 触发VLM推理...
+[competition_master_stage3.py-21] [INFO] [1783057478.927794869] [competition_master_stage3]: [VLM] 发布 sign4return=100, 拍照推理中...
+[competition_master_stage3.py-21] [INFO] [1783057478.931690203] [competition_master_stage3]: [状态机] CRUISE_CHANNEL → RETURN_P
+[vision_ai_node-12] [INFO] [1783057478.932012370] [vision_ai_node]: Received sign4return: 100
+[competition_master_stage3.py-21] [INFO] [1783057478.938079038] [competition_master_stage3]: [RETURN] NavigateThroughPoses: 通道入口→P点 (0.38,-1.10)→(-1.99,-0.01)
+[component_container_isolated-17] [INFO] [1783057478.940264164] [bt_navigator]: Begin navigating from current location through 2 poses to (-1.99, -0.01)
+[component_container_isolated-17] [INFO] [1783057478.941851247] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057478.955272292] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057478.966954545] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057478.967122003] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057478.978451589] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[competition_master_stage3.py-21] [INFO] [1783057478.979487089] [competition_master_stage3]: NavigateThroughPoses 已接受, 巡航中...
+[tracker_node-19] [WARN] [1783057479.057031648] [tracker_node]: Measurement timeout (3.5s), pausing tracking
+[competition_master_stage3.py-21] [INFO] [1783057479.075946069] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.33,0.32) yaw=136deg cmd=(vx=0.00 wz=0.00) elapsed=116.5s plan[5pts 0.5m] (2.40,0.25)→(2.20,0.65) cpuFreq=1500MHz cpuT=78C cpu=87% mem=21%
+[tracker_node-19] [INFO] [1783057479.256489483] [tracker_node]: Tracker initialized at (0.07, 0.00)
+[hobot_codec_republish-13] [WARN] [1783057479.289627324] [vlm_jpeg_encoder]: Sub imgRaw fps [11.57]
+[hobot_codec_republish-13] [WARN] [1783057479.292117325] [vlm_jpeg_encoder]: Pub img fps [11.57]
+[component_container_isolated-17] [WARN] [1783057479.403878308] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 2.2623 Hz
+[path_optimizer_node.py-22] [INFO] [1783057479.445194733] [path_optimizer_node]: Path optimised (49 pts, 6.2 ms): mean |kappa| 1.2660 -> 2.0036 (-58.3%), max |kappa| 12.3729 -> 18.2211 (-47.3%), max shift 0.080 m
+[tracker_node-19] [WARN] [1783057479.458170403] [tracker_node]: Measurement timeout (3.9s), pausing tracking
+[speed_profile_node.py-23] [INFO] [1783057479.504229663] [speed_profile_node]: Plan received: 49 poses, mean|κ|=2.0731 m⁻¹, max|κ|=8.4460 m⁻¹, mean_v=0.333 m/s, min_v=0.150 m/s, max_v=0.497 m/s
+[component_container_isolated-17] [INFO] [1783057479.542993005] [controller_server]: Received a goal, begin computing control effort.
+[tracker_node-19] [INFO] [1783057479.660481364] [tracker_node]: Tracker initialized at (0.07, 0.00)
+[tracker_node-19] [WARN] [1783057479.856376658] [tracker_node]: Measurement timeout (4.3s), pausing tracking
+[tracker_node-19] [INFO] [1783057480.056102285] [tracker_node]: Tracker initialized at (0.07, 0.00)
+[tracker_node-19] [WARN] [1783057480.255951329] [tracker_node]: Measurement timeout (4.7s), pausing tracking
+[tracker_node-19] [INFO] [1783057480.458006082] [tracker_node]: Tracker initialized at (0.07, 0.00)
+[component_container_isolated-17] [INFO] [1783057480.641940331] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057480.663090503] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057480.684048632] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057480.684265424] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057480.695542510] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[competition_master_stage3.py-21] [INFO] [1783057481.079274887] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.18,0.48) yaw=126deg cmd=(vx=0.14 wz=-0.17) elapsed=118.5s plan[49pts 7.1m] (2.20,0.55)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=100% mem=21%
+[component_container_isolated-17] [WARN] [1783057481.397378874] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4120 Hz
+[path_optimizer_node.py-22] [INFO] [1783057481.446081135] [path_optimizer_node]: Path optimised (51 pts, 5.2 ms): mean |kappa| 1.2545 -> 1.4890 (-18.7%), max |kappa| 11.5702 -> 12.9458 (-11.9%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057481.502647147] [speed_profile_node]: Plan received: 51 poses, mean|κ|=1.5346 m⁻¹, max|κ|=6.4554 m⁻¹, mean_v=0.335 m/s, min_v=0.150 m/s, max_v=0.497 m/s
+[component_container_isolated-17] [INFO] [1783057481.549399699] [controller_server]: Passing new path to controller.
+[component_container_isolated-17] [INFO] [1783057482.642118817] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057482.668651906] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057482.684046201] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057482.684205951] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057482.694854995] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[competition_master_stage3.py-21] [INFO] [1783057483.082833373] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.29,0.36) yaw=142deg cmd=(vx=-0.17 wz=-1.03) elapsed=120.5s plan[51pts 7.7m] (2.30,0.35)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=100% mem=21%
+[component_container_isolated-17] [WARN] [1783057483.397654943] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3939 Hz
+[imu_madgwick_filter.py-6] [INFO] [1783057483.420553782] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=7066 q_w=0.5868 angle=108.1deg beta=0.0030
+[imu_madgwick_filter.py-4] [INFO] [1783057483.439311202] [imu_madgwick_filter]: [imu_madgwick ->] msgs=2913 q_w=-0.0262 angle=183.0deg beta=0.0330
+[path_optimizer_node.py-22] [INFO] [1783057483.439810953] [path_optimizer_node]: Path optimised (48 pts, 5.8 ms): mean |kappa| 1.1462 -> 1.8888 (-64.8%), max |kappa| 12.4764 -> 19.5879 (-57.0%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057483.472729335] [speed_profile_node]: Plan received: 48 poses, mean|κ|=1.8146 m⁻¹, max|κ|=9.4556 m⁻¹, mean_v=0.340 m/s, min_v=0.150 m/s, max_v=0.497 m/s
+[component_container_isolated-17] [INFO] [1783057483.549403935] [controller_server]: Passing new path to controller.
+[tracker_node-19] [WARN] [1783057483.656230876] [tracker_node]: Measurement timeout (3.0s), pausing tracking
+[tracker_node-19] [INFO] [1783057483.856544670] [tracker_node]: Tracker initialized at (0.05, 0.00)
+[tracker_node-19] [WARN] [1783057484.056276256] [tracker_node]: Measurement timeout (3.4s), pausing tracking
+[tracker_node-19] [INFO] [1783057484.256132718] [tracker_node]: Tracker initialized at (0.05, 0.00)
+[hobot_codec_republish-13] [WARN] [1783057484.315333148] [vlm_jpeg_encoder]: Sub imgRaw fps [12.94]
+[tracker_node-19] [WARN] [1783057484.456698721] [tracker_node]: Measurement timeout (3.8s), pausing tracking
+[component_container_isolated-17] [INFO] [1783057484.641834387] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057484.656571515] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[tracker_node-19] [INFO] [1783057484.675309270] [tracker_node]: Tracker initialized at (0.05, 0.00)
+[component_container_isolated-17] [INFO] [1783057484.675665145] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057484.675793020] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057484.702835567] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[tracker_node-19] [WARN] [1783057484.857199518] [tracker_node]: Measurement timeout (4.2s), pausing tracking
+[tracker_node-19] [INFO] [1783057485.056856188] [tracker_node]: Tracker initialized at (0.05, 0.00)
+[competition_master_stage3.py-21] [INFO] [1783057485.073004400] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.39,0.29) yaw=121deg cmd=(vx=0.40 wz=-0.05) elapsed=122.5s plan[48pts 7.1m] (2.40,0.25)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=87% mem=22%
+[tracker_node-19] [WARN] [1783057485.257719441] [tracker_node]: Measurement timeout (4.6s), pausing tracking
+[component_container_isolated-17] [WARN] [1783057485.395506305] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3896 Hz
+[path_optimizer_node.py-22] [INFO] [1783057485.444019483] [path_optimizer_node]: Path optimised (47 pts, 9.3 ms): mean |kappa| 1.3316 -> 2.0222 (-51.9%), max |kappa| 13.8164 -> 14.3337 (-3.7%), max shift 0.080 m
+[tracker_node-19] [INFO] [1783057485.462467279] [tracker_node]: Tracker initialized at (0.05, 0.00)
+[speed_profile_node.py-23] [INFO] [1783057485.489865160] [speed_profile_node]: Plan received: 47 poses, mean|κ|=1.9452 m⁻¹, max|κ|=8.3113 m⁻¹, mean_v=0.323 m/s, min_v=0.150 m/s, max_v=0.497 m/s
+[tracker_node-19] [WARN] [1783057485.659393364] [tracker_node]: Measurement timeout (5.0s), pausing tracking
+[tracker_node-19] [INFO] [1783057485.860306784] [tracker_node]: Tracker initialized at (0.05, 0.00)
+[competition_master_stage3.py-21] [INFO] [1783057487.073848639] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(1.98,0.84) yaw=120deg cmd=(vx=-0.30 wz=0.07) elapsed=124.5s plan[47pts 6.9m] (2.20,0.55)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=75% mem=22%
+[component_container_isolated-17] [INFO] [1783057487.649397727] [controller_server]: Passing new path to controller.
+[hobot_codec_republish-13] [WARN] [1783057488.617809236] [vlm_jpeg_encoder]: Pub img fps [6.97]
+[component_container_isolated-17] [INFO] [1783057488.741794972] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057488.756812934] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057488.765046977] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057488.765232685] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057488.777619563] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[tracker_node-19] [WARN] [1783057489.056723293] [tracker_node]: Measurement timeout (3.1s), pausing tracking
+[competition_master_stage3.py-21] [INFO] [1783057489.069870587] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.07,0.66) yaw=121deg cmd=(vx=0.40 wz=-0.11) elapsed=126.5s plan[47pts 6.9m] (2.20,0.55)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=85% mem=21%
+[tracker_node-19] [INFO] [1783057489.265909923] [tracker_node]: Tracker initialized at (0.20, 0.00)
+[component_container_isolated-17] [WARN] [1783057489.397650328] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.5839 Hz
+[path_optimizer_node.py-22] [INFO] [1783057489.432957002] [path_optimizer_node]: Path optimised (44 pts, 5.3 ms): mean |kappa| 1.1192 -> 1.7861 (-59.6%), max |kappa| 13.3224 -> 19.6233 (-47.3%), max shift 0.080 m
+[tracker_node-19] [WARN] [1783057489.455947591] [tracker_node]: Measurement timeout (3.5s), pausing tracking
+[speed_profile_node.py-23] [INFO] [1783057489.489921849] [speed_profile_node]: Plan received: 44 poses, mean|κ|=1.7104 m⁻¹, max|κ|=9.2561 m⁻¹, mean_v=0.354 m/s, min_v=0.150 m/s, max_v=0.497 m/s
+[component_container_isolated-17] [INFO] [1783057489.549397779] [controller_server]: Passing new path to controller.
+[tracker_node-19] [INFO] [1783057489.656112636] [tracker_node]: Tracker initialized at (0.20, 0.00)
+[tracker_node-19] [WARN] [1783057489.856507681] [tracker_node]: Measurement timeout (3.9s), pausing tracking
+[tracker_node-19] [INFO] [1783057490.059520685] [tracker_node]: Tracker initialized at (0.20, 0.00)
+[tracker_node-19] [WARN] [1783057490.255717771] [tracker_node]: Measurement timeout (4.3s), pausing tracking
+[tracker_node-19] [INFO] [1783057490.456902525] [tracker_node]: Tracker initialized at (0.20, 0.00)
+[component_container_isolated-17] [INFO] [1783057490.641693483] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057490.665475447] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057490.682742576] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057490.683010326] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057490.694447620] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[competition_master_stage3.py-21] [INFO] [1783057491.075514998] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(1.69,1.11) yaw=156deg cmd=(vx=-0.30 wz=-0.16) elapsed=128.5s plan[44pts 6.2m] (2.00,0.75)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=77% mem=21%
+[component_container_isolated-17] [WARN] [1783057491.387194568] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
+[component_container_isolated-17] [WARN] [1783057491.387440401] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.07, -0.73)
+[component_container_isolated-17] [WARN] [1783057491.387537610] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
+[component_container_isolated-17] [INFO] [1783057491.541945103] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057491.552870314] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057491.562797941] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057491.562970691] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [INFO] [1783057491.563055275] [behavior_server]: Running wait
+[component_container_isolated-17] [INFO] [1783057491.563268233] [behavior_server]: wait completed successfully
+[component_container_isolated-17] [WARN] [1783057491.580088112] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [INFO] [1783057491.742026315] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057491.766169029] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057491.776912573] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057491.777069948] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057491.788951159] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057492.416430968] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.5784 Hz
+[path_optimizer_node.py-22] [INFO] [1783057492.457491143] [path_optimizer_node]: Path optimised (66 pts, 6.9 ms): mean |kappa| 1.1910 -> 1.9313 (-62.2%), max |kappa| 12.9226 -> 12.9473 (-0.2%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057492.516623365] [speed_profile_node]: Plan received: 66 poses, mean|κ|=1.9026 m⁻¹, max|κ|=8.3648 m⁻¹, mean_v=0.333 m/s, min_v=0.150 m/s, max_v=0.496 m/s
+[component_container_isolated-17] [INFO] [1783057492.549398081] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057493.076049367] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(1.81,1.03) yaw=131deg cmd=(vx=0.26 wz=0.75) elapsed=130.5s plan[66pts 9.7m] (1.80,1.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=71% mem=22%
+[imu_madgwick_filter.py-6] [INFO] [1783057493.421995737] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=7557 q_w=0.5700 angle=110.5deg beta=0.0030
+[imu_madgwick_filter.py-4] [INFO] [1783057493.439382824] [imu_madgwick_filter]: [imu_madgwick ->] msgs=3109 q_w=-0.0846 angle=189.7deg beta=0.0330
+[tracker_node-19] [WARN] [1783057493.656938582] [tracker_node]: Measurement timeout (3.1s), pausing tracking
+[hobot_codec_republish-13] [WARN] [1783057493.676520378] [vlm_jpeg_encoder]: Sub imgRaw fps [13.43]
+[tracker_node-19] [INFO] [1783057493.856077544] [tracker_node]: Tracker initialized at (0.08, 0.00)
+[tracker_node-19] [WARN] [1783057494.058802215] [tracker_node]: Measurement timeout (3.5s), pausing tracking
+[tracker_node-19] [INFO] [1783057494.256418926] [tracker_node]: Tracker initialized at (0.08, 0.00)
+[tracker_node-19] [WARN] [1783057494.455728222] [tracker_node]: Measurement timeout (3.9s), pausing tracking
+[component_container_isolated-17] [WARN] [1783057494.515419860] [controller_server]: Control loop missed its desired rate of 10.0000Hz
+[component_container_isolated-17] [INFO] [1783057493.641875662] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [WARN] [1783057494.142785484] [bt_navigator_navigate_through_poses_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[hobot_codec_republish-13] [WARN] [1783057494.518650403] [vlm_jpeg_encoder]: Pub img fps [11.53]
+[component_container_isolated-17] [INFO] [1783057494.530486780] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057494.540647824] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057494.553174202] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [WARN] [1783057494.568118622] [BehaviorTreeEngine]: Behavior Tree tick rate 10.00 was exceeded!
+[component_container_isolated-17] [INFO] [1783057494.573208873] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057494.573379040] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [INFO] [1783057494.587597585] [behavior_server]: Running wait
+[component_container_isolated-17] [INFO] [1783057494.589366960] [behavior_server]: wait completed successfully
+[component_container_isolated-17] [WARN] [1783057494.602676755] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[tracker_node-19] [INFO] [1783057494.658028601] [tracker_node]: Tracker initialized at (0.08, 0.00)
+[tracker_node-19] [WARN] [1783057494.855716813] [tracker_node]: Measurement timeout (4.3s), pausing tracking
+[component_container_isolated-17] [INFO] [1783057494.871491733] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057494.884270569] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057494.897560030] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057494.897816030] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057494.914977368] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[tracker_node-19] [INFO] [1783057495.056248900] [tracker_node]: Tracker initialized at (0.08, 0.00)
+[competition_master_stage3.py-21] [INFO] [1783057495.077082196] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(1.81,1.03) yaw=131deg cmd=(vx=-0.20 wz=0.97) elapsed=132.5s plan[66pts 9.7m] (1.80,1.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=77% mem=21%
+[tracker_node-19] [WARN] [1783057495.256193654] [tracker_node]: Measurement timeout (4.7s), pausing tracking
+[component_container_isolated-17] [WARN] [1783057495.395153144] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 2.0050 Hz
+[path_optimizer_node.py-22] [INFO] [1783057495.442384613] [path_optimizer_node]: Path optimised (47 pts, 5.9 ms): mean |kappa| 1.9123 -> 3.1804 (-66.3%), max |kappa| 11.9226 -> 55.6702 (-366.9%), max shift 0.080 m
+[tracker_node-19] [INFO] [1783057495.456687949] [tracker_node]: Tracker initialized at (0.08, 0.00)
+[speed_profile_node.py-23] [INFO] [1783057495.482304330] [speed_profile_node]: Plan received: 47 poses, mean|κ|=3.0678 m⁻¹, max|κ|=16.8670 m⁻¹, mean_v=0.310 m/s, min_v=0.150 m/s, max_v=0.497 m/s
+[component_container_isolated-17] [INFO] [1783057495.527804174] [controller_server]: Passing new path to controller.
+[tracker_node-19] [WARN] [1783057495.655797161] [tracker_node]: Measurement timeout (5.1s), pausing tracking
+[tracker_node-19] [INFO] [1783057495.857470457] [tracker_node]: Tracker initialized at (0.08, 0.00)
+[tracker_node-19] [WARN] [1783057496.056803378] [tracker_node]: Measurement timeout (5.5s), pausing tracking
+[tracker_node-19] [INFO] [1783057496.256809507] [tracker_node]: Tracker initialized at (0.08, 0.00)
+[tracker_node-19] [WARN] [1783057496.456561052] [tracker_node]: Measurement timeout (5.9s), pausing tracking
+[component_container_isolated-17] [INFO] [1783057496.520675608] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057496.532030028] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057496.540978321] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057496.541179946] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057496.559811284] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[tracker_node-19] [INFO] [1783057496.662762724] [tracker_node]: Tracker initialized at (0.08, 0.00)
+[competition_master_stage3.py-21] [INFO] [1783057497.072332776] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(1.88,0.95) yaw=143deg cmd=(vx=0.27 wz=-0.97) elapsed=134.5s plan[47pts 6.9m] (1.80,1.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=88% mem=21%
+[component_container_isolated-17] [WARN] [1783057497.389297557] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.1931 Hz
+[path_optimizer_node.py-22] [INFO] [1783057497.442724402] [path_optimizer_node]: Path optimised (48 pts, 8.6 ms): mean |kappa| 1.4875 -> 2.0352 (-36.8%), max |kappa| 13.8959 -> 24.1824 (-74.0%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057497.481229036] [speed_profile_node]: Plan received: 48 poses, mean|κ|=2.1545 m⁻¹, max|κ|=11.1668 m⁻¹, mean_v=0.328 m/s, min_v=0.150 m/s, max_v=0.497 m/s
+[component_container_isolated-17] [INFO] [1783057497.568968764] [controller_server]: Passing new path to controller.
+[component_container_isolated-17] [INFO] [1783057498.561247700] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057498.573966411] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057498.586682039] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057498.586947622] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057498.598565291] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[competition_master_stage3.py-21] [INFO] [1783057499.082630652] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(1.79,1.05) yaw=128deg cmd=(vx=-0.30 wz=-0.28) elapsed=136.5s plan[48pts 6.6m] (1.90,0.95)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=100% mem=21%
+[component_container_isolated-17] [WARN] [1783057499.396514724] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2388 Hz
+[path_optimizer_node.py-22] [INFO] [1783057499.441721693] [path_optimizer_node]: Path optimised (43 pts, 7.9 ms): mean |kappa| 1.0904 -> 1.5890 (-45.7%), max |kappa| 12.3078 -> 12.5397 (-1.9%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057499.489253621] [speed_profile_node]: Plan received: 43 poses, mean|κ|=1.5211 m⁻¹, max|κ|=7.6106 m⁻¹, mean_v=0.358 m/s, min_v=0.150 m/s, max_v=0.497 m/s
+[hobot_codec_republish-13] [WARN] [1783057499.511857167] [vlm_jpeg_encoder]: Sub imgRaw fps [13.99]
+[hobot_codec_republish-13] [WARN] [1783057499.587540476] [vlm_jpeg_encoder]: Pub img fps [14.01]
+[component_container_isolated-17] [INFO] [1783057499.605319397] [controller_server]: Passing new path to controller.
+[tracker_node-19] [WARN] [1783057499.859009330] [tracker_node]: Measurement timeout (3.2s), pausing tracking
+[tracker_node-19] [INFO] [1783057500.058608459] [tracker_node]: Tracker initialized at (0.20, 0.00)
+[tracker_node-19] [WARN] [1783057500.256473880] [tracker_node]: Measurement timeout (3.5s), pausing tracking
+[tracker_node-19] [INFO] [1783057500.458144926] [tracker_node]: Tracker initialized at (0.20, 0.00)
+[tracker_node-19] [WARN] [1783057500.656535847] [tracker_node]: Measurement timeout (3.9s), pausing tracking
+[component_container_isolated-17] [INFO] [1783057500.678471518] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057500.695681647] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057500.709721109] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057500.710250734] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057500.727590488] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[tracker_node-19] [INFO] [1783057500.856139184] [tracker_node]: Tracker initialized at (0.20, 0.00)
+[tracker_node-19] [WARN] [1783057501.056683939] [tracker_node]: Measurement timeout (4.3s), pausing tracking
+[competition_master_stage3.py-21] [INFO] [1783057501.075683651] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(2.04,0.79) yaw=121deg cmd=(vx=0.40 wz=0.96) elapsed=138.5s plan[43pts 6.1m] (1.90,0.95)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=93% mem=21%
+[tracker_node-19] [INFO] [1783057501.258978110] [tracker_node]: Tracker initialized at (0.20, 0.00)
+[component_container_isolated-17] [WARN] [1783057501.388178432] [planner_server]: GridBased: failed to create plan, invalid use: Starting point in lethal space! Cannot create feasible plan..
+[component_container_isolated-17] [WARN] [1783057501.388467182] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (1.07, -0.73)
+[component_container_isolated-17] [WARN] [1783057501.388595932] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
+[tracker_node-19] [WARN] [1783057501.456584822] [tracker_node]: Measurement timeout (4.7s), pausing tracking
+[component_container_isolated-17] [INFO] [1783057501.568802973] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057501.581302601] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057501.593946312] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057501.594212521] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [INFO] [1783057501.600368480] [behavior_server]: Running wait
+[component_container_isolated-17] [INFO] [1783057501.600845439] [behavior_server]: wait completed successfully
+[component_container_isolated-17] [WARN] [1783057501.604926148] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[tracker_node-19] [INFO] [1783057501.656461785] [tracker_node]: Tracker initialized at (0.20, 0.00)
+[tracker_node-19] [WARN] [1783057501.855706623] [tracker_node]: Measurement timeout (5.1s), pausing tracking
+[component_container_isolated-17] [INFO] [1783057501.869084042] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057501.888761755] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057501.903614384] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057501.904621051] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057501.930449348] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[tracker_node-19] [INFO] [1783057502.064283504] [tracker_node]: Tracker initialized at (0.20, 0.00)
+[tracker_node-19] [WARN] [1783057502.258534299] [tracker_node]: Measurement timeout (5.6s), pausing tracking
+[component_container_isolated-17] [WARN] [1783057502.387839912] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 2.1345 Hz
+[path_optimizer_node.py-22] [INFO] [1783057502.420376003] [path_optimizer_node]: Path optimised (39 pts, 6.1 ms): mean |kappa| 0.8990 -> 1.6567 (-84.3%), max |kappa| 13.0307 -> 14.9516 (-14.7%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057502.454400261] [speed_profile_node]: Plan received: 39 poses, mean|κ|=1.5795 m⁻¹, max|κ|=8.4490 m⁻¹, mean_v=0.371 m/s, min_v=0.150 m/s, max_v=0.497 m/s
+[tracker_node-19] [INFO] [1783057502.456533053] [tracker_node]: Tracker initialized at (0.20, 0.00)
+[component_container_isolated-17] [INFO] [1783057502.615538089] [controller_server]: Passing new path to controller.
+[tracker_node-19] [WARN] [1783057502.657115724] [tracker_node]: Measurement timeout (5.9s), pausing tracking
+[tracker_node-19] [INFO] [1783057502.856472437] [tracker_node]: Tracker initialized at (0.23, 0.00)
+[competition_master_stage3.py-21] [INFO] [1783057503.078843863] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(1.35,1.04) yaw=-167deg cmd=(vx=0.40 wz=0.94) elapsed=140.5s plan[39pts 5.6m] (1.50,1.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=100% mem=21%
+[imu_madgwick_filter.py-6] [INFO] [1783057503.417171233] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=8043 q_w=-0.2668 angle=211.0deg beta=0.0030
+[imu_madgwick_filter.py-4] [INFO] [1783057503.440637196] [imu_madgwick_filter]: [imu_madgwick ->] msgs=3303 q_w=-0.8523 angle=296.9deg beta=0.0330
+[component_container_isolated-17] [INFO] [1783057503.668672291] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057503.680451543] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057503.689164670] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057503.689329546] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057503.700106465] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057504.417252547] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.3732 Hz
+[path_optimizer_node.py-22] [INFO] [1783057504.470368476] [path_optimizer_node]: Path optimised (80 pts, 8.7 ms): mean |kappa| 1.6235 -> 2.4329 (-49.9%), max |kappa| 12.4916 -> 15.9514 (-27.7%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057504.523055863] [speed_profile_node]: Plan received: 80 poses, mean|κ|=2.4988 m⁻¹, max|κ|=10.2437 m⁻¹, mean_v=0.297 m/s, min_v=0.150 m/s, max_v=0.492 m/s
+[hobot_codec_republish-13] [WARN] [1783057504.556848954] [vlm_jpeg_encoder]: Sub imgRaw fps [13.08]
+[component_container_isolated-17] [INFO] [1783057504.615533968] [controller_server]: Passing new path to controller.
+[hobot_codec_republish-13] [WARN] [1783057504.621240386] [vlm_jpeg_encoder]: Pub img fps [13.11]
+[competition_master_stage3.py-21] [INFO] [1783057505.086785619] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(0.97,0.74) yaw=-121deg cmd=(vx=-0.20 wz=0.36) elapsed=142.5s plan[80pts 11.9m] (0.90,0.65)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=72% mem=21%
+[component_container_isolated-17] [INFO] [1783057505.669546920] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057505.683879924] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057505.704747054] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057505.704902554] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[tracker_node-19] [WARN] [1783057505.856918380] [tracker_node]: Measurement timeout (3.0s), pausing tracking
+[component_container_isolated-17] [WARN] [1783057505.920447520] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[tracker_node-19] [INFO] [1783057506.056719218] [tracker_node]: Tracker initialized at (0.23, 0.00)
+[tracker_node-19] [WARN] [1783057506.256088556] [tracker_node]: Measurement timeout (3.4s), pausing tracking
+[component_container_isolated-17] [WARN] [1783057506.397141506] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4638 Hz
+[path_optimizer_node.py-22] [INFO] [1783057506.426036971] [path_optimizer_node]: Path optimised (39 pts, 7.0 ms): mean |kappa| 1.4540 -> 3.6405 (-150.4%), max |kappa| 12.8431 -> 60.9339 (-374.4%), max shift 0.080 m
+[tracker_node-19] [INFO] [1783057506.456109353] [tracker_node]: Tracker initialized at (0.23, 0.00)
+[speed_profile_node.py-23] [INFO] [1783057506.463674563] [speed_profile_node]: Plan received: 39 poses, mean|κ|=3.6479 m⁻¹, max|κ|=16.9351 m⁻¹, mean_v=0.323 m/s, min_v=0.150 m/s, max_v=0.497 m/s
+[component_container_isolated-17] [INFO] [1783057506.615534307] [controller_server]: Passing new path to controller.
+[tracker_node-19] [WARN] [1783057506.656119858] [tracker_node]: Measurement timeout (3.8s), pausing tracking
+[tracker_node-19] [INFO] [1783057506.857182779] [tracker_node]: Tracker initialized at (0.23, 0.00)
+[tracker_node-19] [WARN] [1783057507.056524284] [tracker_node]: Measurement timeout (4.2s), pausing tracking
+[competition_master_stage3.py-21] [INFO] [1783057507.075879122] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(0.98,0.78) yaw=-95deg cmd=(vx=-0.30 wz=-0.61) elapsed=144.5s plan[39pts 5.5m] (1.00,0.95)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=85% mem=21%
+[tracker_node-19] [INFO] [1783057507.256854081] [tracker_node]: Tracker initialized at (0.23, 0.00)
+[component_container_isolated-17] [INFO] [1783057507.668723968] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057507.689091056] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057507.702993434] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057507.703156726] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057507.716363354] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057508.392315386] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4512 Hz
+[path_optimizer_node.py-22] [INFO] [1783057508.423408644] [path_optimizer_node]: Path optimised (40 pts, 4.8 ms): mean |kappa| 1.1963 -> 1.5826 (-32.3%), max |kappa| 12.7833 -> 16.7908 (-31.3%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057508.454739734] [speed_profile_node]: Plan received: 40 poses, mean|κ|=1.6745 m⁻¹, max|κ|=8.6147 m⁻¹, mean_v=0.347 m/s, min_v=0.150 m/s, max_v=0.497 m/s
+[component_container_isolated-17] [INFO] [1783057508.615544605] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057509.075764879] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(1.03,1.06) yaw=-103deg cmd=(vx=0.36 wz=0.03) elapsed=146.5s plan[40pts 5.8m] (1.00,0.95)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=100% mem=21%
+[hobot_codec_republish-13] [WARN] [1783057509.589128957] [vlm_jpeg_encoder]: Sub imgRaw fps [13.71]
+[component_container_isolated-17] [INFO] [1783057509.668828476] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057509.684374021] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057509.694994523] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057509.695160982] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057509.705799276] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[hobot_codec_republish-13] [WARN] [1783057509.761411039] [vlm_jpeg_encoder]: Pub img fps [13.43]
+[component_container_isolated-17] [WARN] [1783057510.402458105] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4147 Hz
+[path_optimizer_node.py-22] [INFO] [1783057510.436942030] [path_optimizer_node]: Path optimised (36 pts, 6.5 ms): mean |kappa| 1.0879 -> 2.3551 (-116.5%), max |kappa| 14.1016 -> 37.0005 (-162.4%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057510.473756497] [speed_profile_node]: Plan received: 36 poses, mean|κ|=2.2303 m⁻¹, max|κ|=13.2740 m⁻¹, mean_v=0.383 m/s, min_v=0.150 m/s, max_v=0.497 m/s
+[component_container_isolated-17] [INFO] [1783057510.615558322] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057511.087594974] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(0.99,0.94) yaw=-118deg cmd=(vx=0.33 wz=0.97) elapsed=148.5s plan[36pts 4.9m] (1.00,0.85)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=88% mem=21%
+[component_container_isolated-17] [INFO] [1783057511.668642485] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057511.677683279] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057511.686835031] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057511.686985239] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057511.696718325] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057512.395559572] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4437 Hz
+[path_optimizer_node.py-22] [INFO] [1783057512.429412955] [path_optimizer_node]: Path optimised (41 pts, 6.8 ms): mean |kappa| 1.5005 -> 3.4897 (-132.6%), max |kappa| 11.9872 -> 53.0595 (-342.6%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057512.488619719] [speed_profile_node]: Plan received: 41 poses, mean|κ|=3.3205 m⁻¹, max|κ|=20.7151 m⁻¹, mean_v=0.359 m/s, min_v=0.150 m/s, max_v=0.497 m/s
+[component_container_isolated-17] [INFO] [1783057512.615526165] [controller_server]: Passing new path to controller.
+[imu_madgwick_filter.py-4] [WARN] [1783057513.061826978] [imu_madgwick_filter]: [imu_madgwick] dt outlier: 0.1500s > 0.15s, capping
+[competition_master_stage3.py-21] [INFO] [1783057513.074808773] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(0.91,0.64) yaw=-93deg cmd=(vx=0.40 wz=-0.03) elapsed=150.5s plan[41pts 5.6m] (0.90,0.65)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=93% mem=22%
+[imu_madgwick_filter.py-6] [INFO] [1783057513.414723353] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=8548 q_w=-0.7223 angle=272.5deg beta=0.0030
+[imu_madgwick_filter.py-4] [INFO] [1783057513.439220859] [imu_madgwick_filter]: [imu_madgwick ->] msgs=3491 q_w=-0.9998 angle=357.7deg beta=0.0330
+[component_container_isolated-17] [INFO] [1783057513.668636079] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057513.685355000] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057513.703179379] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057513.703356087] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057513.724860217] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057514.392350833] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4759 Hz
+[path_optimizer_node.py-22] [INFO] [1783057514.436944843] [path_optimizer_node]: Path optimised (37 pts, 11.2 ms): mean |kappa| 2.1932 -> 4.4892 (-104.7%), max |kappa| 12.6388 -> 31.3456 (-148.0%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057514.483218938] [speed_profile_node]: Plan received: 37 poses, mean|κ|=4.4444 m⁻¹, max|κ|=17.0263 m⁻¹, mean_v=0.267 m/s, min_v=0.150 m/s, max_v=0.443 m/s
+[component_container_isolated-17] [INFO] [1783057514.615523802] [controller_server]: Passing new path to controller.
+[hobot_codec_republish-13] [WARN] [1783057514.649961435] [vlm_jpeg_encoder]: Sub imgRaw fps [12.85]
+[hobot_codec_republish-13] [WARN] [1783057514.797446636] [vlm_jpeg_encoder]: Pub img fps [13.11]
+[competition_master_stage3.py-21] [INFO] [1783057515.074678827] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(1.07,0.05) yaw=-72deg cmd=(vx=0.25 wz=-0.97) elapsed=152.5s plan[37pts 5.1m] (1.10,-0.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=71% mem=22%
+[component_container_isolated-17] [INFO] [1783057515.669312175] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057515.686906554] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057515.698538974] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057515.698703807] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057515.922132402] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057516.392889763] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4467 Hz
+[path_optimizer_node.py-22] [INFO] [1783057516.430959230] [path_optimizer_node]: Path optimised (37 pts, 5.5 ms): mean |kappa| 2.1784 -> 4.5364 (-108.2%), max |kappa| 13.2419 -> 41.9012 (-216.4%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057516.472199115] [speed_profile_node]: Plan received: 37 poses, mean|κ|=4.4686 m⁻¹, max|κ|=18.1226 m⁻¹, mean_v=0.277 m/s, min_v=0.150 m/s, max_v=0.467 m/s
+[component_container_isolated-17] [INFO] [1783057516.615535940] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057517.082866509] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(1.13,-0.32) yaw=-110deg cmd=(vx=0.25 wz=0.86) elapsed=154.5s plan[37pts 5.0m] (1.10,-0.25)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=88% mem=22%
+[component_container_isolated-17] [INFO] [1783057517.668921481] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057517.689174777] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057517.703701573] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057517.703846281] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057517.722220577] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057518.397765612] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4439 Hz
+[path_optimizer_node.py-22] [INFO] [1783057518.418469617] [path_optimizer_node]: Path optimised (29 pts, 7.0 ms): mean |kappa| 1.2339 -> 1.5830 (-28.3%), max |kappa| 12.1872 -> 13.3286 (-9.4%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057518.446630665] [speed_profile_node]: Plan received: 29 poses, mean|κ|=1.4894 m⁻¹, max|κ|=6.3527 m⁻¹, mean_v=0.367 m/s, min_v=0.150 m/s, max_v=0.477 m/s
+[component_container_isolated-17] [INFO] [1783057518.615541580] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057519.076724939] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(1.08,-0.48) yaw=-98deg cmd=(vx=0.36 wz=-0.48) elapsed=156.5s plan[29pts 4.3m] (1.10,-0.55)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=85% mem=22%
+[component_container_isolated-17] [INFO] [1783057519.668667663] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057519.692706002] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057519.704840130] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057519.705099755] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[hobot_codec_republish-13] [WARN] [1783057519.712429715] [vlm_jpeg_encoder]: Sub imgRaw fps [13.83]
+[component_container_isolated-17] [WARN] [1783057519.724705552] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[hobot_codec_republish-13] [WARN] [1783057519.835541161] [vlm_jpeg_encoder]: Pub img fps [13.90]
+[component_container_isolated-17] [WARN] [1783057520.391762002] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4434 Hz
+[path_optimizer_node.py-22] [INFO] [1783057520.412270965] [path_optimizer_node]: Path optimised (25 pts, 3.8 ms): mean |kappa| 1.1504 -> 1.6108 (-40.0%), max |kappa| 11.9423 -> 12.3753 (-3.6%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057520.483914482] [speed_profile_node]: Plan received: 25 poses, mean|κ|=1.5003 m⁻¹, max|κ|=6.1583 m⁻¹, mean_v=0.374 m/s, min_v=0.150 m/s, max_v=0.496 m/s
+[component_container_isolated-17] [INFO] [1783057520.615532388] [controller_server]: Passing new path to controller.
+[imu_madgwick_filter.py-4] [WARN] [1783057520.862215947] [imu_madgwick_filter]: [imu_madgwick] dt outlier: 0.2497s > 0.15s, capping
+[competition_master_stage3.py-21] [INFO] [1783057521.085713333] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(1.00,-0.78) yaw=-127deg cmd=(vx=0.40 wz=-0.18) elapsed=158.5s plan[25pts 3.6m] (1.00,-0.65)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=83% mem=22%
+[component_container_isolated-17] [INFO] [1783057521.668842222] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057521.686415393] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057521.695276229] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057521.697471437] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057521.712369358] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057522.391991811] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4422 Hz
+[path_optimizer_node.py-22] [INFO] [1783057522.412001524] [path_optimizer_node]: Path optimised (27 pts, 4.3 ms): mean |kappa| 2.1241 -> 2.5863 (-21.8%), max |kappa| 12.7804 -> 9.2431 (27.7%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057522.441622615] [speed_profile_node]: Plan received: 27 poses, mean|κ|=2.4227 m⁻¹, max|κ|=6.9872 m⁻¹, mean_v=0.290 m/s, min_v=0.150 m/s, max_v=0.490 m/s
+[component_container_isolated-17] [INFO] [1783057522.615531906] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057523.071568223] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(0.61,-1.04) yaw=-149deg cmd=(vx=0.30 wz=0.97) elapsed=160.5s plan[27pts 3.9m] (0.60,-1.15)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=88% mem=21%
+[imu_madgwick_filter.py-6] [INFO] [1783057523.414549555] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=9030 q_w=-0.2190 angle=205.3deg beta=0.0030
+[imu_madgwick_filter.py-4] [INFO] [1783057523.439565561] [imu_madgwick_filter]: [imu_madgwick ->] msgs=3681 q_w=-0.9029 angle=309.1deg beta=0.0330
+[component_container_isolated-17] [INFO] [1783057523.668649824] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057523.689467079] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057523.709422834] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057523.709595751] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057523.726891380] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057524.390597830] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4871 Hz
+[path_optimizer_node.py-22] [INFO] [1783057524.413086377] [path_optimizer_node]: Path optimised (21 pts, 3.4 ms): mean |kappa| 0.6061 -> 0.7521 (-24.1%), max |kappa| 3.3333 -> 4.8120 (-44.4%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057524.435887841] [speed_profile_node]: Plan received: 21 poses, mean|κ|=0.7782 m⁻¹, max|κ|=3.0565 m⁻¹, mean_v=0.401 m/s, min_v=0.164 m/s, max_v=0.496 m/s
+[component_container_isolated-17] [INFO] [1783057524.615566843] [controller_server]: Passing new path to controller.
+[hobot_codec_republish-13] [WARN] [1783057524.754862168] [vlm_jpeg_encoder]: Sub imgRaw fps [12.69]
+[hobot_codec_republish-13] [WARN] [1783057524.927154251] [vlm_jpeg_encoder]: Pub img fps [12.57]
+[competition_master_stage3.py-21] [INFO] [1783057525.077117328] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(0.47,-1.31) yaw=-109deg cmd=(vx=-0.28 wz=0.31) elapsed=162.5s plan[21pts 2.9m] (0.50,-1.15)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=77% mem=22%
+[component_container_isolated-17] [INFO] [1783057525.668940178] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057525.681099056] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057525.693632101] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057525.693783101] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057525.723526316] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057526.389276393] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.5009 Hz
+[path_optimizer_node.py-22] [INFO] [1783057526.407534231] [path_optimizer_node]: Path optimised (27 pts, 3.5 ms): mean |kappa| 1.7439 -> 2.7264 (-56.3%), max |kappa| 11.9622 -> 12.2692 (-2.6%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057526.440817614] [speed_profile_node]: Plan received: 27 poses, mean|κ|=2.7000 m⁻¹, max|κ|=7.5520 m⁻¹, mean_v=0.290 m/s, min_v=0.150 m/s, max_v=0.451 m/s
+[component_container_isolated-17] [INFO] [1783057526.615583989] [controller_server]: Passing new path to controller.
+[tracker_node-19] [WARN] [1783057526.656614332] [tracker_node]: Measurement timeout (3.1s), pausing tracking
+[tracker_node-19] [INFO] [1783057526.857939505] [tracker_node]: Tracker initialized at (-0.05, 0.00)
+[tracker_node-19] [WARN] [1783057527.057661637] [tracker_node]: Measurement timeout (3.5s), pausing tracking
+[competition_master_stage3.py-21] [INFO] [1783057527.070727431] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(0.45,-1.31) yaw=-103deg cmd=(vx=-0.17 wz=-0.50) elapsed=164.5s plan[27pts 4.0m] (0.50,-1.35)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=88% mem=22%
+[tracker_node-19] [INFO] [1783057527.257307810] [tracker_node]: Tracker initialized at (-0.05, 0.00)
+[tracker_node-19] [WARN] [1783057527.458408900] [tracker_node]: Measurement timeout (3.9s), pausing tracking
+[tracker_node-19] [INFO] [1783057527.656577739] [tracker_node]: Tracker initialized at (-0.05, 0.00)
+[component_container_isolated-17] [INFO] [1783057527.669130700] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057527.688069580] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057527.703619042] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057527.703786542] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057527.719940088] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057528.384022372] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4861 Hz
+[path_optimizer_node.py-22] [INFO] [1783057528.439016844] [path_optimizer_node]: Path optimised (21 pts, 26.0 ms): mean |kappa| 0.4859 -> 0.4112 (15.4%), max |kappa| 3.3333 -> 2.2613 (32.2%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057528.475256894] [speed_profile_node]: Plan received: 21 poses, mean|κ|=0.4230 m⁻¹, max|κ|=1.5453 m⁻¹, mean_v=0.438 m/s, min_v=0.273 m/s, max_v=0.496 m/s
+[component_container_isolated-17] [INFO] [1783057528.615527137] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057529.078282540] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(0.47,-1.21) yaw=-87deg cmd=(vx=-0.30 wz=-0.32) elapsed=166.5s plan[21pts 2.9m] (0.50,-1.25)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=100% mem=22%
+[component_container_isolated-17] [INFO] [1783057529.668924141] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057529.679996435] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057529.698153731] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057529.698320273] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057529.721157445] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[hobot_codec_republish-13] [WARN] [1783057529.757322079] [vlm_jpeg_encoder]: Sub imgRaw fps [12.40]
+[hobot_codec_republish-13] [WARN] [1783057529.954615626] [vlm_jpeg_encoder]: Pub img fps [12.53]
+[component_container_isolated-17] [WARN] [1783057530.411938612] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4000 Hz
+[path_optimizer_node.py-22] [INFO] [1783057530.433350742] [path_optimizer_node]: Path optimised (30 pts, 4.3 ms): mean |kappa| 1.6732 -> 2.1274 (-27.1%), max |kappa| 11.9226 -> 11.9088 (0.1%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057530.458104498] [speed_profile_node]: Plan received: 30 poses, mean|κ|=2.1726 m⁻¹, max|κ|=6.1633 m⁻¹, mean_v=0.303 m/s, min_v=0.150 m/s, max_v=0.494 m/s
+[component_container_isolated-17] [INFO] [1783057530.615525828] [controller_server]: Passing new path to controller.
+[tracker_node-19] [WARN] [1783057530.856907844] [tracker_node]: Measurement timeout (3.1s), pausing tracking
+[tracker_node-19] [INFO] [1783057531.057423768] [tracker_node]: Tracker initialized at (0.02, 0.00)
+[competition_master_stage3.py-21] [INFO] [1783057531.075960439] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(0.40,-1.03) yaw=-50deg cmd=(vx=-0.17 wz=-0.03) elapsed=168.5s plan[30pts 4.4m] (0.40,-1.05)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=88% mem=22%
+[component_container_isolated-17] [INFO] [1783057531.668869541] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057531.681803085] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057531.695861631] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057531.696021006] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057531.714159010] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057532.401698802] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.4191 Hz
+[path_optimizer_node.py-22] [INFO] [1783057532.426147182] [path_optimizer_node]: Path optimised (27 pts, 7.4 ms): mean |kappa| 1.9327 -> 2.1999 (-13.8%), max |kappa| 11.9857 -> 14.9875 (-25.0%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057532.447434604] [speed_profile_node]: Plan received: 27 poses, mean|κ|=2.1913 m⁻¹, max|κ|=5.7822 m⁻¹, mean_v=0.284 m/s, min_v=0.150 m/s, max_v=0.487 m/s
+[component_container_isolated-17] [INFO] [1783057532.615608437] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057533.075221756] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(0.40,-1.02) yaw=-50deg cmd=(vx=-0.30 wz=-0.47) elapsed=170.5s plan[27pts 3.9m] (0.40,-0.95)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=75% mem=22%
+[imu_madgwick_filter.py-6] [INFO] [1783057533.416431214] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=9525 q_w=-0.7962 angle=285.5deg beta=0.0030
+[imu_madgwick_filter.py-4] [INFO] [1783057533.441050012] [imu_madgwick_filter]: [imu_madgwick ->] msgs=3878 q_w=-0.9585 angle=326.9deg beta=0.0330
+[component_container_isolated-17] [INFO] [1783057533.670175193] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057533.721762788] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057533.837747317] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057533.838004525] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057533.846246110] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057534.393000035] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.6175 Hz
+[path_optimizer_node.py-22] [INFO] [1783057534.419186916] [path_optimizer_node]: Path optimised (18 pts, 3.5 ms): mean |kappa| 0.4171 -> 0.1656 (60.3%), max |kappa| 3.3219 -> 0.5311 (84.0%), max shift 0.070 m
+[speed_profile_node.py-23] [INFO] [1783057534.437262879] [speed_profile_node]: Plan received: 18 poses, mean|κ|=0.1644 m⁻¹, max|κ|=0.3409 m⁻¹, mean_v=0.478 m/s, min_v=0.449 m/s, max_v=0.495 m/s
+[tracker_node-19] [WARN] [1783057534.460681718] [tracker_node]: Reinitializing (divergence=1.95m > 1.5m)
+[component_container_isolated-17] [INFO] [1783057534.615517756] [controller_server]: Passing new path to controller.
+[hobot_codec_republish-13] [WARN] [1783057534.787944631] [vlm_jpeg_encoder]: Sub imgRaw fps [12.92]
+[competition_master_stage3.py-21] [INFO] [1783057535.075546826] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(0.33,-0.86) yaw=-69deg cmd=(vx=0.40 wz=0.59) elapsed=172.5s plan[18pts 2.5m] (0.30,-0.85)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=79C cpu=100% mem=22%
+[competition_master_stage3.py-21] [INFO] [1783057537.072559063] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(0.46,-0.98) yaw=-47deg cmd=(vx=0.00 wz=0.00) elapsed=174.5s plan[18pts 2.5m] (0.30,-0.85)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=88% mem=22%
+[component_container_isolated-17] [INFO] [1783057535.568932738] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [WARN] [1783057536.068889068] [bt_navigator_navigate_through_poses_rclcpp_node]: Node timed out while executing service call to global_costmap/clear_entirely_global_costmap.
+[component_container_isolated-17] [WARN] [1783057537.781538444] [controller_server]: Control loop missed its desired rate of 10.0000Hz
+[hobot_codec_republish-13] [WARN] [1783057537.784469987] [vlm_jpeg_encoder]: Pub img fps [7.92]
+[component_container_isolated-17] [INFO] [1783057537.808555618] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057537.813141910] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057537.821170246] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [WARN] [1783057537.833046832] [BehaviorTreeEngine]: Behavior Tree tick rate 10.00 was exceeded!
+[component_container_isolated-17] [INFO] [1783057537.834159457] [behavior_server]: Running wait
+[component_container_isolated-17] [INFO] [1783057537.834532374] [behavior_server]: wait completed successfully
+[component_container_isolated-17] [INFO] [1783057537.835754499] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057537.835906958] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057537.845703502] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [INFO] [1783057538.136423240] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057538.150710993] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057538.158714537] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057538.158879828] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057538.165486538] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057538.390043760] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 4.3049 Hz
+[path_optimizer_node.py-22] [INFO] [1783057538.407273639] [path_optimizer_node]: Path optimised (19 pts, 3.9 ms): mean |kappa| 0.2062 -> 0.0699 (66.1%), max |kappa| 2.1832 -> 0.3190 (85.4%), max shift 0.028 m
+[speed_profile_node.py-23] [INFO] [1783057538.432443479] [speed_profile_node]: Plan received: 19 poses, mean|κ|=0.0731 m⁻¹, max|κ|=0.1696 m⁻¹, mean_v=0.492 m/s, min_v=0.478 m/s, max_v=0.498 m/s
+[component_container_isolated-17] [INFO] [1783057538.590108642] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057539.084651763] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(0.46,-0.98) yaw=-47deg cmd=(vx=-0.30 wz=0.74) elapsed=176.5s plan[19pts 2.7m] (0.50,-0.95)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=100% mem=22%
+[component_container_isolated-17] [INFO] [1783057539.570336132] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057539.582868510] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057539.603948141] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057539.604135557] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057539.619068228] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057540.385766749] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2786 Hz
+[path_optimizer_node.py-22] [INFO] [1783057540.401100753] [path_optimizer_node]: Path optimised (16 pts, 3.2 ms): mean |kappa| 0.1756 -> 0.0674 (61.6%), max |kappa| 2.3615 -> 0.3852 (83.7%), max shift 0.029 m
+[speed_profile_node.py-23] [INFO] [1783057540.440940554] [speed_profile_node]: Plan received: 16 poses, mean|κ|=0.0687 m⁻¹, max|κ|=0.2053 m⁻¹, mean_v=0.492 m/s, min_v=0.473 m/s, max_v=0.500 m/s
+[component_container_isolated-17] [INFO] [1783057540.514901656] [controller_server]: Passing new path to controller.
+[competition_master_stage3.py-21] [INFO] [1783057541.084672796] [competition_master_stage3]: [DIAG] state=RETURN_P pos=(0.04,-0.73) yaw=-23deg cmd=(vx=-0.30 wz=0.31) elapsed=178.5s plan[16pts 2.1m] (-0.00,-0.75)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=77% mem=22%
+[component_container_isolated-17] [INFO] [1783057541.528525780] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057541.541241075] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057541.550009368] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057541.550191202] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057541.564061830] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [WARN] [1783057542.386678241] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 1.2017 Hz
+[path_optimizer_node.py-22] [INFO] [1783057542.415031206] [path_optimizer_node]: Path optimised (14 pts, 2.9 ms): mean |kappa| 0.1956 -> 0.0666 (66.0%), max |kappa| 2.1912 -> 0.3294 (85.0%), max shift 0.028 m
+[speed_profile_node.py-23] [INFO] [1783057542.444032088] [speed_profile_node]: Plan received: 14 poses, mean|κ|=0.0668 m⁻¹, max|κ|=0.1749 m⁻¹, mean_v=0.493 m/s, min_v=0.478 m/s, max_v=0.500 m/s
+[component_container_isolated-17] [INFO] [1783057542.543715321] [controller_server]: Passing new path to controller.
+[hobot_codec_republish-13] [WARN] [1783057542.838242227] [vlm_jpeg_encoder]: Sub imgRaw fps [14.83]
+[hobot_codec_republish-13] [WARN] [1783057542.853428647] [vlm_jpeg_encoder]: Pub img fps [14.80]
+[competition_master_stage3.py-21] [ERROR] [1783057543.022272397] [competition_master_stage3]: >>> [TIMEOUT] 全局超时! 已运行 180.5s > 180.0s, 当前状态=RETURN_P
+[imu_madgwick_filter.py-6] [INFO] [1783057543.420372912] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=10019 q_w=-0.9495 angle=323.4deg beta=0.0030
+[imu_madgwick_filter.py-4] [INFO] [1783057543.439138292] [imu_madgwick_filter]: [imu_madgwick ->] msgs=4077 q_w=-0.7958 angle=285.5deg beta=0.0330
+[component_container_isolated-17] [INFO] [1783057543.651271469] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057543.667667640] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057543.683283060] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057543.683436394] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057543.698109064] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[competition_master_stage3.py-21] [INFO] [1783057543.901184906] [competition_master_stage3]: [BAG] 录制已停止
+[competition_master_stage3.py-21] [INFO] [1783057543.905770032] [competition_master_stage3]: [状态机] RETURN_P → TIMEOUT
+[competition_master_stage3.py-21] [INFO] [1783057543.914391076] [competition_master_stage3]:
+[competition_master_stage3.py-21] [INFO] [1783057543.916937868] [competition_master_stage3]: ============================================================
+[competition_master_stage3.py-21] [INFO] [1783057543.919284285] [competition_master_stage3]: >>> [Stage 3] 任务结束 <<<
+[competition_master_stage3.py-21] [INFO] [1783057543.923849411] [competition_master_stage3]:   最终状态: TIMEOUT
+[competition_master_stage3.py-21] [INFO] [1783057543.926916871] [competition_master_stage3]:   总耗时:   181.4s
+[competition_master_stage3.py-21] [INFO] [1783057543.930513996] [competition_master_stage3]:   --- 各阶段耗时 ---
+[competition_master_stage3.py-21] [INFO] [1783057543.935510248] [competition_master_stage3]:   LAUNCH................ 17.5s
+[competition_master_stage3.py-21] [INFO] [1783057543.940888999] [competition_master_stage3]:   NAV_TO_QR............. 23.0s
+[competition_master_stage3.py-21] [INFO] [1783057543.945067625] [competition_master_stage3]:   BACKING_UP............ 6.0s
+[competition_master_stage3.py-21] [INFO] [1783057543.948993084] [competition_master_stage3]:   CRUISE_CHANNEL........ 87.4s
+[competition_master_stage3.py-21] [INFO] [1783057543.956707878] [competition_master_stage3]:   RETURN_P.............. 65.0s
+[competition_master_stage3.py-21] [INFO] [1783057543.962601504] [competition_master_stage3]:   (transition/overhead). -17.5s
+[competition_master_stage3.py-21] [INFO] [1783057543.968135131] [competition_master_stage3]:   --- ---
+[competition_master_stage3.py-21] [INFO] [1783057543.974768341] [competition_master_stage3]:   QR 原始数据: 1584
+[competition_master_stage3.py-21] [INFO] [1783057543.978487925] [competition_master_stage3]:   QR 方向:   逆时针 (CW=顺时针/odd, CCW=逆时针/even)
+[competition_master_stage3.py-21] [WARN] [1783057543.981676051] [competition_master_stage3]:   VLM 结果:  未收到
+[competition_master_stage3.py-21] [INFO] [1783057543.984237843] [competition_master_stage3]:   超时限制:  180.0s (全局)
+[competition_master_stage3.py-21] [INFO] [1783057543.986475344] [competition_master_stage3]: ============================================================
+[competition_master_stage3.py-21] [INFO] [1783057543.993829720] [competition_master_stage3]: [TRAJ] CSV已保存: /userdata/dev_ws/trajectory_20260703_134543.csv (186 点)
+[competition_master_stage3.py-21] [INFO] [1783057544.448434666] [competition_master_stage3]: [TRAJ] Nav2 params snapshot: 31 keys
+[competition_master_stage3.py-21] [INFO] [1783057544.454331959] [competition_master_stage3]: [TRAJ] 摘要JSON已保存: /userdata/dev_ws/trajectory_20260703_134543_summary.json
+[competition_master_stage3.py-21] [INFO] [1783057544.458772794] [competition_master_stage3]: [TRAJ] 规划历史已保存: /userdata/dev_ws/trajectory_20260703_134543_plans.csv (74 次规划)
+[competition_master_stage3.py-21] [INFO] [1783057544.479570632] [competition_master_stage3]: [TRAJ] costmap PGM已保存: /userdata/dev_ws/trajectory_20260703_134543_costmap.pgm
+[component_container_isolated-17] [WARN] [1783057544.512156307] [planner_server]: GridBased: failed to create plan, exceeded maximum iterations.
+[component_container_isolated-17] [WARN] [1783057544.512395515] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (-1.99, -0.01)
+[component_container_isolated-17] [WARN] [1783057544.512531890] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
+[competition_master_stage3.py-21] [INFO] [1783057544.537092480] [competition_master_stage3]: [DIAG] state=TIMEOUT pos=(-0.19,-0.66) yaw=-10deg cmd=(vx=-0.30 wz=-0.24) elapsed=181.9s plan[14pts 1.9m] (-0.20,-0.65)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=42% mem=21%
+[component_container_isolated-17] [INFO] [1783057544.633824462] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057544.642860339] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057544.652321008] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057544.652501883] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [INFO] [1783057544.661699260] [behavior_server]: Running wait
+[component_container_isolated-17] [INFO] [1783057544.662814927] [behavior_server]: wait completed successfully
+[component_container_isolated-17] [WARN] [1783057544.665584428] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [INFO] [1783057544.933886994] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057544.947417539] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057544.958361125] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057544.958529792] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057544.971189462] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[competition_master_stage3.py-21] [INFO] [1783057545.077771405] [competition_master_stage3]: [DIAG] state=TIMEOUT pos=(-0.58,-0.50) yaw=-25deg cmd=(vx=0.00 wz=0.00) elapsed=182.5s plan[14pts 1.9m] (-0.20,-0.65)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=84% mem=21%
+[component_container_isolated-17] [WARN] [1783057545.481062005] [planner_server]: GridBased: failed to create plan, exceeded maximum iterations.
+[component_container_isolated-17] [WARN] [1783057545.481299755] [planner_server]: Planning algorithm GridBased failed to generate a valid path to (-1.99, -0.01)
+[component_container_isolated-17] [WARN] [1783057545.481405546] [planner_server]: [compute_path_through_poses] [ActionServer] Aborting handle.
+[component_container_isolated-17] [INFO] [1783057545.679486137] [controller_server]: Goal was canceled. Stopping the robot.
+[component_container_isolated-17] [INFO] [1783057545.679667637] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[component_container_isolated-17] [INFO] [1783057545.680219804] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[component_container_isolated-17] [INFO] [1783057545.688854723] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057545.699173350] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057545.701445934] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057545.701695851] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057545.716980688] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [INFO] [1783057545.726753774] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057545.735492776] [behavior_server]: Running wait
+[component_container_isolated-17] [INFO] [1783057545.735971109] [behavior_server]: wait completed successfully
+[component_container_isolated-17] [WARN] [1783057545.736167484] [BehaviorTreeEngine]: Behavior Tree tick rate 10.00 was exceeded!
+[component_container_isolated-17] [INFO] [1783057545.738952652] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057545.739092485] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057545.751324196] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [INFO] [1783057545.934737950] [behavior_server]: Running backup
+[competition_master_stage3.py-21] [INFO] [1783057547.079226942] [competition_master_stage3]: [DIAG] state=TIMEOUT pos=(-0.45,-0.54) yaw=-17deg cmd=(vx=0.00 wz=0.00) elapsed=184.5s plan[14pts 1.9m] (-0.20,-0.65)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=75% mem=21%
+[hobot_codec_republish-13] [WARN] [1783057547.848064508] [vlm_jpeg_encoder]: Sub imgRaw fps [12.38]
+[hobot_codec_republish-13] [WARN] [1783057547.918757484] [vlm_jpeg_encoder]: Pub img fps [12.44]
+[competition_master_stage3.py-21] [INFO] [1783057549.075450271] [competition_master_stage3]: [DIAG] state=TIMEOUT pos=(-0.45,-0.54) yaw=-17deg cmd=(vx=0.00 wz=0.00) elapsed=186.5s plan[14pts 1.9m] (-0.20,-0.65)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=77% mem=21%
+[competition_master_stage3.py-21] [INFO] [1783057551.072489852] [competition_master_stage3]: [DIAG] state=TIMEOUT pos=(-0.61,-0.49) yaw=-17deg cmd=(vx=0.00 wz=0.00) elapsed=188.5s plan[14pts 1.9m] (-0.20,-0.65)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=66% mem=21%
+[hobot_codec_republish-13] [WARN] [1783057552.871159801] [vlm_jpeg_encoder]: Sub imgRaw fps [13.54]
+[hobot_codec_republish-13] [WARN] [1783057552.930790733] [vlm_jpeg_encoder]: Pub img fps [13.57]
+[competition_master_stage3.py-21] [INFO] [1783057553.076533436] [competition_master_stage3]: [DIAG] state=TIMEOUT pos=(-0.77,-0.49) yaw=-17deg cmd=(vx=0.00 wz=0.00) elapsed=190.5s plan[14pts 1.9m] (-0.20,-0.65)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=87% mem=21%
+[imu_madgwick_filter.py-6] [INFO] [1783057553.414774396] [imu_madgwick_bmi088]: [imu_madgwick ->] msgs=10545 q_w=-0.9754 angle=334.5deg beta=0.0030
+[imu_madgwick_filter.py-4] [INFO] [1783057553.440321235] [imu_madgwick_filter]: [imu_madgwick ->] msgs=4276 q_w=-0.7118 angle=270.8deg beta=0.0330
+[component_container_isolated-17] [WARN] [1783057554.835839877] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
+[component_container_isolated-17] [WARN] [1783057554.836010502] [behavior_server]: backup failed
+[component_container_isolated-17] [WARN] [1783057554.836082335] [behavior_server]: [backup] [ActionServer] Aborting handle.
+[imu_madgwick_filter.py-4] [WARN] [1783057554.959744866] [imu_madgwick_filter]: [imu_madgwick] dt outlier: 0.1501s > 0.15s, capping
+[competition_master_stage3.py-21] [INFO] [1783057555.077484479] [competition_master_stage3]: [DIAG] state=TIMEOUT pos=(-0.77,-0.49) yaw=-17deg cmd=(vx=0.00 wz=0.00) elapsed=192.5s plan[14pts 1.9m] (-0.20,-0.65)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=50% mem=21%
+[component_container_isolated-17] [INFO] [1783057555.139489370] [local_costmap.local_costmap]: Received request to clear entirely the local_costmap
+[component_container_isolated-17] [INFO] [1783057555.154616498] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057555.163405292] [local_costmap.local_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057555.163649209] [local_costmap.local_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [INFO] [1783057555.163443876] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [WARN] [1783057555.178563921] [local_costmap.local_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [INFO] [1783057555.179865880] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057555.185220631] [behavior_server]: Running wait
+[component_container_isolated-17] [INFO] [1783057555.185619798] [behavior_server]: wait completed successfully
+[component_container_isolated-17] [INFO] [1783057555.191723216] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057555.191873758] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057555.203714969] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[component_container_isolated-17] [INFO] [1783057555.434420527] [behavior_server]: Running backup
+[component_container_isolated-17] [WARN] [1783057555.435779361] [behavior_server]: Collision Ahead - Exiting DriveOnHeading
+[component_container_isolated-17] [WARN] [1783057555.435917444] [behavior_server]: backup failed
+[component_container_isolated-17] [WARN] [1783057555.436067902] [behavior_server]: [backup] [ActionServer] Aborting handle.
+[component_container_isolated-17] [INFO] [1783057555.734567602] [behavior_server]: Running wait
+[competition_master_stage3.py-21] [INFO] [1783057557.076059398] [competition_master_stage3]: [DIAG] state=TIMEOUT pos=(-0.96,-0.43) yaw=-16deg cmd=(vx=0.00 wz=0.00) elapsed=194.5s plan[14pts 1.9m] (-0.20,-0.65)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=75% mem=21%
+[hobot_codec_republish-13] [WARN] [1783057557.946676867] [vlm_jpeg_encoder]: Sub imgRaw fps [13.00]
+[hobot_codec_republish-13] [WARN] [1783057557.948986576] [vlm_jpeg_encoder]: Pub img fps [12.95]
+[component_container_isolated-17] [INFO] [1783057558.739810734] [behavior_server]: wait completed successfully
+[component_container_isolated-17] [INFO] [1783057559.033828016] [global_costmap.global_costmap]: Received request to clear entirely the global_costmap
+[component_container_isolated-17] [INFO] [1783057559.047143311] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/costmap_ctrl" topic for filter info...
+[component_container_isolated-17] [INFO] [1783057559.057720147] [global_costmap.global_costmap]: KeepoutFilter: Received filter info from /costmap_ctrl topic.
+[component_container_isolated-17] [INFO] [1783057559.057929606] [global_costmap.global_costmap]: KeepoutFilter: Subscribing to "/keepout_mask" topic for filter mask...
+[component_container_isolated-17] [WARN] [1783057559.069964442] [global_costmap.global_costmap]: KeepoutFilter: New filter mask arrived from /keepout_mask topic. Updating old filter mask.
+[competition_master_stage3.py-21] [INFO] [1783057559.076241944] [competition_master_stage3]: [DIAG] state=TIMEOUT pos=(-0.96,-0.43) yaw=-16deg cmd=(vx=0.00 wz=0.00) elapsed=196.5s plan[14pts 1.9m] (-0.20,-0.65)→(-2.00,-0.05) cpuFreq=1500MHz cpuT=78C cpu=100% mem=21%
+[component_container_isolated-17] [WARN] [1783057559.387947772] [planner_server]: Planner loop missed its desired rate of 10.0000 Hz. Current loop rate is 3.0729 Hz
+[path_optimizer_node.py-22] [INFO] [1783057559.400725484] [path_optimizer_node]: Path optimised (17 pts, 2.7 ms): mean |kappa| 1.1346 -> 1.8691 (-64.7%), max |kappa| 3.3334 -> 9.7675 (-193.0%), max shift 0.080 m
+[speed_profile_node.py-23] [INFO] [1783057559.428053491] [speed_profile_node]: Plan received: 17 poses, mean|κ|=1.7086 m⁻¹, max|κ|=4.7777 m⁻¹, mean_v=0.334 m/s, min_v=0.150 m/s, max_v=0.492 m/s
 ^C[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
-[rviz2-18] [INFO] [1782640184.467369550] [rclcpp]: signal_handler(SIGINT/SIGTERM)
-[ERROR] [origincar_base_node-1]: process has died [pid 38859, exit code -6, cmd '/userdata/dev_ws/install/origincar_base/lib/origincar_base/origincar_base_node --ros-args --params-file /tmp/launch_params_97fj30g8 --params-file /tmp/launch_params_pm9uwncr'].
-[ERROR] [lslidar_driver_node-2]: process has died [pid 38861, exit code -6, cmd '/userdata/dev_ws/install/lslidar_driver/lib/lslidar_driver/lslidar_driver_node --ros-args -r __node:=lslidar_driver_node --params-file /userdata/dev_ws/install/lslidar_driver/share/lslidar_driver/params/lsx10.yaml'].
-[INFO] [robot_state_publisher-3]: process has finished cleanly [pid 38863]
-[INFO] [static_transform_publisher-8]: process has finished cleanly [pid 38911]
-[INFO] [ekf_node-7]: process has finished cleanly [pid 38871]
-[component_container_isolated-16] [INFO] [1782640184.467376133] [rclcpp]: signal_handler(SIGINT/SIGTERM)
-[component_container_isolated-16] [INFO] [1782640184.467538383] [velocity_smoother]: Running Nav2 LifecycleNode rcl preshutdown (velocity_smoother)
-[INFO] [map_server-13]: process has finished cleanly [pid 38997]
-[INFO] [lifecycle_manager-15]: process has finished cleanly [pid 39001]
-[INFO] [costmap_filter_info_server-14]: process has finished cleanly [pid 38999]
-[static_transform_publisher-8] [INFO] [1782640184.467494008] [rclcpp]: signal_handler(SIGINT/SIGTERM)
-[origincar_base_node-1] [INFO] [1782640184.467521675] [rclcpp]: signal_handler(SIGINT/SIGTERM)
-[origincar_base_node-1] [INFO] [1782640184.467813425] [origincar_base]: Stop command sent to STM32 on shutdown.
+[lifecycle_manager-16] [INFO] [1783057559.473786919] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[lifecycle_manager-16] [INFO] [1783057559.474046502] [lifecycle_manager_keepout]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_keepout)
+[lifecycle_manager-16] [INFO] [1783057559.474215628] [lifecycle_manager_keepout]: Terminating bond timer...
+[ERROR] [origincar_base_node-1]: process has died [pid 22519, exit code -6, cmd '/userdata/dev_ws/install/origincar_base/lib/origincar_base/origincar_base_node --ros-args --params-file /tmp/launch_params_t778pi1n --params-file /tmp/launch_params_yrhto_vn'].
+[ERROR] [lslidar_driver_node-2]: process has died [pid 22521, exit code -6, cmd '/userdata/dev_ws/install/lslidar_driver/lib/lslidar_driver/lslidar_driver_node --ros-args -r __node:=lslidar_driver_node --params-file /userdata/dev_ws/install/lslidar_driver/share/lslidar_driver/params/lsx10.yaml'].
+[INFO] [ekf_node-7]: process has finished cleanly [pid 22531]
+[INFO] [robot_state_publisher-3]: process has finished cleanly [pid 22523]
+[ERROR] [rviz2-24]: process has died [pid 22875, exit code -11, cmd '/opt/ros/humble/lib/rviz2/rviz2 -d /userdata/dev_ws/install/originbot_navigation/share/originbot_navigation/rviz/nav.rviz --ros-args -r __node:=rviz2'].
+[INFO] [hobot_codec_republish-13]: process has finished cleanly [pid 22581]
+[INFO] [static_transform_publisher-8]: process has finished cleanly [pid 22571]
+[INFO] [lifecycle_manager-16]: process has finished cleanly [pid 22687]
+[INFO] [costmap_filter_info_server-15]: process has finished cleanly [pid 22680]
+[INFO] [map_server-14]: process has finished cleanly [pid 22678]
+[INFO] [bmi088_iio_bridge.py-5]: process has finished cleanly [pid 22527]
+[INFO] [imu_madgwick_filter.py-4]: process has finished cleanly [pid 22525]
+[map_server-14] [INFO] [1783057559.473823377] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[map_server-14] [INFO] [1783057559.474046377] [keepout_mask_server]: Running Nav2 LifecycleNode rcl preshutdown (keepout_mask_server)
+[map_server-14] [INFO] [1783057559.474353086] [keepout_mask_server]: Deactivating
+[map_server-14] [INFO] [1783057559.474444336] [keepout_mask_server]: Destroying bond (keepout_mask_server) to lifecycle manager.
+[INFO] [imu_madgwick_filter.py-6]: process has finished cleanly [pid 22529]
+[rviz2-24] [INFO] [1783057559.473839544] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[static_transform_publisher-8] [INFO] [1783057559.473910502] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[component_container_isolated-17] [INFO] [1783057559.474095544] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[component_container_isolated-17] [INFO] [1783057559.474212836] [lifecycle_manager_navigation]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_navigation)
+[component_container_isolated-17] [INFO] [1783057559.474451253] [lifecycle_manager_navigation]: Terminating bond timer...
+[origincar_base_node-1] [INFO] [1783057559.475213294] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[origincar_base_node-1] [INFO] [1783057559.475668128] [origincar_base]: Stop command sent to STM32 on shutdown.
 [origincar_base_node-1] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[aurora930_node-9] [INFO] [1782640184.467538342] [rclcpp]: signal_handler(SIGINT/SIGTERM)
-[aurora930_node-9] I0628 17:49:44.474965 38913 ros2_node.cc:90] process quit succeed
-[aurora930_node-9] I0628 17:49:44.475121 38913 aurora900_ros2_device.cc:83] begin stop()
-[component_container_isolated-16] [INFO] [1782640184.468217467] [velocity_smoother]: Deactivating
-[component_container_isolated-16] [INFO] [1782640184.468374467] [velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782640184.499678170] [velocity_smoother]: Cleaning up
-[component_container_isolated-16] [INFO] [1782640184.500014712] [velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782640184.500118837] [bt_navigator]: Running Nav2 LifecycleNode rcl preshutdown (bt_navigator)
-[component_container_isolated-16] [INFO] [1782640184.500272170] [bt_navigator]: Deactivating
-[component_container_isolated-16] [WARN] [1782640184.500376045] [bt_navigator]: [navigate_through_poses] [ActionServer] Requested to deactivate server but goal is still executing. Should check if action server is running before deactivating.
-[component_container_isolated-16] [WARN] [1782640184.525677616] [bt_navigator]: [navigate_through_poses] [ActionServer] Aborting handle.
-[component_container_isolated-16] [INFO] [1782640184.526310158] [bt_navigator]: Goal canceled
-[component_container_isolated-16] [WARN] [1782640184.526432075] [bt_navigator]: [navigate_through_poses] [ActionServer] Stopping the thread per request.
-[component_container_isolated-16] [INFO] [1782640184.526993159] [bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782640184.580543095] [bt_navigator]: Cleaning up
-[component_container_isolated-16] [INFO] [1782640184.643977958] [lifecycle_manager_navigation]: Have not received a heartbeat from bt_navigator.
-[component_container_isolated-16] [ERROR] [1782640184.644165667] [lifecycle_manager_navigation]: CRITICAL FAILURE: SERVER bt_navigator IS DOWN after not receiving a heartbeat for 4000 ms. Shutting down related nodes.
-[component_container_isolated-16] [INFO] [1782640184.644523459] [lifecycle_manager_navigation]: Terminating bond timer...
-[component_container_isolated-16] [INFO] [1782640184.644618126] [lifecycle_manager_navigation]: Resetting managed nodes...
-[component_container_isolated-16] [INFO] [1782640184.644681626] [lifecycle_manager_navigation]: Deactivating velocity_smoother
-[component_container_isolated-16] [INFO] [1782640184.706790238] [local_costmap.local_costmap]: Message Filter dropping message: frame 'laser_link' at time 1782640184.405 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
-[component_container_isolated-16] [WARN] [1782640184.707644780] [rcl_lifecycle]: No transition matching 4 found for current state unconfigured
-[component_container_isolated-16] [WARN] [1782640184.707718406] [rcl_lifecycle]: No transition matching 4 found for current state unconfigured
-[component_container_isolated-16] [ERROR] [1782640184.707760239] [velocity_smoother]: Unable to start transition 4 from current state unconfigured: Transition is not registered., at ./src/rcl_lifecycle.c:355
-[component_container_isolated-16] [ERROR] [1782640184.711383201] [lifecycle_manager_navigation]: Failed to change state for node: velocity_smoother
-[component_container_isolated-16] [INFO] [1782640184.711606410] [lifecycle_manager_navigation]: Deactivating waypoint_follower
-[component_container_isolated-16] [INFO] [1782640184.712774828] [waypoint_follower]: Deactivating
-[component_container_isolated-16] [INFO] [1782640184.713089287] [waypoint_follower]: Destroying bond (waypoint_follower) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782640184.842551058] [lifecycle_manager_navigation]: Deactivating bt_navigator
-[component_container_isolated-16] [WARN] [1782640184.843992310] [rcl_lifecycle]: No transition matching 4 found for current state cleaningup
-[component_container_isolated-16] [WARN] [1782640184.844122602] [rcl_lifecycle]: No transition matching 4 found for current state cleaningup
-[component_container_isolated-16] [ERROR] [1782640184.844164435] [bt_navigator]: Unable to start transition 4 from current state cleaningup: Transition is not registered., at ./src/rcl_lifecycle.c:355
-[component_container_isolated-16] [ERROR] [1782640184.845925729] [lifecycle_manager_navigation]: Failed to change state for node: bt_navigator
-[component_container_isolated-16] [INFO] [1782640184.846144396] [lifecycle_manager_navigation]: Deactivating behavior_server
-[component_container_isolated-16] [INFO] [1782640184.847527814] [behavior_server]: Deactivating
-[component_container_isolated-16] [INFO] [1782640184.847815189] [behavior_server]: Destroying bond (behavior_server) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782640184.971452871] [lifecycle_manager_navigation]: Deactivating planner_server
-[component_container_isolated-16] [INFO] [1782640184.973061998] [planner_server]: Deactivating
-[component_container_isolated-16] [INFO] [1782640184.973427123] [global_costmap.global_costmap]: Deactivating
-[component_container_isolated-16] [INFO] [1782640185.235701129] [bt_navigator]: Completed Cleaning up
-[component_container_isolated-16] [INFO] [1782640185.235928713] [bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782640185.235988754] [lifecycle_manager_localization]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_localization)
-[component_container_isolated-16] [INFO] [1782640185.236054921] [lifecycle_manager_localization]: Terminating bond timer...
-[component_container_isolated-16] [INFO] [1782640185.274276756] [waypoint_follower]: Running Nav2 LifecycleNode rcl preshutdown (waypoint_follower)
-[component_container_isolated-16] [INFO] [1782640185.274521173] [waypoint_follower]: Cleaning up
-[component_container_isolated-16] [INFO] [1782640185.277021509] [planner_server]: Deactivating plugin GridBased of type SmacPlannerHybrid
-[component_container_isolated-16] [INFO] [1782640185.277318093] [planner_server]: Destroying bond (planner_server) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782640185.293443736] [waypoint_follower]: Destroying bond (waypoint_follower) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782640185.293648611] [planner_server]: Running Nav2 LifecycleNode rcl preshutdown (planner_server)
-[component_container_isolated-16] [INFO] [1782640185.293734237] [planner_server]: Destroying bond (planner_server) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782640185.293794028] [lifecycle_manager_navigation]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_navigation)
-[component_container_isolated-16] [INFO] [1782640185.395938227] [lifecycle_manager_navigation]: Deactivating smoother_server
-[component_container_isolated-16] [INFO] [1782640185.396956895] [smoother_server]: Deactivating
-[component_container_isolated-16] [INFO] [1782640185.397094270] [smoother_server]: Deactivating smoother: SmoothPath of type nav2_constrained_smoother::ConstrainedSmoother
-[component_container_isolated-16] [INFO] [1782640185.397269896] [smoother_server]: Destroying bond (smoother_server) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782640185.513246569] [lifecycle_manager_navigation]: Deactivating controller_server
-[component_container_isolated-16] [INFO] [1782640185.514090028] [controller_server]: Deactivating
-[component_container_isolated-16] [INFO] [1782640185.514197695] [controller_server]: Deactivating controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
-[component_container_isolated-16] [INFO] [1782640185.514389570] [local_costmap.local_costmap]: Deactivating
-[component_container_isolated-16] [INFO] [1782640185.522312287] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782640185.637732501] [lifecycle_manager_navigation]: Cleaning up velocity_smoother
-[component_container_isolated-16] [WARN] [1782640185.638663336] [rcl_lifecycle]: No transition matching 2 found for current state unconfigured
-[component_container_isolated-16] [WARN] [1782640185.638736378] [rcl_lifecycle]: No transition matching 2 found for current state unconfigured
-[component_container_isolated-16] [ERROR] [1782640185.638764961] [velocity_smoother]: Unable to start transition 2 from current state unconfigured: Transition is not registered., at ./src/rcl_lifecycle.c:355
-[component_container_isolated-16] [INFO] [1782640185.639781129] [lifecycle_manager_navigation]: Cleaning up waypoint_follower
-[component_container_isolated-16] [WARN] [1782640185.651875809] [rcl_lifecycle]: No transition matching 2 found for current state unconfigured
-[component_container_isolated-16] [WARN] [1782640185.651967643] [rcl_lifecycle]: No transition matching 2 found for current state unconfigured
-[component_container_isolated-16] [ERROR] [1782640185.651999226] [waypoint_follower]: Unable to start transition 2 from current state unconfigured: Transition is not registered., at ./src/rcl_lifecycle.c:355
-[component_container_isolated-16] [INFO] [1782640185.653341977] [lifecycle_manager_navigation]: Cleaning up bt_navigator
-[component_container_isolated-16] [WARN] [1782640185.697486777] [rcl_lifecycle]: No transition matching 2 found for current state unconfigured
-[component_container_isolated-16] [WARN] [1782640185.699463363] [rcl_lifecycle]: No transition matching 2 found for current state unconfigured
-[component_container_isolated-16] [ERROR] [1782640185.699518405] [bt_navigator]: Unable to start transition 2 from current state unconfigured: Transition is not registered., at ./src/rcl_lifecycle.c:355
-[component_container_isolated-16] [INFO] [1782640185.701160157] [lifecycle_manager_navigation]: Cleaning up behavior_server
-[component_container_isolated-16] [INFO] [1782640185.702221074] [behavior_server]: Cleaning up
-[costmap_filter_info_server-14] [INFO] [1782640184.467941634] [rclcpp]: signal_handler(SIGINT/SIGTERM)
-[costmap_filter_info_server-14] [INFO] [1782640184.468180051] [keepout_filter_info_server]: Running Nav2 LifecycleNode rcl preshutdown (keepout_filter_info_server)
-[costmap_filter_info_server-14] [INFO] [1782640184.468424343] [keepout_filter_info_server]: Deactivating
-[costmap_filter_info_server-14] [INFO] [1782640184.468528176] [keepout_filter_info_server]: Destroying bond (keepout_filter_info_server) to lifecycle manager.
-[costmap_filter_info_server-14] [INFO] [1782640184.489338866] [keepout_filter_info_server]: Cleaning up
-[costmap_filter_info_server-14] [INFO] [1782640184.489715533] [keepout_filter_info_server]: Destroying bond (keepout_filter_info_server) to lifecycle manager.
-[costmap_filter_info_server-14] [INFO] [1782640184.688613801] [keepout_filter_info_server]: Destroying
-[lifecycle_manager-15] [INFO] [1782640184.468236801] [rclcpp]: signal_handler(SIGINT/SIGTERM)
-[lifecycle_manager-15] [INFO] [1782640184.468430843] [lifecycle_manager_keepout]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_keepout)
-[lifecycle_manager-15] [INFO] [1782640184.468553426] [lifecycle_manager_keepout]: Terminating bond timer...
-[lifecycle_manager-15] [INFO] [1782640184.691287512] [lifecycle_manager_keepout]: Destroying lifecycle_manager_keepout
-[map_server-13] [INFO] [1782640184.468727426] [rclcpp]: signal_handler(SIGINT/SIGTERM)
-[map_server-13] [INFO] [1782640184.468922760] [keepout_mask_server]: Running Nav2 LifecycleNode rcl preshutdown (keepout_mask_server)
-[map_server-13] [INFO] [1782640184.469174885] [keepout_mask_server]: Deactivating
-[map_server-13] [INFO] [1782640184.469262718] [keepout_mask_server]: Destroying bond (keepout_mask_server) to lifecycle manager.
-[map_server-13] [INFO] [1782640184.480023772] [keepout_mask_server]: Cleaning up
-[map_server-13] [INFO] [1782640184.480252648] [keepout_mask_server]: Destroying bond (keepout_mask_server) to lifecycle manager.
-[map_server-13] [INFO] [1782640184.669917404] [keepout_mask_server]: Destroying
-[ekf_node-7] [INFO] [1782640184.468934593] [rclcpp]: signal_handler(SIGINT/SIGTERM)
-[robot_state_publisher-3] [INFO] [1782640184.469075677] [rclcpp]: signal_handler(SIGINT/SIGTERM)
-[competition_master_stage3.py-17] [INFO] [1782640184.578580259] [competition_master_stage3]: [MAIN] 收到 Ctrl+C, 停止录制 + 保存轨迹...
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
 [origincar_base_node-1] terminate called after throwing an instance of 'rclcpp::exceptions::RCLError'
 [origincar_base_node-1]   what():  failed to create guard condition: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/guard_condition.c:67
-[aurora930_node-9] I0628 17:49:44.582767 38913 aurora900_ros2_device.cc:103] stop stream
-[aurora930_node-9] 2026-06-28 17:49:44.744 ( 173.582s) [        8EE34020]      aurora900_impl.cc:648   INFO| ir_stream_count_=0, rgb_stream_count_=0, depth_stream_count_=0
-[aurora930_node-9] 2026-06-28 17:49:44.745 ( 173.582s) [        8EE34020]      aurora900_impl.cc:649   INFO| mask=7
-[aurora930_node-9] I0628 17:49:44.982301 38913 aurora900_ros2_device.cc:105] destroy stream
-[aurora930_node-9] I0628 17:49:44.982542 38913 aurora900_ros2_device.cc:110] close glog
+[costmap_filter_info_server-15] [INFO] [1783057559.476366961] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[costmap_filter_info_server-15] [INFO] [1783057559.476672836] [keepout_filter_info_server]: Running Nav2 LifecycleNode rcl preshutdown (keepout_filter_info_server)
+[costmap_filter_info_server-15] [INFO] [1783057559.476947753] [keepout_filter_info_server]: Deactivating
+[costmap_filter_info_server-15] [INFO] [1783057559.477050128] [keepout_filter_info_server]: Destroying bond (keepout_filter_info_server) to lifecycle manager.
+[costmap_filter_info_server-15] [INFO] [1783057559.488469589] [keepout_filter_info_server]: Cleaning up
+[costmap_filter_info_server-15] [INFO] [1783057559.488702340] [keepout_filter_info_server]: Destroying bond (keepout_filter_info_server) to lifecycle manager.
+[costmap_filter_info_server-15] [INFO] [1783057559.842626596] [keepout_filter_info_server]: Destroying
+[robot_state_publisher-3] [INFO] [1783057559.476962462] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[aurora930_node-9] [INFO] [1783057559.485269005] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[aurora930_node-9] I0703 13:45:59.535164 22573 ros2_node.cc:90] process quit succeed
+[aurora930_node-9] I0703 13:45:59.535362 22573 aurora900_ros2_device.cc:83] begin stop()
+[aurora930_node-9] I0703 13:45:59.625053 22573 aurora900_ros2_device.cc:103] stop stream
+[aurora930_node-9] 2026-07-03 13:45:59.696 ( 227.420s) [        90794020]      aurora900_impl.cc:648   INFO| ir_stream_count_=0, rgb_stream_count_=0, depth_stream_count_=0
+[aurora930_node-9] 2026-07-03 13:45:59.696 ( 227.420s) [        90794020]      aurora900_impl.cc:649   INFO| mask=7
+[aurora930_node-9] I0703 13:46:00.044888 22573 aurora900_ros2_device.cc:105] destroy stream
+[aurora930_node-9] I0703 13:46:00.045117 22573 aurora900_ros2_device.cc:110] close glog
 [aurora930_node-9] WARNING: Logging before InitGoogleLogging() is written to STDERR
-[aurora930_node-9] I0628 17:49:44.982698 38913 ros2_device.cc:113] close device...
-[aurora930_node-9] 2026-06-28 17:49:45.482 ( 174.319s) [        53FF57E0]         cmd_backend.cc:40    INFO| RunBlocking is end!!!
-[aurora930_node-9] 2026-06-28 17:49:45.683 ( 174.520s) [        8EE34020]deptrum_camera_vendor.c:121   INFO| device is close.
-[aurora930_node-9] I0628 17:49:45.685218 38913 ros2_device.cc:116] quit succeed
-[bmi088_iio_bridge.py-5] Traceback (most recent call last):
-[bmi088_iio_bridge.py-5]   File "/userdata/dev_ws/install/origincar_bringup/lib/origincar_bringup/bmi088_iio_bridge.py", line 493, in <module>
-[bmi088_iio_bridge.py-5]     main()
-[bmi088_iio_bridge.py-5]   File "/userdata/dev_ws/install/origincar_bringup/lib/origincar_bringup/bmi088_iio_bridge.py", line 489, in main
-[bmi088_iio_bridge.py-5]     rclpy.shutdown()
-[bmi088_iio_bridge.py-5]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 130, in shutdown
-[bmi088_iio_bridge.py-5]     _shutdown(context=context)
-[bmi088_iio_bridge.py-5]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/utilities.py", line 58, in shutdown
-[bmi088_iio_bridge.py-5]     return context.shutdown()
-[bmi088_iio_bridge.py-5]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py", line 102, in shutdown
-[bmi088_iio_bridge.py-5]     self.__context.shutdown()
-[bmi088_iio_bridge.py-5] rclpy._rclpy_pybind11.RCLError: failed to shutdown: rcl_shutdown already called on the given context, at ./src/rcl/init.c:241
+[aurora930_node-9] I0703 13:46:00.045253 22573 ros2_device.cc:113] close device...
+[aurora930_node-9] 2026-07-03 13:46:00.545 ( 228.269s) [        611D37E0]         cmd_backend.cc:40    INFO| RunBlocking is end!!!
+[aurora930_node-9] 2026-07-03 13:46:00.746 ( 228.470s) [        90794020]deptrum_camera_vendor.c:121   INFO| device is close.
+[aurora930_node-9] I0703 13:46:00.749464 22573 ros2_device.cc:116] quit succeed
+[ekf_node-7] [INFO] [1783057559.485410130] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[competition_master_stage3.py-21] [INFO] [1783057559.518397139] [competition_master_stage3]: [MAIN] 收到 Ctrl+C, 停止录制 + 保存轨迹...
+[competition_master_stage3.py-21] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[competition_master_stage3.py-21] [INFO] [1783057559.522332181] [competition_master_stage3]:
+[competition_master_stage3.py-21] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[competition_master_stage3.py-21] [INFO] [1783057559.525881682] [competition_master_stage3]: ============================================================
+[competition_master_stage3.py-21] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[competition_master_stage3.py-21] [INFO] [1783057559.529310808] [competition_master_stage3]: >>> [Stage 3] 任务结束 <<<
+[competition_master_stage3.py-21] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[competition_master_stage3.py-21] [INFO] [1783057559.532950851] [competition_master_stage3]:   最终状态: TIMEOUT
+[competition_master_stage3.py-21] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[competition_master_stage3.py-21] [INFO] [1783057559.536692560] [competition_master_stage3]:   总耗时:   197.0s
+[competition_master_stage3.py-21] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[competition_master_stage3.py-21] [INFO] [1783057559.539745686] [competition_master_stage3]:   --- 各阶段耗时 ---
+[competition_master_stage3.py-21] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[competition_master_stage3.py-21] [INFO] [1783057559.542848645] [competition_master_stage3]:   LAUNCH................ 17.5s
+[competition_master_stage3.py-21] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[competition_master_stage3.py-21] [INFO] [1783057559.546048729] [competition_master_stage3]:   NAV_TO_QR............. 23.0s
+[competition_master_stage3.py-21] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[competition_master_stage3.py-21] [INFO] [1783057559.549283980] [competition_master_stage3]:   BACKING_UP............ 6.0s
+[competition_master_stage3.py-21] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[competition_master_stage3.py-21] [INFO] [1783057559.552957064] [competition_master_stage3]:   CRUISE_CHANNEL........ 87.4s
+[competition_master_stage3.py-21] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[competition_master_stage3.py-21] [INFO] [1783057559.556274732] [competition_master_stage3]:   RETURN_P.............. 65.0s
+[competition_master_stage3.py-21] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[competition_master_stage3.py-21] [INFO] [1783057559.559474357] [competition_master_stage3]:   (transition/overhead). -1.9s
+[competition_master_stage3.py-21] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[competition_master_stage3.py-21] [INFO] [1783057559.562734525] [competition_master_stage3]:   --- ---
+[competition_master_stage3.py-21] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[competition_master_stage3.py-21] [INFO] [1783057559.565876901] [competition_master_stage3]:   QR 原始数据: 1584
+[competition_master_stage3.py-21] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[competition_master_stage3.py-21] [INFO] [1783057559.569234360] [competition_master_stage3]:   QR 方向:   逆时针 (CW=顺时针/odd, CCW=逆时针/even)
+[competition_master_stage3.py-21] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[competition_master_stage3.py-21] [WARN] [1783057559.573336611] [competition_master_stage3]:   VLM 结果:  未收到
+[competition_master_stage3.py-21] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[competition_master_stage3.py-21] [INFO] [1783057559.576711695] [competition_master_stage3]:   超时限制:  180.0s (全局)
+[competition_master_stage3.py-21] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[competition_master_stage3.py-21] [INFO] [1783057559.627492083] [competition_master_stage3]: ============================================================
+[competition_master_stage3.py-21] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[competition_master_stage3.py-21] [INFO] [1783057559.637198585] [competition_master_stage3]: [TRAJ] CSV已保存: /userdata/dev_ws/trajectory_20260703_134559.csv (192 点)
+[speed_profile_node.py-23] Traceback (most recent call last):
+[speed_profile_node.py-23]   File "/userdata/dev_ws/install/origincar_bringup/lib/origincar_bringup/speed_profile_node.py", line 395, in <module>
+[speed_profile_node.py-23]     main()
+[speed_profile_node.py-23]   File "/userdata/dev_ws/install/origincar_bringup/lib/origincar_bringup/speed_profile_node.py", line 391, in main
+[speed_profile_node.py-23]     rclpy.shutdown()
+[speed_profile_node.py-23]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 130, in shutdown
+[speed_profile_node.py-23]     _shutdown(context=context)
+[speed_profile_node.py-23]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/utilities.py", line 58, in shutdown
+[speed_profile_node.py-23]     return context.shutdown()
+[speed_profile_node.py-23]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py", line 102, in shutdown
+[speed_profile_node.py-23]     self.__context.shutdown()
+[speed_profile_node.py-23] rclpy._rclpy_pybind11.RCLError: failed to shutdown: rcl_shutdown already called on the given context, at ./src/rcl/init.c:241
+[path_optimizer_node.py-22] Traceback (most recent call last):
+[path_optimizer_node.py-22]   File "/userdata/dev_ws/install/origincar_bringup/lib/origincar_bringup/path_optimizer_node.py", line 620, in <module>
+[path_optimizer_node.py-22]     main()
+[path_optimizer_node.py-22]   File "/userdata/dev_ws/install/origincar_bringup/lib/origincar_bringup/path_optimizer_node.py", line 616, in main
+[path_optimizer_node.py-22]     rclpy.shutdown()
+[path_optimizer_node.py-22]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 130, in shutdown
+[path_optimizer_node.py-22]     _shutdown(context=context)
+[path_optimizer_node.py-22]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/utilities.py", line 58, in shutdown
+[path_optimizer_node.py-22]     return context.shutdown()
+[path_optimizer_node.py-22]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py", line 102, in shutdown
+[path_optimizer_node.py-22]     self.__context.shutdown()
+[path_optimizer_node.py-22] rclpy._rclpy_pybind11.RCLError: failed to shutdown: rcl_shutdown already called on the given context, at ./src/rcl/init.c:241
+[map_server-14] [INFO] [1783057559.505218344] [keepout_mask_server]: Cleaning up
+[map_server-14] [INFO] [1783057559.505506052] [keepout_mask_server]: Destroying bond (keepout_mask_server) to lifecycle manager.
+[map_server-14] [INFO] [1783057559.788981624] [keepout_mask_server]: Destroying
+[component_container_isolated-17] [INFO] [1783057559.539121102] [controller_server]: Received a goal, begin computing control effort.
+[component_container_isolated-17] [INFO] [1783057559.726250733] [local_costmap.local_costmap]: Message Filter dropping message: frame 'laser_link' at time 1783057559.425 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[component_container_isolated-17] [INFO] [1783057560.138858129] [velocity_smoother]: Running Nav2 LifecycleNode rcl preshutdown (velocity_smoother)
+[component_container_isolated-17] [INFO] [1783057560.139236754] [velocity_smoother]: Deactivating
+[component_container_isolated-17] [INFO] [1783057560.139376087] [velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1783057560.149870632] [velocity_smoother]: Cleaning up
+[component_container_isolated-17] [INFO] [1783057560.150120423] [velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1783057560.150188882] [waypoint_follower]: Running Nav2 LifecycleNode rcl preshutdown (waypoint_follower)
+[component_container_isolated-17] [INFO] [1783057560.150293298] [waypoint_follower]: Deactivating
+[component_container_isolated-17] [INFO] [1783057560.150369548] [waypoint_follower]: Destroying bond (waypoint_follower) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1783057560.160630884] [waypoint_follower]: Cleaning up
+[component_container_isolated-17] [INFO] [1783057560.176916888] [waypoint_follower]: Destroying bond (waypoint_follower) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1783057560.177082972] [planner_server]: Running Nav2 LifecycleNode rcl preshutdown (planner_server)
+[component_container_isolated-17] [INFO] [1783057560.177249847] [planner_server]: Deactivating
+[component_container_isolated-17] [INFO] [1783057560.177865430] [global_costmap.global_costmap]: Deactivating
+[component_container_isolated-17] [INFO] [1783057560.373875522] [planner_server]: Deactivating plugin GridBased of type SmacPlannerHybrid
+[component_container_isolated-17] [INFO] [1783057560.374231188] [planner_server]: Destroying bond (planner_server) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1783057560.384680274] [planner_server]: Cleaning up
+[component_container_isolated-17] [INFO] [1783057560.445487790] [global_costmap.global_costmap]: Cleaning up
+[component_container_isolated-17] [INFO] [1783057560.470527046] [planner_server]: Cleaning up plugin GridBased of type SmacPlannerHybrid
+[component_container_isolated-17] [INFO] [1783057560.471787380] [planner_server]: Destroying plugin GridBased of type SmacPlannerHybrid
+[component_container_isolated-17] [INFO] [1783057560.518131600] [planner_server]: Destroying bond (planner_server) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1783057560.518276016] [behavior_server]: Running Nav2 LifecycleNode rcl preshutdown (behavior_server)
+[component_container_isolated-17] [INFO] [1783057560.518395975] [behavior_server]: Deactivating
+[component_container_isolated-17] [INFO] [1783057560.518591433] [behavior_server]: Destroying bond (behavior_server) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1783057560.529301394] [behavior_server]: Cleaning up
+[component_container_isolated-17] [INFO] [1783057560.567000195] [behavior_server]: Destroying bond (behavior_server) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1783057560.567177737] [lifecycle_manager_localization]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_localization)
+[component_container_isolated-17] [INFO] [1783057560.567270945] [lifecycle_manager_localization]: Terminating bond timer...
+[component_container_isolated-17] [INFO] [1783057560.631524003] [smoother_server]: Running Nav2 LifecycleNode rcl preshutdown (smoother_server)
+[component_container_isolated-17] [INFO] [1783057560.631876045] [smoother_server]: Deactivating
+[component_container_isolated-17] [INFO] [1783057560.631958795] [smoother_server]: Deactivating smoother: SmoothPath of type nav2_constrained_smoother::ConstrainedSmoother
+[component_container_isolated-17] [INFO] [1783057560.632105295] [smoother_server]: Destroying bond (smoother_server) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1783057560.642600923] [smoother_server]: Cleaning up
+[component_container_isolated-17] [INFO] [1783057560.642740090] [smoother_server]: Cleaning up smoother: SmoothPath of type nav2_constrained_smoother::ConstrainedSmoother
+[component_container_isolated-17] [INFO] [1783057560.802294630] [smoother_server]: Destroying bond (smoother_server) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1783057560.802443672] [amcl]: Running Nav2 LifecycleNode rcl preshutdown (amcl)
+[component_container_isolated-17] [INFO] [1783057560.802565088] [amcl]: Deactivating
+[component_container_isolated-17] [INFO] [1783057560.802718130] [amcl]: Destroying bond (amcl) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1783057560.813346841] [amcl]: Cleaning up
+[component_container_isolated-17] [INFO] [1783057560.869207272] [amcl]: Destroying bond (amcl) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1783057560.872831356] [bt_navigator]: Running Nav2 LifecycleNode rcl preshutdown (bt_navigator)
+[component_container_isolated-17] [INFO] [1783057560.874226773] [bt_navigator]: Deactivating
+[component_container_isolated-17] [WARN] [1783057560.874400148] [bt_navigator]: [navigate_through_poses] [ActionServer] Requested to deactivate server but goal is still executing. Should check if action server is running before deactivating.
+[component_container_isolated-17] [INFO] [1783057560.939554248] [controller_server]: Goal was canceled. Stopping the robot.
+[component_container_isolated-17] [INFO] [1783057560.939778748] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[component_container_isolated-17] [WARN] [1783057560.940417707] [bt_navigator]: [navigate_through_poses] [ActionServer] Aborting handle.
+[component_container_isolated-17] [INFO] [1783057560.940949457] [bt_navigator]: Goal canceled
+[component_container_isolated-17] [WARN] [1783057560.941544290] [bt_navigator]: [navigate_through_poses] [ActionServer] Stopping the thread per request.
+[component_container_isolated-17] [INFO] [1783057560.942153165] [bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1783057560.952637751] [bt_navigator]: Cleaning up
+[component_container_isolated-17] [INFO] [1783057561.371151024] [bt_navigator]: Completed Cleaning up
+[component_container_isolated-17] [INFO] [1783057561.371556649] [bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1783057561.371680399] [controller_server]: Running Nav2 LifecycleNode rcl preshutdown (controller_server)
+[component_container_isolated-17] [INFO] [1783057561.371819566] [controller_server]: Deactivating
+[component_container_isolated-17] [INFO] [1783057561.371885357] [controller_server]: Deactivating controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[component_container_isolated-17] [INFO] [1783057561.372121066] [local_costmap.local_costmap]: Deactivating
+[component_container_isolated-17] [INFO] [1783057561.387150861] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1783057561.397778364] [controller_server]: Cleaning up
+[component_container_isolated-17] [INFO] [1783057561.397952031] [controller_server]: Cleaning up controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
+[component_container_isolated-17] [INFO] [1783057561.398271239] [local_costmap.local_costmap]: Cleaning up
+[lifecycle_manager-16] [INFO] [1783057560.022215599] [lifecycle_manager_keepout]: Destroying lifecycle_manager_keepout
+[ERROR] [costmap_publisher-20]: process has died [pid 22856, exit code 1, cmd '/userdata/dev_ws/install/object_tracker/lib/object_tracker/costmap_publisher --ros-args -r __node:=costmap_publisher'].
+[ERROR] [speed_profile_node.py-23]: process has died [pid 22873, exit code 1, cmd '/userdata/dev_ws/install/origincar_bringup/lib/origincar_bringup/speed_profile_node.py --ros-args -r __node:=speed_profile_node --params-file /tmp/launch_params_xb99u3m_'].
 [vision_ai_node-12] Traceback (most recent call last):
 [vision_ai_node-12]   File "/userdata/dev_ws/install/racing_vision_ai/lib/racing_vision_ai/vision_ai_node", line 33, in <module>
 [vision_ai_node-12]     sys.exit(load_entry_point('racing-vision-ai==0.0.1', 'console_scripts', 'vision_ai_node')())
-[vision_ai_node-12]   File "/userdata/dev_ws/install/racing_vision_ai/lib/python3.10/site-packages/racing_vision_ai/vision_ai_node.py", line 283, in main
+[vision_ai_node-12]   File "/userdata/dev_ws/install/racing_vision_ai/lib/python3.10/site-packages/racing_vision_ai/vision_ai_node.py", line 226, in main
 [vision_ai_node-12]     rclpy.shutdown()
 [vision_ai_node-12]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 130, in shutdown
 [vision_ai_node-12]     _shutdown(context=context)
@@ -2457,101 +2104,67 @@ root@ubuntu:/userdata/dev_ws# ros2 launch origincar_bringup stage3_bringup.launc
 [vision_ai_node-12]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py", line 102, in shutdown
 [vision_ai_node-12]     self.__context.shutdown()
 [vision_ai_node-12] rclpy._rclpy_pybind11.RCLError: failed to shutdown: rcl_shutdown already called on the given context, at ./src/rcl/init.c:241
-[component_container_isolated-16] [INFO] [1782640185.845525070] [lifecycle_manager_navigation]: Cleaning up planner_server
-[component_container_isolated-16] [INFO] [1782640185.846380238] [planner_server]: Cleaning up
-[component_container_isolated-16] [INFO] [1782640185.881432278] [global_costmap.global_costmap]: Cleaning up
-[component_container_isolated-16] [INFO] [1782640185.894802084] [planner_server]: Cleaning up plugin GridBased of type SmacPlannerHybrid
-[component_container_isolated-16] [INFO] [1782640185.909738810] [planner_server]: Destroying plugin GridBased of type SmacPlannerHybrid
-[component_container_isolated-16] [INFO] [1782640185.946272393] [lifecycle_manager_navigation]: Cleaning up smoother_server
-[component_container_isolated-16] [INFO] [1782640185.946888268] [smoother_server]: Cleaning up
-[component_container_isolated-16] [INFO] [1782640185.947014894] [smoother_server]: Cleaning up smoother: SmoothPath of type nav2_constrained_smoother::ConstrainedSmoother
-[component_container_isolated-16] [INFO] [1782640185.987678190] [lifecycle_manager_navigation]: Cleaning up controller_server
-[component_container_isolated-16] [INFO] [1782640185.988524441] [controller_server]: Cleaning up
-[component_container_isolated-16] [INFO] [1782640185.988643316] [controller_server]: Cleaning up controller: FollowPath of type regulated_pure_pursuit_controller::RegulatedPurePursuitController
-[component_container_isolated-16] [INFO] [1782640185.993844155] [local_costmap.local_costmap]: Cleaning up
-[component_container_isolated-16] [INFO] [1782640186.054064557] [lifecycle_manager_navigation]: Managed nodes have been reset
-[INFO] [imu_madgwick_filter.py-6]: process has finished cleanly [pid 38869]
-[component_container_isolated-16] [INFO] [1782640186.126152638] [behavior_server]: Running Nav2 LifecycleNode rcl preshutdown (behavior_server)
-[component_container_isolated-16] [INFO] [1782640186.126360555] [behavior_server]: Destroying bond (behavior_server) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782640186.126430722] [amcl]: Running Nav2 LifecycleNode rcl preshutdown (amcl)
-[component_container_isolated-16] [INFO] [1782640186.126552889] [amcl]: Deactivating
-[component_container_isolated-16] [INFO] [1782640186.126702472] [amcl]: Destroying bond (amcl) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782640186.140164196] [amcl]: Cleaning up
-[competition_master_stage3.py-17] [INFO] [1782640186.154098545] [competition_master_stage3]: [BAG] 录制已停止
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782640186.157863383] [competition_master_stage3]:
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782640186.161082303] [competition_master_stage3]: ============================================================
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782640186.165380224] [competition_master_stage3]: >>> [Stage 3] 任务结束 <<<
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782640186.169358687] [competition_master_stage3]:   最终状态: RETURN_P
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782640186.173013733] [competition_master_stage3]:   总耗时:   147.6s
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[INFO] [imu_madgwick_filter.py-4]: process has finished cleanly [pid 38865]
-[competition_master_stage3.py-17] [INFO] [1782640186.177081363] [competition_master_stage3]:   --- 各阶段耗时 ---
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782640186.181221201] [competition_master_stage3]:   LAUNCH................ 17.3s
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[component_container_isolated-16] [INFO] [1782640186.177932197] [amcl]: Destroying bond (amcl) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782640186.178098239] [smoother_server]: Running Nav2 LifecycleNode rcl preshutdown (smoother_server)
-[component_container_isolated-16] [INFO] [1782640186.178186031] [smoother_server]: Destroying bond (smoother_server) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782640186.178243281] [map_server]: Running Nav2 LifecycleNode rcl preshutdown (map_server)
-[component_container_isolated-16] [INFO] [1782640186.178366531] [map_server]: Deactivating
-[component_container_isolated-16] [INFO] [1782640186.178531364] [map_server]: Destroying bond (map_server) to lifecycle manager.
-[competition_master_stage3.py-17] [INFO] [1782640186.184917246] [competition_master_stage3]:   NAV_TO_QR............. 14.8s
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782640186.189342210] [competition_master_stage3]:   BACKING_UP............ 6.0s
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782640186.193510048] [competition_master_stage3]:   CRUISE_CHANNEL........ 41.2s
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[component_container_isolated-16] [INFO] [1782640186.189011168] [map_server]: Cleaning up
-[component_container_isolated-16] [INFO] [1782640186.189245376] [map_server]: Destroying bond (map_server) to lifecycle manager.
-[component_container_isolated-16] [INFO] [1782640186.189495377] [controller_server]: Running Nav2 LifecycleNode rcl preshutdown (controller_server)
-[component_container_isolated-16] [INFO] [1782640186.189949502] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
-[competition_master_stage3.py-17] [INFO] [1782640186.197378177] [competition_master_stage3]:   (transition/overhead). 68.2s
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782640186.201590390] [competition_master_stage3]:   --- ---
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782640186.205893229] [competition_master_stage3]:   QR 原始数据: 1585
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782640186.210004400] [competition_master_stage3]:   QR 方向:   顺时针 (CW=顺时针/odd, CCW=逆时针/even)
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782640186.214211280] [competition_master_stage3]:   VLM 结果:  这张图片展示了**室内电梯区域的临时布置场景**，疑似处于施工保护或场地筹备状态，细节如下：
-[competition_master_stage3.py-17]
-[competition_master_stage3.py-17]
-[competition_master_stage3.py-17] ### 场景与布局
-[competition_master_stage3.py-17] 画面聚焦建筑内部的电梯厅区域，地面铺有**浅色（浅黄/白色）反光塑料布**（施工用地面保护膜，表面带褶皱、反光明显），整体氛围偏向“临时布置”（如施工、活动筹备）。
-[competition_master_stage3.py-17]
-[competition_master_stage3.py-17]
-[competition_master_stage3.py-17] ### 核心物体与细节
-[competition_master_stage3.py-17] 1. **电梯与按钮**：
-[competition_master_stage3.py-17]    - 左侧是**银色电梯门**，两侧
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782640186.218205826] [competition_master_stage3]:   超时限制:  180.0s (全局)
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782640186.221994872] [competition_master_stage3]: ============================================================
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782640186.228756129] [competition_master_stage3]: [TRAJ] CSV已保存: /userdata/dev_ws/trajectory_20260628_174946.csv (96 点)
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[ERROR] [bmi088_iio_bridge.py-5]: process has died [pid 38867, exit code 1, cmd '/userdata/dev_ws/install/origincar_bringup/lib/origincar_bringup/bmi088_iio_bridge.py --ros-args -r __node:=bmi088_iio_bridge --params-file /tmp/launch_params_iild0e17'].
-[ERROR] [rviz2-18]: process has died [pid 39176, exit code -11, cmd '/opt/ros/humble/lib/rviz2/rviz2 -d /userdata/dev_ws/install/originbot_navigation/share/originbot_navigation/rviz/nav.rviz --ros-args -r __node:=rviz2'].
-[competition_master_stage3.py-17] [INFO] [1782640186.590214497] [competition_master_stage3]: [TRAJ] Nav2 params snapshot: 31 keys
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782640186.594899294] [competition_master_stage3]: [TRAJ] 摘要JSON已保存: /userdata/dev_ws/trajectory_20260628_174946_summary.json
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782640186.599116549] [competition_master_stage3]: [TRAJ] 规划历史已保存: /userdata/dev_ws/trajectory_20260628_174946_plans.csv (31 次规划)
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[competition_master_stage3.py-17] [INFO] [1782640186.617830237] [competition_master_stage3]: [TRAJ] costmap PGM已保存: /userdata/dev_ws/trajectory_20260628_174946_costmap.pgm
-[competition_master_stage3.py-17] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
-[ERROR] [vision_ai_node-12]: process has died [pid 38919, exit code 1, cmd '/userdata/dev_ws/install/racing_vision_ai/lib/racing_vision_ai/vision_ai_node --ros-args -r __node:=vision_ai_node'].
-[INFO] [aurora930_node-9]: process has finished cleanly [pid 38913]
-[INFO] [competition_master_stage3.py-17]: process has finished cleanly [pid 39172]
-[ERROR] [component_container_isolated-16]: process[component_container_isolated-16] failed to terminate '5' seconds after receiving 'SIGINT', escalating to 'SIGTERM'
-[INFO] [component_container_isolated-16]: sending signal 'SIGTERM' to process[component_container_isolated-16]
-[component_container_isolated-16] [INFO] [1782640190.791971752] [rclcpp]: signal_handler(SIGINT/SIGTERM)
-[ERROR] [component_container_isolated-16]: process[component_container_isolated-16] failed to terminate '10.0' seconds after receiving 'SIGTERM', escalating to 'SIGKILL'
-[INFO] [component_container_isolated-16]: sending signal 'SIGKILL' to process[component_container_isolated-16]
-[ERROR] [component_container_isolated-16]: process has died [pid 39170, exit code -9, cmd '/opt/ros/humble/lib/rclcpp_components/component_container_isolated --ros-args --log-level info --ros-args -r __node:=nav2_container --params-file /tmp/launch_params_0utdds8o --params-file /tmp/launch_params_muuy4nas -r /tf:=tf -r /tf_static:=tf_static'].
+[costmap_publisher-20] Traceback (most recent call last):
+[costmap_publisher-20]   File "/userdata/dev_ws/install/object_tracker/lib/object_tracker/costmap_publisher", line 33, in <module>
+[costmap_publisher-20]     sys.exit(load_entry_point('object-tracker==0.0.1', 'console_scripts', 'costmap_publisher')())
+[costmap_publisher-20]   File "/userdata/dev_ws/install/object_tracker/lib/python3.10/site-packages/object_tracker/costmap_publisher.py", line 76, in main
+[costmap_publisher-20]     rclpy.shutdown()
+[costmap_publisher-20]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 130, in shutdown
+[costmap_publisher-20]     _shutdown(context=context)
+[costmap_publisher-20]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/utilities.py", line 58, in shutdown
+[costmap_publisher-20]     return context.shutdown()
+[costmap_publisher-20]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py", line 102, in shutdown
+[costmap_publisher-20]     self.__context.shutdown()
+[costmap_publisher-20] rclpy._rclpy_pybind11.RCLError: failed to shutdown: rcl_shutdown already called on the given context, at ./src/rcl/init.c:241
+[tracker_node-19] Traceback (most recent call last):
+[tracker_node-19]   File "/userdata/dev_ws/install/object_tracker/lib/object_tracker/tracker_node", line 33, in <module>
+[tracker_node-19]     sys.exit(load_entry_point('object-tracker==0.0.1', 'console_scripts', 'tracker_node')())
+[tracker_node-19]   File "/userdata/dev_ws/install/object_tracker/lib/python3.10/site-packages/object_tracker/tracker_node.py", line 313, in main
+[tracker_node-19]     rclpy.shutdown()
+[tracker_node-19]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 130, in shutdown
+[tracker_node-19]     _shutdown(context=context)
+[tracker_node-19]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/utilities.py", line 58, in shutdown
+[tracker_node-19]     return context.shutdown()
+[tracker_node-19]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py", line 102, in shutdown
+[tracker_node-19]     self.__context.shutdown()
+[tracker_node-19] rclpy._rclpy_pybind11.RCLError: failed to shutdown: rcl_shutdown already called on the given context, at ./src/rcl/init.c:241
+[depth_detector-18] Traceback (most recent call last):
+[depth_detector-18]   File "/userdata/dev_ws/install/object_tracker/lib/object_tracker/depth_detector", line 33, in <module>
+[depth_detector-18]     sys.exit(load_entry_point('object-tracker==0.0.1', 'console_scripts', 'depth_detector')())
+[depth_detector-18]   File "/userdata/dev_ws/install/object_tracker/lib/python3.10/site-packages/object_tracker/depth_detector.py", line 382, in main
+[depth_detector-18]     rclpy.shutdown()
+[depth_detector-18]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 130, in shutdown
+[depth_detector-18]     _shutdown(context=context)
+[depth_detector-18]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/utilities.py", line 58, in shutdown
+[depth_detector-18]     return context.shutdown()
+[depth_detector-18]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/context.py", line 102, in shutdown
+[depth_detector-18]     self.__context.shutdown()
+[depth_detector-18] rclpy._rclpy_pybind11.RCLError: failed to shutdown: rcl_shutdown already called on the given context, at ./src/rcl/init.c:241
+[competition_master_stage3.py-21] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[competition_master_stage3.py-21] [INFO] [1783057560.225660567] [competition_master_stage3]: [TRAJ] Nav2 params snapshot: 31 keys
+[competition_master_stage3.py-21] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[competition_master_stage3.py-21] [INFO] [1783057560.231413069] [competition_master_stage3]: [TRAJ] 摘要JSON已保存: /userdata/dev_ws/trajectory_20260703_134559_summary.json
+[competition_master_stage3.py-21] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[competition_master_stage3.py-21] [INFO] [1783057560.239199487] [competition_master_stage3]: [TRAJ] 规划历史已保存: /userdata/dev_ws/trajectory_20260703_134559_plans.csv (75 次规划)
+[competition_master_stage3.py-21] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[competition_master_stage3.py-21] [INFO] [1783057560.260379826] [competition_master_stage3]: [TRAJ] costmap PGM已保存: /userdata/dev_ws/trajectory_20260703_134559_costmap.pgm
+[competition_master_stage3.py-21] Failed to publish log message to rosout: publisher's context is invalid, at ./src/rcl/publisher.c:389
+[ERROR] [path_optimizer_node.py-22]: process has died [pid 22868, exit code 1, cmd '/userdata/dev_ws/install/origincar_bringup/lib/origincar_bringup/path_optimizer_node.py --ros-args -r __node:=path_optimizer_node --params-file /tmp/launch_params_duy1jdaj'].
+[INFO] [competition_master_stage3.py-21]: process has finished cleanly [pid 22863]
+[ERROR] [depth_detector-18]: process has died [pid 22850, exit code 1, cmd '/userdata/dev_ws/install/object_tracker/lib/object_tracker/depth_detector --ros-args -r __node:=depth_detector'].
+[INFO] [aurora930_node-9]: process has finished cleanly [pid 22573]
+[ERROR] [vision_ai_node-12]: process has died [pid 22579, exit code 1, cmd '/userdata/dev_ws/install/racing_vision_ai/lib/racing_vision_ai/vision_ai_node --ros-args -r __node:=vision_ai_node'].
+[ERROR] [tracker_node-19]: process has died [pid 22852, exit code 1, cmd '/userdata/dev_ws/install/object_tracker/lib/object_tracker/tracker_node --ros-args -r __node:=tracker_node --params-file /tmp/launch_params_decrwi6d'].
+[component_container_isolated-17] [INFO] [1783057562.466214926] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1783057562.466371218] [map_server]: Running Nav2 LifecycleNode rcl preshutdown (map_server)
+[component_container_isolated-17] [INFO] [1783057562.466485218] [map_server]: Deactivating
+[component_container_isolated-17] [INFO] [1783057562.466629968] [map_server]: Destroying bond (map_server) to lifecycle manager.
+[component_container_isolated-17] [INFO] [1783057562.477216054] [map_server]: Cleaning up
+[component_container_isolated-17] [INFO] [1783057562.477665929] [map_server]: Destroying bond (map_server) to lifecycle manager.
+[ERROR] [component_container_isolated-17]: process[component_container_isolated-17] failed to terminate '5' seconds after receiving 'SIGINT', escalating to 'SIGTERM'
+[INFO] [component_container_isolated-17]: sending signal 'SIGTERM' to process[component_container_isolated-17]
+[component_container_isolated-17] [INFO] [1783057566.468483486] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[ERROR] [component_container_isolated-17]: process[component_container_isolated-17] failed to terminate '10.0' seconds after receiving 'SIGTERM', escalating to 'SIGKILL'
+[INFO] [component_container_isolated-17]: sending signal 'SIGKILL' to process[component_container_isolated-17]
+[ERROR] [component_container_isolated-17]: process has died [pid 22846, exit code -9, cmd '/opt/ros/humble/lib/rclcpp_components/component_container_isolated --ros-args --log-level info --ros-args -r __node:=nav2_container --params-file /tmp/launch_params_7mmwss9h --params-file /tmp/launch_params_ktg316pq -r /tf:=tf -r /tf_static:=tf_static'].
 root@ubuntu:/userdata/dev_ws#

@@ -14,7 +14,7 @@ def generate_launch_description():
             package='robot_state_publisher', 
             executable='robot_state_publisher', 
             name='robot_state_publisher',
-            arguments=[os.path.join(get_package_share_directory('origincar_description'),'urdf','origincar.urdf')]
+            arguments=[os.path.join(get_package_share_directory('origincar_description'),'urdf','laser_slam_only.urdf')]
         )
     ])
  

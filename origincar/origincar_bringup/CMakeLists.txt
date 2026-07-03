@@ -16,7 +16,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 install(
-  DIRECTORY launch
+  DIRECTORY launch config
   DESTINATION share/${PROJECT_NAME}
 )
 # find dependencies
@@ -38,19 +38,7 @@ install(TARGETS odom2tf
   DESTINATION lib/${PROJECT_NAME}
 )
 
-install(PROGRAMS src/task_manager.py
-  DESTINATION lib/${PROJECT_NAME}
-)
-
-install(PROGRAMS src/mission_controller.py
-  DESTINATION lib/${PROJECT_NAME}
-)
-
 install(PROGRAMS src/wait_for_odom.py
-  DESTINATION lib/${PROJECT_NAME}
-)
-
-install(PROGRAMS src/competition_lifecycle_manager.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -75,6 +63,16 @@ install(PROGRAMS src/competition_master_stage2.py
 )
 
 install(PROGRAMS src/competition_master_stage3.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+# speed_profile_node: publishes /speed_limit based on path curvature v(κ) = v_max/(1+β*|κ|^λ)
+install(PROGRAMS src/speed_profile_node.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+# yolo_costmap_bridge: PerceptionTargets → PointCloud2 for Nav2 costmap
+install(PROGRAMS src/yolo_costmap_bridge.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

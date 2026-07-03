@@ -11,6 +11,7 @@ stage3_bringup.launch.py — Stage 3 总启动文件
 流程: QR扫码→通道入口→通道巡航(CCW/CW)→VLM图生文→返航P点
   t=0s → 底盘 + TF + Madgwick + EKF + PID + 深度相机 + QR
   t=1s → Nav2 全栈
+  t=3s → 障碍物检测 + 粒子滤波跟踪 + costmap桥接
   t=4s → competition_master_stage3 (QR→入口→巡航→VLM→返航)
   t=8s → RViz2 (地图查看)
 """
@@ -44,6 +45,41 @@ def generate_launch_description():
                 )
             ),
             OpaqueFunction(function=_vision_ai_if_available),  # VLM视觉AI节点
+
+            # ── JPU hardware JPEG encoder (t+0s) ──
+            # Encodes /aurora/rgb/image_raw → /aurora/rgb/image_jpeg using JPU
+            # Replaces CPU cv2.imencode in vision_ai_node (saves 5-10ms per VLM trigger)
+            Node(
+                package='hobot_codec',
+                executable='hobot_codec_republish',
+                name='vlm_jpeg_encoder',
+                output='screen',
+                arguments=['--ros-args', '--log-level', 'warn'],
+                parameters=[{
+                    'in_format': 'bgr8',
+                    'out_format': 'jpeg',
+                    'sub_topic': '/aurora/rgb/image_raw',
+                    'pub_topic': '/aurora/rgb/image_jpeg',
+                    'jpg_quality': 85.0,
+                }],
+            ),
+
+            # ── BGR→NV12 converter for YOLO BPU input (t+0s) ──
+            Node(
+                package='hobot_codec',
+                executable='hobot_codec_republish',
+                name='rgb_to_nv12',
+                output='screen',
+                arguments=['--ros-args', '--log-level', 'warn'],
+                parameters=[{
+                    'in_format': 'bgr8',
+                    'out_format': 'nv12',
+                    'in_mode': 'ros',
+                    'out_mode': 'shared_mem',
+                    'sub_topic': '/aurora/rgb/image_raw',
+                    'pub_topic': '/hbmem_img',
+                }],
+            ),
         ]),
 
         TimerAction(period=1.0, actions=[
@@ -51,6 +87,32 @@ def generate_launch_description():
                 PythonLaunchDescriptionSource(
                     os.path.join(origincar_bringup_dir, 'launch', 'nav2_minimal.launch.py')
                 )
+            ),
+        ]),
+
+        # ── YOLO BPU obstacle detection (t+3s) ──
+        # BGR→NV12 codec starts at t=0s; YOLO + bridge handle all obstacle perception
+        TimerAction(period=3.0, actions=[
+            # BPU YOLOv5 obstacle detection
+            Node(
+                package='racing_obstacle_detection_yolo',
+                executable='racing_obstacle_detection_yolo',
+                name='racing_obstacle_detection_yolo',
+                output='screen',
+                parameters=[{
+                    'is_shared_mem_sub': True,
+                    'sub_img_topic': '/hbmem_img',
+                    'config_file': '/userdata/dev_ws/src/origincar/origincar_bringup/config/yolov5workconfig.json',
+                }],
+                arguments=['--ros-args', '--log-level', 'warn'],
+            ),
+            # PerceptionTargets → PointCloud2 bridge for costmap
+            Node(
+                package='origincar_bringup',
+                executable='yolo_costmap_bridge.py',
+                name='yolo_costmap_bridge',
+                output='screen',
+                emulate_tty=True,
             ),
         ]),
 
@@ -63,6 +125,29 @@ def generate_launch_description():
                 emulate_tty=True,
                 respawn=True,
                 respawn_delay=2.0,
+            ),
+        ]),
+
+        # ── Speed profile node (t+5s) ──
+        # Subscribes to /plan; publishes /speed_limit based on
+        # path curvature v(κ) = v_max/(1+β*|κ|^λ)
+        TimerAction(period=5.0, actions=[
+            Node(
+                package='origincar_bringup',
+                executable='speed_profile_node.py',
+                name='speed_profile_node',
+                output='screen',
+                emulate_tty=True,
+                parameters=[{
+                    'v_max': 0.50,
+                    'v_min': 0.15,
+                    'beta': 0.47,
+                    'lambda': 1.32,
+                    'max_accel': 1.01,
+                    'max_decel': -1.57,
+                    'smoothing_window': 5,
+                    'lookahead_idx': 10,
+                }],
             ),
         ]),
 

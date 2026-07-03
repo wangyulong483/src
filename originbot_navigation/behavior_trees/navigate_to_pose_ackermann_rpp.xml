@@ -23,10 +23,9 @@
         -->
         <RateController hz="1.0">
           <RecoveryNode number_of_retries="1" name="ComputePathToPose">
-            <Sequence name="ClearAroundAndCompute">
-              <ClearCostmapAroundRobot name="ClearGlobalAroundRobot"
-                                       service_name="global_costmap/clear_around_global_costmap"
-                                       reset_distance="1.5"/>
+            <Sequence name="ClearAndCompute">
+              <ClearEntireCostmap name="ClearGlobalCostmap"
+                                  service_name="global_costmap/clear_entirely_global_costmap"/>
               <ComputePathToPose goal="{goal}" path="{path}" planner_id="GridBased"/>
             </Sequence>
             <!-- recovery: 若目标已更新→立即返回SUCCESS重规划; 否则清除全局代价地图 -->

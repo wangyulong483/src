@@ -87,8 +87,8 @@ def generate_launch_description():
 
     # === qr_decision (Python) — 方向判断 + 停车控制（仅订阅 /sign，不重复解码） ===
     qr_decision_node = Node(
-        package='origincar_qr',
-        executable='qr_decision',
+        package='qr_decoder',
+        executable='qr_decision.py',
         name='qr_decision',
         output='screen',
         parameters=[{

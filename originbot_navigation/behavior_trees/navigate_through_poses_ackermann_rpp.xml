@@ -25,9 +25,8 @@
             <Sequence name="RemovePassedAndCompute">
               <RemovePassedGoals input_goals="{goals}" output_goals="{goals}"
                                  robot_base_frame="base_footprint" radius="0.4"/>
-              <ClearCostmapAroundRobot name="ClearGlobalAroundRobot"
-                                       service_name="global_costmap/clear_around_global_costmap"
-                                       reset_distance="1.5"/>
+              <ClearEntireCostmap name="ClearGlobalCostmap"
+                                  service_name="global_costmap/clear_entirely_global_costmap"/>
               <ComputePathThroughPoses goals="{goals}" path="{path}" planner_id="GridBased"/>
             </Sequence>
             <Fallback name="ComputePathRecoveryFallback">
