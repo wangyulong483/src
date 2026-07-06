@@ -52,7 +52,7 @@ def generate_launch_description():
 
     urdf2tf = launch.actions.IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            [origincar_bringup_dir, '/launch', '/urdf2tf.launch.py']),
+            [origincar_base_dir, '/launch', '/robot_mode_description.launch.py']),
     )
 
     odom2tf = launch_ros.actions.Node(

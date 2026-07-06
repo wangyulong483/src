@@ -27,6 +27,13 @@ CY = 188.75
 IMG_W = 640
 IMG_H = 400
 
+# Bbox size → distance estimation (fallback when depth=0).
+# distance = FY * real_height / bbox_height_px
+# Standard traffic cone ≈ 0.30m; adjust via ROS param.
+CONE_REAL_HEIGHT_M = 0.30
+CONE_ESTIMATE_MIN_DIST_M = 0.3
+CONE_ESTIMATE_MAX_DIST_M = 4.0
+
 
 class YoloCostmapBridge(Node):
     """Converts YOLO detection boxes → 3D points for Nav2 costmap."""
@@ -73,6 +80,13 @@ class YoloCostmapBridge(Node):
         self._latest_depth = data
         self._depth_header = msg.header
 
+    def _estimate_z_from_bbox(self, bbox_h_px):
+        """Estimate distance from bbox height using known cone size."""
+        if bbox_h_px <= 0:
+            return 0.0
+        z_est = FY * CONE_REAL_HEIGHT_M / bbox_h_px
+        return float(np.clip(z_est, CONE_ESTIMATE_MIN_DIST_M, CONE_ESTIMATE_MAX_DIST_M))
+
     def _on_detection(self, msg):
         if self._latest_depth is None:
             return
@@ -83,12 +97,13 @@ class YoloCostmapBridge(Node):
                 # ROI center in pixel coords
                 cx = roi.rect.x_offset + roi.rect.width / 2
                 cy = roi.rect.y_offset + roi.rect.height / 2
+                bbox_h = roi.rect.height
 
                 # Clamp to image bounds
                 u = int(np.clip(cx, 0, IMG_W - 1))
                 v = int(np.clip(cy, 0, IMG_H - 1))
 
-                # Sample depth in a 3×3 window around center, take median
+                # 1) Try real depth first
                 r0 = max(0, v - 1)
                 r1 = min(IMG_H, v + 2)
                 c0 = max(0, u - 1)
@@ -96,7 +111,14 @@ class YoloCostmapBridge(Node):
                 patch = self._latest_depth[r0:r1, c0:c1]
                 z_val = float(np.median(patch[patch > 0])) if np.any(patch > 0) else 0.0
 
-                if z_val < 0.1 or z_val > 5.0:
+                # 2) Depth unavailable → fallback to bbox size estimation
+                if z_val < 0.1:
+                    z_val = self._estimate_z_from_bbox(bbox_h)
+                    if z_val < 0.1:
+                        continue
+                    self.get_logger().debug(
+                        f'bbox fallback: h={bbox_h:.0f}px → z={z_val:.2f}m')
+                elif z_val > 5.0:
                     continue
 
                 # Project to camera 3D

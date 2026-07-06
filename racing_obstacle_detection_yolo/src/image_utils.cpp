@@ -69,8 +69,22 @@ std::shared_ptr<NV12PyramidInput> ImageUtils::GetNV12Pyramid(
     const cv::Mat &bgr_mat, int scaled_img_height, int scaled_img_width) {
   cv::Mat nv12_mat;
   cv::Mat mat_tmp;
-  mat_tmp.create(scaled_img_height, scaled_img_width, bgr_mat.type());
-  cv::resize(bgr_mat, mat_tmp, mat_tmp.size(), 0, 0);
+  // Letterbox resize: maintain aspect ratio; critical for detection accuracy.
+  // Direct cv::resize stretches image → distorts object proportions → model fails.
+  float scale = std::min(static_cast<float>(scaled_img_width) / bgr_mat.cols,
+                         static_cast<float>(scaled_img_height) / bgr_mat.rows);
+  int new_w = static_cast<int>(bgr_mat.cols * scale);
+  int new_h = static_cast<int>(bgr_mat.rows * scale);
+  // Ensure even dimensions for NV12 (YUV420 requires even width & height)
+  new_w = (new_w / 2) * 2;
+  new_h = (new_h / 2) * 2;
+  cv::Mat resized;
+  cv::resize(bgr_mat, resized, cv::Size(new_w, new_h), 0, 0, cv::INTER_LINEAR);
+  mat_tmp = cv::Mat(scaled_img_height, scaled_img_width, bgr_mat.type(),
+                    cv::Scalar(114, 114, 114));  // gray padding (YOLOv5 default)
+  int pad_left = (scaled_img_width - new_w) / 2;
+  int pad_top  = (scaled_img_height - new_h) / 2;
+  resized.copyTo(mat_tmp(cv::Rect(pad_left, pad_top, new_w, new_h)));
   // cv::imwrite("resized_img.jpg", mat_tmp);
   auto ret = BGRToNv12(mat_tmp, nv12_mat);
   if (ret) {

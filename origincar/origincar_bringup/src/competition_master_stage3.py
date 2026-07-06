@@ -5,15 +5,15 @@ competition_master_stage3 — Stage 3 管理层节点
 完整 Stage 3 流程:
 1. NAV_TO_QR:       导航到 QR 发布点 (停靠, 扫码获取方向 CW/CCW)
 2. BACKING_UP:      右后退摆正车头, 使车头对准通道入口 (阿克曼无法原地旋转)
-3. CRUISE_CHANNEL:  NavigateThroughPoses 穿全部路点 (途经+停靠)
-                    规划器自动处理通道内路由, 入口为途经点不停
-                    CW  (顺时针) → cruise_cw[-1], CCW (逆时针) → cruise_ccw[-1]
+3. CRUISE_CHANNEL:  NavigateThroughPoses 穿路点1→路点2→VLM (3路点)
+                    入口为途经点不停; VLM在末尾触发拍照
 4. VLM_TRIGGER:     发布 100 到 /sign4return, 立即返航不等AI结果
-5. RETURN_P:        导航返回 P 点 (停靠)
+5. RETURN_P:        路点3(post-VLM) + 共识路点 + NavigateToPose 回P点
 
 架构说明:
-  - NavigateToPose action client 用于全部导航 (NAV_TO_QR, NAV_TO_ENTRY, CRUISE_CHANNEL, RETURN_P)
-  - cruise_cw / cruise_ccw 数组保留全部路点以备后用, 实际仅取最后一个作为 VLM 停靠点
+  - cruise_cw/ccw 含4路点: [路点1, 路点2, VLM, 路点3]
+  - 巡航发送前3个 (路点1→路点2→VLM), VLM到后触发拍照
+  - 路点3注入 RETURN_P 首段, 方向感知窄通道引导
   - 沿用 stage2 的 QR 拦截→cancel-wait-for-BT→backup→entry-nav 模式
   - 180s 全局超时 + 各阶段独立超时
 """
@@ -62,18 +62,23 @@ class CompetitionMasterStage3(Node):
         self.declare_parameter('p_point_y', -0.014)
         self.declare_parameter('p_point_yaw', 0.262)
 
-        # cruise_cw: 顺时针 (odd QR) — 途经点 + VLM 停靠点
-        #            仅最后一个路点 (VLM 停靠点) 用于 NavigateToPose
-        # 2026-06-28: 手动驾驶重标定 (stage2 RViz 逐点导航)
-        # 第2环路点=CCW的VLM位置 (2.17,0.69) — CW/CCW共用同一VLM停靠点
+        # cruise_cw: 顺时针 (odd QR) — 2026-07-05 用户实测路线校准
+        # [路点1, 路点2, VLM, 路点3(post-VLM)]
+        # 路点1→路点2→VLM: NavigateThroughPoses 巡航, VLM末尾触发拍照
+        # 路点3: 注入 RETURN_P 首段, 引导回程
         self.declare_parameter('cruise_cw', [
-            0.93, 0.11, 0.0,   2.17, 0.69, 0.0,   3.01, -1.16, 0.0,
+            0.95,  0.04, 0.0,    # 路点1
+            2.10,  0.78, 0.0,    # 路点2
+            3.04, -1.58, 0.0,    # VLM ★
+            1.54, -1.47, 0.0,    # 路点3 (post-VLM → RETURN_P)
         ])
-        # cruise_ccw: 逆时针 (even QR) — 途经点 + VLM 停靠点
-        #             仅最后一个路点 (VLM 停靠点) 用于 NavigateToPose
-        # 2026-06-12: 手动驾驶标定路径
+        # cruise_ccw: 逆时针 (even QR) — 2026-07-05 用户实测路线校准
+        # [路点1, 路点2, VLM, 路点3(post-VLM)]
         self.declare_parameter('cruise_ccw', [
-            0.25, -1.17, 0.0,   1.66, -1.50, 0.0,   2.90, -0.90, 0.0,   2.17, 0.69, 0.80,  # 手动驾驶标定
+            1.56, -1.34, 0.0,    # 路点1
+            3.02, -1.07, 0.0,    # 路点2
+            2.02,  0.94, 0.0,    # VLM ★
+            0.94, -0.09, 0.0,    # 路点3 (post-VLM → RETURN_P)
         ])
 
         # ═══════════════════════════════════════════════════════════
@@ -161,6 +166,9 @@ class CompetitionMasterStage3(Node):
         # ── VLM 触发 ────────────────────────────────────────────
         self._vlm_triggered = False
         self._vlm_trigger_time = None
+
+        # ── RETURN_P 分阶段 ──────────────────────────────────
+        self._return_phase = None  # None / 'POST_VLM' / 'P_FINAL'
 
         # ── 全局计时 ────────────────────────────────────────────
         self._clock_start = None           # 全局计时起点 (首次发送导航目标时记录)
@@ -256,9 +264,9 @@ class CompetitionMasterStage3(Node):
         wps_cw = _flat_to_waypoints(self.cruise_cw)
         wps_ccw = _flat_to_waypoints(self.cruise_ccw)
         self.get_logger().info(
-            f"  cruise_cw: {len(wps_cw)} 路点 → VLM=({wps_cw[-1][0]:.2f}, {wps_cw[-1][1]:.2f})")
+            f"  cruise_cw: {len(wps_cw)}路点 (1,2,VLM,post) → VLM=({wps_cw[2][0]:.2f}, {wps_cw[2][1]:.2f})")
         self.get_logger().info(
-            f"  cruise_ccw: {len(wps_ccw)} 路点 → VLM=({wps_ccw[-1][0]:.2f}, {wps_ccw[-1][1]:.2f})")
+            f"  cruise_ccw: {len(wps_ccw)}路点 (1,2,VLM,post) → VLM=({wps_ccw[2][0]:.2f}, {wps_ccw[2][1]:.2f})")
         self.get_logger().info(
             f"  超时: total={self.total_timeout}s QR={self.nav_to_qr_timeout}s "
             f"entry={self.nav_to_entry_timeout}s cruise={self.cruise_timeout}s "
@@ -309,22 +317,28 @@ class CompetitionMasterStage3(Node):
         return self.get_clock().now().nanoseconds / 1e9
 
     def _get_cruise_waypoints(self):
-        """根据 QR 方向返回完整巡航路点列表 (途经点+停靠点)
+        """根据 QR 方向返回巡航路点 (路点1, 路点2, VLM)
+
+        储存路点3 到 self._post_vlm_wp 供 _start_return 注入 RETURN_P.
 
         Returns:
-            [[x, y, yaw], ...]: 全部路点, 最后一个为 VLM 停靠点
+            [[x, y, yaw], ...]: 3 路点, 最后一个为 VLM 停靠点
         """
         if self._qr_direction and '逆时针' in self._qr_direction:
-            wps = _flat_to_waypoints(self.cruise_ccw)
+            wps_all = _flat_to_waypoints(self.cruise_ccw)
             label = 'CCW (逆时针, even QR)'
         elif self._qr_direction and '顺时针' in self._qr_direction:
-            wps = _flat_to_waypoints(self.cruise_cw)
+            wps_all = _flat_to_waypoints(self.cruise_cw)
             label = 'CW (顺时针, odd QR)'
         else:
-            wps = _flat_to_waypoints(self.cruise_cw)
+            wps_all = _flat_to_waypoints(self.cruise_cw)
             label = 'CW (回退默认)'
+        wps = wps_all[:3]          # 路点1, 路点2, VLM
+        self._post_vlm_wp = wps_all[3]  # 路点3 (post-VLM, 用于RETURN_P首段)
         pts = ", ".join(f"({w[0]:.2f},{w[1]:.2f})" for w in wps)
-        self.get_logger().info(f"[CRUISE] 方向: {label}, 路点: {pts}")
+        self.get_logger().info(f"[CRUISE] 方向: {label}, 路点: {pts} "
+                               f"→ VLM=({wps[-1][0]:.2f},{wps[-1][1]:.2f}) "
+                               f"→ post=({self._post_vlm_wp[0]:.2f},{self._post_vlm_wp[1]:.2f})")
         return wps
 
     # ═══════════════════════════════════════════════════════════════
@@ -1066,8 +1080,14 @@ class CompetitionMasterStage3(Node):
                 )
                 self._trigger_vlm()
             elif self.state == 'RETURN_P':
-                self.get_logger().info("[结果回调] 已回到P点, 任务完成!")
-                self._finish()
+                if getattr(self, '_return_phase', None) == 'POST_VLM':
+                    # 已到达路点3 → 继续导航到 P 点
+                    self.get_logger().info("[结果回调] 已到达路点3, 继续导航到P点...")
+                    self._return_phase = 'P_FINAL'
+                    self._send_return_to_p()
+                else:
+                    self.get_logger().info("[结果回调] 已回到P点, 任务完成!")
+                    self._finish()
         elif status == GoalStatus.STATUS_CANCELED:
             self._nav_start_time = None
             if self._pending_entry_nav:
@@ -1113,45 +1133,33 @@ class CompetitionMasterStage3(Node):
                            approach_yaw, "P点返航")
 
     def _start_return(self):
-        """从 VLM 路点 NavigateThroughPoses 经通道入口回 P 点.
-        使用从15条历史DONE轨迹提取的共识中间路点引导planner穿过窄通道."""
+        """从 VLM 路点 → post-VLM 路点3 → P点 (两步 NavigateToPose).
+
+        不使用 NavigateThroughPoses (避免路径重叠 → 提前命中 goal checker bug).
+        第一步: VLM → 路点3 (方向感知, 引导穿出窄通道)
+        第二步: 路点3 → P点
+        """
         self._state_transition('RETURN_P')
 
-        if not self.through_client.wait_for_server(timeout_sec=3.0):
-            self.get_logger().error("navigate_through_poses server 未就绪!")
-            return
+        post_vlm = getattr(self, '_post_vlm_wp', None)
+        if post_vlm:
+            # 第一步: VLM → 路点3
+            self.get_logger().info(
+                f"[RETURN] VLM→post({post_vlm[0]:.2f},{post_vlm[1]:.2f})→P")
+            self.send_nav_goal(post_vlm[0], post_vlm[1],
+                               post_vlm[2] if len(post_vlm) > 2 else 0.0,
+                               "路点3(post-VLM)")
+            self._return_phase = 'POST_VLM'  # 标记: 到路点3后继续到P
+        else:
+            # 无 post-VLM: 直接去 P 点
+            self._return_phase = 'P_DIRECT'
+            self._send_return_to_p()
 
-        # 共识路点 (从15条DONE轨迹RETURN_P段提取, mean_std=0.19m):
-        # VLM区→窄通道顶→通道拐弯→通道底→接近P→P点
-        return_waypoints = [
-            (2.20, 0.59, 2.85),    # WP0: VLM触发区 (返回通道入口)
-            (1.00, 0.95, -1.45),   # WP1: 窄通道顶部
-            (1.14, -0.22, -2.00),  # WP2: 通道中间拐弯
-            (0.80, -0.97, 2.02),   # WP3: 通道底部转向
-            (-0.45, -0.81, 2.67),  # WP4: 接近P点区域
-            (-1.66, -0.20, 2.67),  # WP5: P点前方
-            (self.p_point_x, self.p_point_y, self.p_point_yaw),
-        ]
-
-        goal = NavigateThroughPoses.Goal()
-        for (wx, wy, wyaw) in return_waypoints:
-            pose = PoseStamped()
-            pose.header.frame_id = 'map'
-            pose.header.stamp = self.get_clock().now().to_msg()
-            pose.pose.position.x = wx
-            pose.pose.position.y = wy
-            pose.pose.orientation.z = math.sin(wyaw / 2.0)
-            pose.pose.orientation.w = math.cos(wyaw / 2.0)
-            goal.poses.append(pose)
-
-        self.get_logger().info(
-            f"[RETURN] NavigateThroughPoses: {len(return_waypoints)}路点 "
-            f"({return_waypoints[0][0]:.2f},{return_waypoints[0][1]:.2f})→"
-            f"({self.p_point_x:.2f},{self.p_point_y:.2f}) "
-            f"(共识中心线, std=0.19m)")
-        self._nav_start_time = self.get_clock().now()
-        self._through_future = self.through_client.send_goal_async(goal)
-        self._through_future.add_done_callback(self._through_response_cb)
+    def _send_return_to_p(self):
+        """路点3 → P 点 (最后一段)."""
+        approach_yaw = self._robot_pose['yaw'] if self._robot_pose else self.p_point_yaw
+        self.send_nav_goal(self.p_point_x, self.p_point_y,
+                           approach_yaw, "P点返航")
 
     # ═══════════════════════════════════════════════════════════════
     # ── 超时检查 ─────────────────────────────────────────────────
@@ -1271,10 +1279,21 @@ class CompetitionMasterStage3(Node):
     # ── 启动 & 完成 ──────────────────────────────────────────────
     # ═══════════════════════════════════════════════════════════════
 
+    def _set_cpu_governor(self, governor):
+        """切换 CPU governor (仅 stage3 运行时锁定性能, 退出恢复)"""
+        gov_path = '/sys/devices/system/cpu/cpufreq/policy0/scaling_governor'
+        try:
+            with open(gov_path, 'w') as f:
+                f.write(governor)
+            self.get_logger().info(f"[CPU] governor → {governor}")
+        except Exception as e:
+            self.get_logger().warn(f"[CPU] 切换 governor 失败: {e}")
+
     def _start_nav(self):
         """延迟启动: 等待 BT 激活后开始第一阶段导航"""
         if self.state != 'INIT':
             return
+        self._set_cpu_governor('performance')  # ★ 锁定 1.5GHz
         launch_dur = self._get_current_raw_time() - self._launch_time.nanoseconds / 1e9
         self._phase_times['LAUNCH'] = launch_dur
         self.get_logger().info(f"[LAUNCH] 发车阶段: {launch_dur:.1f}s")
@@ -1373,7 +1392,11 @@ def main(args=None):
         node.get_logger().error(f'[MAIN] 异常退出: {e}')
         node._exit_reason = f'exception:{e}'
     finally:
-        # ★ 无论何种退出, 停止录制 + 保存全程 CSV
+        # ★ 无论何种退出, 恢复CPU governor + 停止录制 + 保存全程 CSV
+        try:
+            node._set_cpu_governor('schedutil')
+        except Exception:
+            pass
         try:
             node._stop_bag_record()
         except Exception:

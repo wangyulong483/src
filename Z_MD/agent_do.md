@@ -2,6 +2,305 @@
 
 ---
 
+## 2026-07-05 22:00 — ★ 巡航路点重构：VLM 索引修复 + post-VLM 注入 RETURN_P
+
+> **用户**: "VLM 路点在第 3 个（路点1→路点2→VLM→路点3→P）" — VLM 不在巡航末尾
+
+### 问题
+
+旧代码用 `wps[-1]` 取 VLM，但实际路线 VLM 在第 3/4 个路点（非末尾），导致：
+1. 启动日志 `→ VLM=(...)` 显示错误坐标
+2. NavigateThroughPoses 发送了路点3 → 巡航结束时机器人早已过 VLM → VLM 延迟触发
+
+### 方案
+
+**4 路点数组 + 切片**: `[路点1, 路点2, VLM, 路点3]`，巡航取 `[:3]`，路点3 存储到 `self._post_vlm_wp` 注入 RETURN_P。
+
+```
+巡航 (NavigateThroughPoses):
+  entry → 路点1 → 路点2 → VLM (停靠) → 触发拍照
+
+RETURN_P (NavigateThroughPoses):
+  路点3 + 共识路点 + ... → P点
+```
+
+### 修改（1 文件，4 处）
+
+**文件**: `competition_master_stage3.py`
+
+| # | 改动 | 说明 |
+|---|------|------|
+| 1 | cruise_ccw/cw 路点: 6/5→**4** | [路点1, 路点2, VLM, 路点3] |
+| 2 | `_get_cruise_waypoints()`: 返回 `[:3]`, 存 `[3]` | VLM=wps[-1] 正确; `self._post_vlm_wp` |
+| 3 | `_start_return()`: 路点3 注入首段 | 方向感知窄通道引导 |
+| 4 | 启动日志: `wps[-1]`→`wps[2]` | VLM 显示正确 |
+
+### 路点表
+
+| # | CCW (逆时针) | CW (顺时针) |
+|---|-------------|------------|
+| 路点1 | (1.56, -1.34) | (0.95, 0.04) |
+| 路点2 | (3.02, -1.07) | (2.10, 0.78) |
+| **VLM** ★ | **(2.02, 0.94)** | **(3.04, -1.58)** |
+| 路点3 | (0.94, -0.09) → RETURN_P | (1.54, -1.47) → RETURN_P |
+
+### SSH
+
+- CRLF fix + `colcon build` → 成功 (2.65s)
+
+---
+
+## 2026-07-05 21:00 — ★ cruise_ccw 路点校准：用户实测逆时针路线
+
+> **用户**: "小车路点设的不好，我带你走了一遍逆时针路线" — 通过 stage2 手动导航演示正确 CCW 路径
+
+### 方法
+
+从 stage2 log.md 提取 `bt_navigator: Begin navigating from` 日志，还原 5 段实际 CCW 行驶路径：
+
+```
+① (-2.00,-0.02) → (0.41,-3.17)    QR点
+② (-0.32,-2.89) → (0.38,-1.10)    通道入口
+③ (0.27,-1.16) → (1.56,-1.34)     CCW 通道下半段
+④ (1.53,-1.00) → (3.02,-1.07)     CCW 右转弯
+⑤ (3.11,-0.97) → (2.02, 0.94)     CCW 上坡
+⑥ (2.18, 0.79) → (0.94,-0.09)     CCW 回程
+⑦ (0.88, 0.11) → (-1.94, 0.04)    RETURN_P
+```
+
+### 偏差分析
+
+| 路点 | 旧 cruise_ccw | 实测 | 最大偏差 |
+|------|-------------|------|---------|
+| WP0 | (0.741, -1.149) | **(0.27, -1.16)** | x 差 0.47m |
+| WP1 | (1.754, **-1.761**) | **(1.56, -1.34)** | y 差 0.42m |
+| WP2 | (3.077, -1.173) | **(3.02, -1.07)** | 近似 |
+| WP3 | (1.873, 1.200) | **(2.02, 0.94)** | y 差 0.26m |
+| WP4 | (0.856, **0.317**) | **(0.94, -0.09)** | y 差 0.41m |
+| **VLM** | (0.935, **-0.870**) | **(0.88, 0.11)** | **y 差 0.98m!** |
+
+### 修改（1 文件）
+
+**文件**: `origincar/origincar_bringup/src/competition_master_stage3.py`
+
+| 旧 cruise_ccw | 新 cruise_ccw (实测) |
+|--------------|-------------------|
+| (0.741, -1.149, yaw=-0.54) | **(0.27, -1.16, 0.0)** |
+| (1.754, -1.761, yaw=0.42) | **(1.56, -1.34, 0.0)** |
+| (3.077, -1.173, yaw=2.04) | **(3.02, -1.07, 0.0)** |
+| (1.873, 1.200, yaw=-2.43) | **(2.02, 0.94, 0.0)** |
+| (0.856, 0.317, yaw=-1.50) | **(0.94, -0.09, 0.0)** |
+| (0.935, -0.870, yaw=-2.18) | **(0.88, 0.11, 0.0)** |
+
+yaw 全部设为 0.0，由 RPP 自动计算目标朝向。
+
+> ⚠️ **cruise_cw 未同步更新**: 用户仅演示了 CCW 路线。CW 路点可能同样偏离实际路径。
+
+### SSH
+
+- `competition_master_stage3.py` → CRLF fix → `colcon build --packages-select origincar_bringup` → 成功 (2.67s)
+
+---
+
+## 2026-07-05 20:35 — ★ Nav2 参数回归 70.1s 基线：local inflation 恢复 + RPP 安全配置
+
+> **日志分析 (19:56 运行)**: YOLO 修复验证成功。CRUISE 10.0s 正常。但 RETURN_P 52.3s 卡死在 (1.18, 0.01)，lethal space × N，backup "Collision Ahead" × 2。总耗时 106.4s Ctrl+C。
+
+### EXA MCP 研究关键发现
+
+| 来源 | 关键发现 |
+|------|----------|
+| [Nav2 PR #5187](https://github.com/ros-navigation/navigation2/pull/5187) | `override_lethal_cost` 在多轮前已启用 — 但只覆盖 keepout 致命区，不覆盖 LiDAR |
+| [Nav2 Keepout Docs](https://docs.nav2.org/configuration/packages/costmap-plugins/keepout_filter.html) | ★ 局部+全局 inflation 必须一致，否则规划器找的路径控制器执行不了 |
+| [RPP Docs](https://docs.nav2.org/configuration/packages/configuring-regulated-pp.html) | `use_collision_detection` 窄道必备；`regulated_linear_scaling_min_speed` >0.1 防止完全刹停 |
+
+### 根因
+
+当前 `originbot_nav2_rpp.yaml` 是 Optuna 优化值，关键参数与 70.1s 纪录基线严重偏离：
+
+| 参数 | 70.1s 基线 | Optuna 值 | 问题 |
+|------|-----------|-----------|------|
+| `local_costmap.inflation_radius` | **0.55** | 0.1234 | **致命**: 局部无势场 |
+| `local_costmap.cost_scaling_factor` | **2.0** | 5.634 | 局部梯度太陡 |
+| `desired_linear_vel` | **0.50** | 0.398 | 慢 20% |
+| `use_collision_detection` | **true** | false | 窄道无碰撞检测 |
+| `regulated_linear_scaling_min_speed` | — | 0.1664 | 弯道无法减速到安全低速 |
+| `movement_time_allowance` | — | 12s | 恢复窗口有限 |
+
+**致命链**: local inflation 0.12m → 控制器看不到势场引导 → 窄弯冲出全局规划的路径 → 撞入 LiDAR 致命区 → planner 报告 "Starting point in lethal space" → BT recovery 清 costmap 反复循环 → backup "Collision Ahead" 也失败 → 52.3s 卡死。
+
+### 修改（6 参数，1 文件）
+
+**文件**: `originbot_navigation/param/originbot_nav2_rpp.yaml`
+
+| # | 参数 | 旧 | 新 | 原理 |
+|---|------|-----|-----|------|
+| 1 | `local_costmap.inflation_radius` | 0.1234 | **0.55** | 回归 70.1s 势场，匹配全局 |
+| 2 | `local_costmap.cost_scaling_factor` | 5.634 | **2.0** | 平缓衰减，匹配全局 |
+| 3 | `desired_linear_vel` | 0.398 | **0.50** | 回归 70.1s 验证速度 |
+| 4 | `use_collision_detection` | false | **true** | 窄道碰撞安全 |
+| 5 | `regulated_linear_scaling_min_speed` | 0.1664 | **0.1** | 文档最小值，弯道可大幅减速 |
+| 6 | `movement_time_allowance` | 12.0 | **20.0** | 更多恢复窗口 |
+
+**保留的 Optuna 值**: lookahead 系列、planner 迭代、smoother 参数（已验证不影响安全性）
+
+### 预期效果
+
+- RETURN_P 不再卡死在 lethal space：均匀的 0.55m 势场引导控制器始终选择全局规划的路径
+- CRUISE 恢复 70.1s 的 30s 水平（当前 10s 异常快因为通道直）
+- 碰撞检测 + 20s 恢复窗口确保即使临时偏离也能恢复
+
+### SSH
+
+- `originbot_nav2_rpp.yaml` → CRLF fix → `colcon build --packages-select originbot_navigation` → 成功 (2.51s)
+
+---
+
+## 2026-07-05 20:05 — ★ hobot_codec BGR→NV12 崩溃修复：YOLO 双模式直连
+
+> **错误**: `hobot_codec_republish` 节点崩溃: `bgr8 cannot be encoded to nv12` → YOLO BPU 障碍物检测无输入。
+
+### EXA MCP 研究关键发现
+
+| 来源 | 关键发现 |
+|------|----------|
+| [D-Robotics/hobot_codec](https://github.com/D-Robotics/hobot_codec) | ARM 版仅支持硬件编解码路径（JPU/VPU），**X86 only** 才支持 bgr8↔nv12 软件转换 |
+| [racing_obstacle_detection_yolo sample.cpp](racing_obstacle_detection_yolo/src/sample.cpp#L221-L236) | ★ YOLO 节点已内置双模式：`is_shared_mem_sub=True`→HbmMsg1080P / `False`→ROS Image |
+| [sample.cpp L356-370](racing_obstacle_detection_yolo/src/sample.cpp#L356-L370) | FeedImg() 自动 BGR→NV12: `cv_bridge` → `ImageUtils::GetNV12Pyramid()` |
+| [RDK X5 zero-copy docs](https://developer.d-robotics.cc/tros_doc/en/tros_dev/zero_copy) | `create_publisher_hbmem` + `borrow_loaned_message()` API（若需新节点） |
+| [HbmMsg1080P.msg](https://github.com/HorizonRDK/hobot_msgs/blob/develop/hbm_img_msgs/msg/HbmMsg1080P.msg) | 消息格式: index + time_stamp + height/width + encoding[12] + data[6220800] |
+
+### 根因
+
+```
+hobot_codec ARM 版只有硬件 codec(JPU/VPU):
+  NV12 → JPEG  ✅ JPU 编码
+  H264 → NV12  ✅ VPU 解码
+  BGR → NV12   ❌ 非编解码操作，HobotVdec 报 Invalid in_format
+
+标准 MIPI 管线: 摄像头→NV12→BPU (零转换)
+我们的管线:     Aurora930→BGR8→??→NV12→BPU
+```
+
+### 修复（2 参数，零新代码）
+
+**文件**: `origincar/origincar_bringup/launch/stage3_bringup.launch.py`
+
+| # | 改动 | 说明 |
+|---|------|------|
+| 1 | 删除 `rgb_to_nv12` hobot_codec 节点 (15行) | 崩溃的 BGR→NV12 codec |
+| 2 | `is_shared_mem_sub: True` → **`False`** | YOLO 切换到 ROS Image 模式 |
+| 3 | `sub_img_topic: /hbmem_img` → **`/aurora/rgb/image_raw`** | 直连 Aurora930 BGR8 |
+
+**新管线**:
+```
+Aurora930 → /aurora/rgb/image_raw (BGR8 ROS Image)
+                ↓
+YOLO FeedImg() → cv_bridge → ImageUtils::GetNV12Pyramid() (内部转换)
+                ↓
+BPU NV12 推理 → /racing_obstacle_detection
+```
+
+### 已记录
+
+- **ERR-20260705-001**: 已更新 resolution
+- **LRN-20260705-006**: hobot_codec ARM 限制 + YOLO 双模式知识
+
+### SSH
+
+- `stage3_bringup.launch.py` → CRLF fix → `colcon build --packages-select origincar_bringup` → 成功 (2.66s)
+
+---
+
+## 2026-07-05 19:50 — ★ urdf2tf.launch.py 缺失崩溃修复
+
+> **错误**: `stage3_bringup.launch.py` 启动崩溃: `No such file or directory: urdf2tf.launch.py`
+
+### 根因
+
+```
+stage3_bringup.launch.py → base_minimal.launch.py (L53-56)
+  → IncludeLaunchDescription('urdf2tf.launch.py')
+    → 文件从未创建（初始 commit d2f96f4 就有死引用）
+      → launch 立即崩溃
+```
+
+### 发现
+
+`origincar_base/launch/robot_mode_description.launch.py` **已存在** — 启动 `robot_state_publisher` + `laser_slam_only.urdf` — 正是 `urdf2tf.launch.py` 应该做的事，但从未被引用。
+
+### 修复
+
+**文件**: `origincar/origincar_bringup/launch/base_minimal.launch.py` L53-55
+
+| 旧 | 新 |
+|----|-----|
+| `origincar_bringup_dir + /urdf2tf.launch.py` | `origincar_base_dir + /robot_mode_description.launch.py` |
+
+### 验证 (log.md 19:44 运行)
+
+```
+robot_state_publisher-3 ✅ 已启动
+  → base_footprint ✅
+  → base_link ✅
+  → gyro_link ✅
+  → laser_link ✅
+```
+
+### 已记录
+
+- **ERR-20260705-001**: 新增 + resolved
+
+### SSH
+
+- `base_minimal.launch.py` → CRLF fix → `colcon build --packages-select origincar_bringup` → 成功 (2.66s)
+
+---
+
+## 2026-07-05 19:44 — 运行分析（57.7s Ctrl+C，RETURN_P 卡死）
+
+> **来源**: log.md (1307 行)
+
+### 运行结果
+
+| 阶段 | 耗时 | 状态 |
+|------|------|------|
+| LAUNCH | 18.0s | urdf2tf 修复首次生效 |
+| NAV_TO_QR | 18.7s | 成功，QR=1584 CCW |
+| BACKING_UP | 6.0s | 成功 |
+| CRUISE_CHANNEL | **8.7s** ⚡ | 异常快 |
+| RETURN_P | **卡死** | (1.13, 0.79) lethal space ×5, Ctrl+C |
+| **总耗时** | **57.7s** | 未完成 |
+
+### 关键对比
+
+| 指标 | 70.1s 纪录 | 本次 |
+|------|-----------|------|
+| CRUISE | 30.6s | **8.7s** (-72%) |
+| RETURN_P | 21.3s | 卡死 |
+| Lethal space | 0次 | **5次** |
+| YOLO BPU | N/A | **崩了** (hobot_codec) |
+| Plans 录制 | 无 | 18 次规划 csv |
+
+### 新发现的 3 个问题
+
+| # | 问题 | 状态 |
+|---|------|------|
+| 1 | `origincar_base_node` SIGABRT + SerialException（首次启动崩溃，重生后正常） | 已知，不修复 |
+| 2 | `hobot_codec bgr8→nv12` 崩溃 → YOLO BPU 障碍物检测断连 | ✅ 已修复 |
+| 3 | RETURN_P (1.13,0.79) lethal space 卡死 — 同一死亡区 | 持续问题 |
+
+### 保留的 70.1s 基线配置
+
+CRUISE 8.7s 异常快可能因为本次通道入口位姿与 70.1s 不同。70.1s 的关键参数（RateController=1.0Hz, desired_linear_vel=0.50, inflation=0.55）在本轮保持不变。
+
+### 已记录
+
+- ERR-20260705-001: hobot_codec bgr8→nv12 崩溃 → resolved
+- LRN-20260705-006: hobot_codec ARM 限制 + YOLO 双模式
+
+---
+
 ## 2026-07-01 13:30 — ★ 深度障碍物检测：DBSCAN→CCL + 地面分割 + 中值滤波
 
 > **用户**: "DBSCAN → 更快聚类。自适应深度切片+连通域标记。地面分割预处理。深度图边缘滤波。"

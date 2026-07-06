@@ -64,22 +64,6 @@ def generate_launch_description():
                 }],
             ),
 
-            # ── BGR→NV12 converter for YOLO BPU input (t+0s) ──
-            Node(
-                package='hobot_codec',
-                executable='hobot_codec_republish',
-                name='rgb_to_nv12',
-                output='screen',
-                arguments=['--ros-args', '--log-level', 'warn'],
-                parameters=[{
-                    'in_format': 'bgr8',
-                    'out_format': 'nv12',
-                    'in_mode': 'ros',
-                    'out_mode': 'shared_mem',
-                    'sub_topic': '/aurora/rgb/image_raw',
-                    'pub_topic': '/hbmem_img',
-                }],
-            ),
         ]),
 
         TimerAction(period=1.0, actions=[
@@ -91,7 +75,7 @@ def generate_launch_description():
         ]),
 
         # ── YOLO BPU obstacle detection (t+3s) ──
-        # BGR→NV12 codec starts at t=0s; YOLO + bridge handle all obstacle perception
+        # YOLO subscribes to BGR8 ROS Image; BGR→NV12 conversion handled internally by FeedImg()
         TimerAction(period=3.0, actions=[
             # BPU YOLOv5 obstacle detection
             Node(
@@ -100,8 +84,8 @@ def generate_launch_description():
                 name='racing_obstacle_detection_yolo',
                 output='screen',
                 parameters=[{
-                    'is_shared_mem_sub': True,
-                    'sub_img_topic': '/hbmem_img',
+                    'is_shared_mem_sub': False,
+                    'sub_img_topic': '/aurora/rgb/image_raw',
                     'config_file': '/userdata/dev_ws/src/origincar/origincar_bringup/config/yolov5workconfig.json',
                 }],
                 arguments=['--ros-args', '--log-level', 'warn'],

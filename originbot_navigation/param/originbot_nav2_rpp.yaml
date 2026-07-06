@@ -109,7 +109,7 @@ controller_server:
     progress_checker:
       plugin: nav2_controller::SimpleProgressChecker
       required_movement_radius: 0.08
-      movement_time_allowance: 12.0
+      movement_time_allowance: 20.0
     FollowPath:
       plugin: nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController
       use_dynamic_window: true
@@ -125,7 +125,7 @@ controller_server:
       # /speed_limit to dynamically adjust based on upcoming curvature.
       # The speed_profile_node computes v(κ) = v_max/(1+β*|κ|^λ) and
       # publishes the recommended speed at the lookahead point.
-      desired_linear_vel: 0.398
+      desired_linear_vel: 0.50
       speed_limit_topic: /speed_limit
       lookahead_dist: 0.6776
       min_lookahead_dist: 0.2628
@@ -136,12 +136,12 @@ controller_server:
       curvature_lookahead_dist: 0.8
       use_regulated_linear_velocity_scaling: true
       regulated_linear_scaling_min_radius: 0.411
-      regulated_linear_scaling_min_speed: 0.1664
+      regulated_linear_scaling_min_speed: 0.1
       use_cost_regulated_linear_velocity_scaling: true
       cost_scaling_dist: 0.0894
       cost_scaling_gain: 2.7066
       inflation_cost_scaling_factor: 5.0
-      use_collision_detection: false
+      use_collision_detection: true
       min_approach_linear_velocity: 0.3174
       approach_velocity_scaling_dist: 0.6752
       use_rotate_to_heading: false
@@ -174,8 +174,8 @@ local_costmap:
       - inflation_layer
       inflation_layer:
         plugin: nav2_costmap_2d::InflationLayer
-        inflation_radius: 0.1234
-        cost_scaling_factor: 5.634
+        inflation_radius: 0.55
+        cost_scaling_factor: 2.0
       keepout_filter:
         plugin: nav2_costmap_2d::KeepoutFilter
         enabled: true
@@ -280,13 +280,13 @@ planner_server:
       motion_model_for_search: REEDS_SHEPP
       minimum_turning_radius: 0.3
       tolerance: 0.5
-      angle_quantization_bins: 56
-      max_iterations: 2027
+      angle_quantization_bins: 40
+      max_iterations: 1500
       max_on_approach_iterations: 300
       max_planning_time: 1.596
       terminal_checking_interval: 500
-      lookup_table_size: 20.0
-      analytic_expansion_ratio: 2.2582
+      lookup_table_size: 40.0
+      analytic_expansion_ratio: 4.0
       analytic_expansion_max_length: 1.5
       analytic_expansion_max_cost: 150.0
       analytic_expansion_max_cost_override: false
@@ -303,7 +303,7 @@ planner_server:
         tolerance: 1.0e-10
         do_refinement: true
       downsample_costmap: true
-      downsampling_factor: 2
+      downsampling_factor: 3
       allow_unknown: false
       debug_visualizations: false
 planner_server_rclcpp_node:
