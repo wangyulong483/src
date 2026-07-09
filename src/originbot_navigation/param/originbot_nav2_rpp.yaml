@@ -1,0 +1,424 @@
+amcl:
+  ros__parameters:
+    use_sim_time: false
+    set_initial_pose: true
+    initial_pose:
+      x: -1.985
+      y: -0.014
+      z: 0.0
+      yaw: 0.262
+    alpha1: 0.45
+    alpha2: 0.45
+    alpha3: 0.45
+    alpha4: 0.45
+    alpha5: 0.45
+    base_frame_id: base_footprint
+    beam_skip_distance: 0.5
+    beam_skip_error_threshold: 0.9
+    beam_skip_threshold: 0.3
+    do_beamskip: true
+    global_frame_id: map
+    lambda_short: 0.1
+    laser_likelihood_max_dist: 2.0
+    laser_max_range: 100.0
+    laser_min_range: 0.1
+    laser_model_type: likelihood_field_prob
+    max_beams: 60
+    max_particles: 1500
+    min_particles: 300
+    odom_frame_id: odom
+    pf_err: 0.05
+    pf_z: 0.99
+    recovery_alpha_fast: 0.1
+    recovery_alpha_slow: 0.001
+    resample_interval: 2  # 回退基线: 每次都重采样(=1)导致粒子退化, 日志双IMU yaw分歧~55°
+    robot_model_type: nav2_amcl::DifferentialMotionModel
+    # ↑ 必须用 DifferentialMotionModel — Nav2 Humble AMCL 不支持 AckermannMotionModel
+    # (仅 Differential + Omni 两种). Ackermann 约束由 SmacPlannerHybrid REEDS_SHEPP
+    # 在规划层处理, 控制层由 RPP allow_reversing + use_rotate_to_heading=false 适配
+    # 已验证: 2026-07-06 EXA MCP + 2026-07-09 Humble 源码 audit
+    save_pose_rate: 0.5
+    sigma_hit: 0.2
+    tf_broadcast: true
+    transform_tolerance: 1.0
+    update_min_a: 0.1  # 回退基线: 恢复定位更新频率, 防 CRUISE 段定位滞后
+    update_min_d: 0.1
+    z_hit: 0.5
+    z_max: 0.05
+    z_rand: 0.5
+    z_short: 0.05
+amcl_map_client:
+  ros__parameters:
+    use_sim_time: false
+amcl_rclcpp_node:
+  ros__parameters:
+    use_sim_time: false
+bt_navigator:
+  ros__parameters:
+    use_sim_time: false
+    global_frame: map
+    robot_base_frame: base_footprint
+    odom_topic: /odom
+    bt_loop_duration: 100
+    default_server_timeout: 500
+    default_nav_to_pose_bt_xml: navigate_to_pose_ackermann_rpp.xml
+    default_nav_through_poses_bt_xml: navigate_through_poses_ackermann_rpp.xml
+    plugin_lib_names:
+    - nav2_compute_path_to_pose_action_bt_node
+    - nav2_compute_path_through_poses_action_bt_node
+    - nav2_follow_path_action_bt_node
+    - nav2_smooth_path_action_bt_node
+    - nav2_back_up_action_bt_node
+    - nav2_wait_action_bt_node
+    - nav2_clear_costmap_service_bt_node
+    - nav2_is_stuck_condition_bt_node
+    - nav2_goal_reached_condition_bt_node
+    - nav2_goal_updated_condition_bt_node
+    - nav2_initial_pose_received_condition_bt_node
+    - nav2_reinitialize_global_localization_service_bt_node
+    - nav2_rate_controller_bt_node
+    - nav2_distance_controller_bt_node
+    - nav2_speed_controller_bt_node
+    - nav2_recovery_node_bt_node
+    - nav2_pipeline_sequence_bt_node
+    - nav2_round_robin_node_bt_node
+    - nav2_remove_passed_goals_action_bt_node
+    - nav2_transform_available_condition_bt_node
+    - nav2_time_expired_condition_bt_node
+    - nav2_distance_traveled_condition_bt_node
+bt_navigator_rclcpp_node:
+  ros__parameters:
+    use_sim_time: false
+controller_server:
+  ros__parameters:
+    use_sim_time: false
+    controller_frequency: 10.0
+    costmap_update_timeout: 0.3
+    failure_tolerance: 10.0
+    min_x_velocity_threshold: 0.001
+    min_y_velocity_threshold: 0.5
+    min_theta_velocity_threshold: 0.001
+    controller_plugins:
+    - FollowPath
+    goal_checker_plugins:
+    - goal_checker
+    progress_checker_plugins:
+    - progress_checker
+    goal_checker:
+      plugin: nav2_controller::SimpleGoalChecker
+      xy_goal_tolerance: 0.4291
+      yaw_goal_tolerance: 3.14
+      stateful: true
+      symmetric_yaw_tolerance: false
+    progress_checker:
+      plugin: nav2_controller::SimpleProgressChecker
+      required_movement_radius: 0.08
+      movement_time_allowance: 20.0
+    FollowPath:
+      plugin: nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController
+      # ★ Humble RPP 1.1.20 (apt) 仅 25 个参数 (旧版, 无 ParameterHandler 重构).
+      # 速度+加速度包络由 velocity_smoother 统一钳位:
+      #   max_velocity=[0.65,0,2.8], max_accel=[1.5,0,2.5], max_decel=[-1.8,0,-2.5]
+      # 已删除的 5 个死参数 (旧版 RPP 不读, 静默忽略; 仅新 Humble/Jazzy+ ParameterHandler 才识别):
+      #   max_linear_vel, min_linear_vel, min_angular_vel, max_linear_accel, max_linear_decel
+      max_angular_accel: 2.5
+      # max_angular_decel — Humble 不支持 (Iron+ only)
+      # desired_linear_vel is the base speed; speed_profile_node publishes
+      # /speed_limit to dynamically adjust based on upcoming curvature.
+      # The speed_profile_node computes v(κ) = v_max/(1+β*|κ|^λ) and
+      # publishes the recommended speed at the lookahead point.
+      desired_linear_vel: 0.50
+      speed_limit_topic: /speed_limit
+      lookahead_dist: 0.6776
+      min_lookahead_dist: 0.2628
+      max_lookahead_dist: 0.8067
+      lookahead_time: 1.2415
+      use_velocity_scaled_lookahead_dist: true
+      # ★ use_fixed_curvature_lookahead 和 curvature_lookahead_dist — Humble 不支持 (Iron+ only)
+      # Humble RPP 始终从同一个 lookahead point 计算曲率, 无法分离曲率前视
+      # 静默忽略了 7 个月的参数 (2026-07-09 源码验证)
+      use_regulated_linear_velocity_scaling: true
+      regulated_linear_scaling_min_radius: 0.411
+      regulated_linear_scaling_min_speed: 0.20  # ★ 2026-07-08: 0.1→0.20, 弯道最低速提一倍, 与speed_profile v_min一致
+      use_cost_regulated_linear_velocity_scaling: true
+      cost_scaling_dist: 0.0894
+      cost_scaling_gain: 1.5   # ★ 2026-07-08: 2.7066→1.5, 降低cost区减速强度
+      inflation_cost_scaling_factor: 5.0
+      use_collision_detection: true
+      max_allowed_time_to_collision_up_to_carrot: 0.35  # ★ 2026-07-08: 默认1.0→0.35, 碰撞检测前视从~0.55m缩到~0.18m, 防止P点附近锥桶致假阳性卡死
+      min_approach_linear_velocity: 0.3174
+      approach_velocity_scaling_dist: 0.6752
+      use_rotate_to_heading: false
+      rotate_to_heading_angular_vel: 0.5
+      rotate_to_heading_min_angle: 0.785
+      allow_reversing: true
+      use_interpolation: true
+      max_robot_pose_search_dist: -1.0
+      transform_tolerance: 0.2
+controller_server_rclcpp_node:
+  ros__parameters:
+    use_sim_time: false
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      update_frequency: 5.0
+      publish_frequency: 2.0
+      global_frame: odom
+      robot_base_frame: base_footprint
+      use_sim_time: false
+      transform_tolerance: 0.5  # ★ 2026-07-08: LiDAR 5Hz扫描时间戳可早至200ms前, 默认0.1不足→丢帧
+      rolling_window: true
+      width: 3
+      height: 3
+      resolution: 0.05
+      robot_footprint: '[ [0.15, -0.10], [0.15, 0.10], [-0.12, 0.10], [-0.12, -0.10]
+        ]'
+      plugins:
+      - obstacle_layer
+      - keepout_filter
+      - inflation_layer
+      # ★ keepout_filter 恢复到 local costmap (回退 70.1s 基线):
+      #   之前移除它 → 局部控制器认为 keepout 格可走 → 车开进去 →
+      #   全局规划器认为该格 lethal → "Starting point in lethal space" 死锁
+      #   (见 Z_MD/log.md). 局部/全局对 lethal 的判断必须一致.
+      inflation_layer:
+        plugin: nav2_costmap_2d::InflationLayer
+        inflation_radius: 0.55
+        cost_scaling_factor: 2.0
+      keepout_filter:
+        plugin: nav2_costmap_2d::KeepoutFilter
+        enabled: true
+        filter_info_topic: /costmap_ctrl
+      obstacle_layer:
+        plugin: nav2_costmap_2d::ObstacleLayer
+        enabled: true
+        observation_sources: scan tracked_obstacles
+        scan:
+          topic: /scan
+          max_obstacle_height: 2.0
+          clearing: true
+          marking: true
+          data_type: LaserScan
+        tracked_obstacles:
+          topic: /tracked_obstacles_cloud
+          sensor_frame: depth_camera_link
+          data_type: PointCloud2
+          marking: true
+          clearing: true
+          obstacle_range: 3.5
+          max_obstacle_height: 0.5
+          min_obstacle_height: 0.05
+          observation_persistence: 1.0
+          expected_update_rate: 0.0
+      always_send_full_costmap: true
+  local_costmap_client:
+    ros__parameters:
+      use_sim_time: false
+  local_costmap_rclcpp_node:
+    ros__parameters:
+      use_sim_time: false
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      update_frequency: 1.0
+      publish_frequency: 1.0
+      global_frame: map
+      robot_base_frame: base_footprint
+      use_sim_time: false
+      robot_footprint: '[ [0.15, -0.10], [0.15, 0.10], [-0.12, 0.10], [-0.12, -0.10]
+        ]'
+      resolution: 0.05
+      track_unknown_space: true
+      transform_tolerance: 0.5
+      plugins:
+      - static_layer
+      - obstacle_layer
+      - keepout_filter
+      - inflation_layer
+      obstacle_layer:
+        plugin: nav2_costmap_2d::ObstacleLayer
+        enabled: true
+        observation_sources: scan tracked_obstacles
+        scan:
+          topic: /scan
+          max_obstacle_height: 2.0
+          clearing: true
+          marking: true
+          data_type: LaserScan
+        tracked_obstacles:
+          topic: /tracked_obstacles_cloud
+          sensor_frame: depth_camera_link
+          data_type: PointCloud2
+          marking: true
+          clearing: true
+          obstacle_range: 3.5
+          max_obstacle_height: 0.5
+          min_obstacle_height: 0.05
+          observation_persistence: 1.0
+          expected_update_rate: 0.0
+      static_layer:
+        plugin: nav2_costmap_2d::StaticLayer
+        map_subscribe_transient_local: true
+      inflation_layer:
+        plugin: nav2_costmap_2d::InflationLayer
+        inflation_radius: 0.5955
+        cost_scaling_factor: 2.8637
+      keepout_filter:
+        plugin: nav2_costmap_2d::KeepoutFilter
+        enabled: true
+        filter_info_topic: /costmap_ctrl
+        # ★ Humble 不支持 override_lethal_cost (2026-07-06 验证)
+        # 动态软化由 competition_master 通过 /costmap_ctrl 实现
+      always_send_full_costmap: true
+  global_costmap_client:
+    ros__parameters:
+      use_sim_time: false
+  global_costmap_rclcpp_node:
+    ros__parameters:
+      use_sim_time: false
+planner_server:
+  ros__parameters:
+    expected_planner_frequency: 10.0
+    use_sim_time: false
+    planner_plugins:
+    - GridBased
+    GridBased:
+      plugin: nav2_smac_planner/SmacPlannerHybrid
+      motion_model_for_search: REEDS_SHEPP
+      minimum_turning_radius: 0.3
+      tolerance: 0.5
+      angle_quantization_bins: 40
+      max_iterations: 1500
+      max_on_approach_iterations: 300
+      max_planning_time: 1.596
+      terminal_checking_interval: 500
+      lookup_table_size: 40.0
+      analytic_expansion_ratio: 4.0
+      analytic_expansion_max_length: 1.5
+      analytic_expansion_max_cost: 150.0
+      analytic_expansion_max_cost_override: false
+      reverse_penalty: 5.0   # ★ 2026-07-09: 4.0→5.0 (EXA: wiki §6.1 方案D, 更强阻换向减少 cusp 生成; Humble 无 cusp 检测 #4757)
+      change_penalty: 0.20   # ★ 2026-07-07: 0.0343→0.20 抑制换向尖角(cusp)
+      # Humble RPP 无 use_fixed_curvature_lookahead → #5098 cusp 曲率前视 bug 不适用
+      # cusp 抑制靠 change_penalty + reverse_penalty 在规划层实现. 若过于保守可回调至 0.10
+      non_straight_penalty: 1.8469
+      cost_penalty: 4.5   # ★ 2026-07-09: 6.33→4.5 (EXA: 官方推荐 1.3-3.5, 6.33 过保守致不必要绕行; 4.5 略高于上限留窄道安全余量)
+      retrospective_penalty: 0.015   # ★ 2026-07-09 新增: Humble 源码已验证 (默认0.015). 偏好靠后机动, 减少提前展开→省搜索时间, 防原地绕圈
+      cache_obstacle_heuristic: true
+      smooth_path: true
+      smoother:
+        max_iterations: 300
+        w_smooth: 0.3
+        w_data: 0.2
+        tolerance: 1.0e-10
+        do_refinement: true
+      downsample_costmap: true
+      downsampling_factor: 3
+      allow_unknown: false  # 回退基线: 禁止穿越未知空间, 配合 room 阈值恢复防穿墙
+      debug_visualizations: false
+planner_server_rclcpp_node:
+  ros__parameters:
+    use_sim_time: false
+recoveries_server:
+  ros__parameters:
+    costmap_topic: local_costmap/costmap_raw
+    footprint_topic: local_costmap/published_footprint
+    cycle_frequency: 10.0
+    recovery_plugins:
+    - backup
+    - wait
+    backup:
+      plugin: nav2_recoveries/BackUp
+      backup_dist: 0.3
+      backup_speed: 0.12
+    wait:
+      plugin: nav2_recoveries/Wait
+      wait_duration: 3.0
+    global_frame: odom
+    robot_base_frame: base_footprint
+    transform_timeout: 0.1
+    use_sim_time: false
+    simulate_ahead_time: 2.0
+smoother_server:
+  ros__parameters:
+    use_sim_time: false
+    smoother_plugins:
+    - SmoothPath
+    SmoothPath:
+      plugin: nav2_constrained_smoother/ConstrainedSmoother
+      reversing_enabled: true
+      minimum_turning_radius: 0.3
+      keep_start_orientation: true
+      keep_goal_orientation: true
+      path_downsampling_factor: 2
+      path_upsampling_factor: 1
+      # Racing tune: stronger curvature minimization for higher cornering speeds
+      # w_smooth reduced from 2e6 → path can deviate more from original to reduce curvature
+      # w_curve increased 20→50 → stricter minimum_turning_radius enforcement
+      w_smooth: 500000.0
+      w_cost: 0.03
+      w_curve: 50.0
+      w_dist: 0.0
+      w_cost_cusp_multiplier: 3.0
+      cusp_zone_length: 2.5
+      optimizer:
+        max_iterations: 70
+        debug_optimizer: false
+        gradient_tol: 5000.0
+        fn_tol: 1.0e-15
+        param_tol: 1.0e-20
+smoother_server_rclcpp_node:
+  ros__parameters:
+    use_sim_time: false
+map_server:
+  ros__parameters:
+    use_sim_time: false
+    yaml_filename: my_map.yaml
+map_saver:
+  ros__parameters:
+    use_sim_time: false
+    save_map_timeout: 5000
+    free_thresh_default: 0.25
+    occupied_thresh_default: 0.65
+waypoint_follower:
+  ros__parameters:
+    use_sim_time: false
+    loop_rate: 20
+    stop_on_failure: false
+    waypoint_task_executor_plugin: wait_at_waypoint
+    wait_at_waypoint:
+      plugin: nav2_waypoint_follower::WaitAtWaypoint
+      enabled: true
+      waypoint_pause_duration: 50
+velocity_smoother:
+  ros__parameters:
+    use_sim_time: false
+    smoothing_frequency: 20.0
+    scale_velocities: false
+    feedback: OPEN_LOOP
+    max_velocity:
+    - 0.65  # ★ 2026-07-07 审查: 0.85→0.65, 匹配RPP max_linear_vel=0.6244, 安全上限
+    - 0.0
+    - 2.8
+    min_velocity:
+    - -0.3
+    - 0.0
+    - -2.8
+    max_accel:
+    - 1.5
+    - 0.0
+    - 2.5
+    max_decel:
+    - -1.8
+    - 0.0
+    - -2.5
+    odom_topic: /odom
+    odom_duration: 0.1
+    deadband_velocity:
+    - 0.0
+    - 0.0
+    - 0.0
+    velocity_timeout: 1.0
+robot_state_publisher:
+  ros__parameters:
+    use_sim_time: false

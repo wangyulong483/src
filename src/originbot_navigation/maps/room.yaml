@@ -1,0 +1,10 @@
+image: room.pgm
+mode: trinary
+resolution: 0.05
+origin: [-2.65, -4.5, 0]
+negate: 0
+# 回退到 70.1s 基线 (2026-07-07): 恢复标准阈值, 墙体像素→lethal
+#   之前的 0.998/0.82 让墙体变 UNKNOWN + planner allow_unknown=true,
+#   导致规划器贴墙/穿墙, 车楔进墙角后无法恢复 (见 Z_MD/log.md 死亡螺旋).
+occupied_thresh: 0.65
+free_thresh: 0.25

@@ -1,0 +1,34 @@
+# Vision AI Configuration File
+# 火山引擎配置
+volcengine:
+  # API密钥 - 请替换为你的实际API密钥
+  api_key: "97e2bfc3-0a5b-4c98-add6-a2c39b8bc6a9"
+  
+  # 模型ID - 请替换为你要使用的模型ID
+  model_id: "ep-20260502193326-428m8"
+  
+  # AI分析提示词 (★ 2026-07-08 按 rule.md 医疗巡检场景重写)
+  # 子任务2: 环道中观察到人形立牌→大模型图生文反馈
+  prompt: "你是一个智慧医疗巡检机器人。请观察图像中的人形立牌，简洁描述：1)人物姿态与着装（如站/蹲/坐，白大褂/蓝色工服等），2)人物正在进行的与医疗巡检相关动作（如查看设备、记录数据、引导方向、消毒作业等），3)场景特征（如医院走廊、诊疗室、临时作业区等）。控制在100字以内。"
+
+# 检测配置
+detection:
+  # 触发图像分析的sign值 (与 competition_master_stage3 VLM触发对齐)
+  target_sign: 100   # ★ 2026-07-08: 9→100, 匹配 competition_master _trigger_vlm() 发布的 sign4return=100
+
+  # 图像话题名称 (JPU hardware-encoded JPEG from hobot_codec)
+  image_topic: "/aurora/rgb/image_jpeg"
+
+  # sign话题名称
+  sign_topic: "sign4return"
+
+  # VLM分析结果发布话题 (与 competition_master_stage3 对接)
+  result_topic: "vlm_result"
+
+# 图像处理配置
+image:
+  # 图像质量 (1-100)
+  jpeg_quality: 85
+  
+  # 图像格式
+  format: "JPEG"

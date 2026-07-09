@@ -2,6 +2,167 @@
 
 ---
 
+## 2026-07-09 18:00 — ★ Humble RPP 参数审计: 4个无效参数清理 + 远程二进制验证
+
+> **用户**: "Humble版本更新到什么比较好" / "在我电脑上克隆，修改源码，使用EXA MCP" / "帮我远程验证，在本地修改" / "更新README和agent_do"
+
+### 发现
+
+**Humble RPP 只有 25 个参数** (declare_parameter_if_not_declared), 我们 YAML 中有 4 个 Iron+ 才有的参数被静默忽略了 7 个月:
+
+| 无效参数 | 说明 |
+|----------|------|
+| `use_dynamic_window: true` | Iron+ 功能 |
+| `use_fixed_curvature_lookahead: true` | **最关键**: Iron+ 功能! 我们一直以为这个参数在抑制 cusp |
+| `curvature_lookahead_dist: 0.8` | 同上—配合参数 |
+| `max_angular_decel: 2.0` | Iron+ 功能 |
+
+这意味着:
+- Humble RPP 始终从同一个 lookahead point 计算曲率, 无法分离曲率前视
+- #5098 cusp 曲率前视 bug 不适用 — 产生 bug 的功能 (use_fixed_curvature_lookahead) 根本不存在
+- `change_penalty=0.20` 对 cusp 的抑制完全靠 planner 层, RPP 层无配合
+- `speed_limit_topic: /speed_limit` ✅ 有效 — controller_server 订阅 nav2_msgs/SpeedLimit 并调用 setSpeedLimit()
+
+### EXA MCP 研究 + Humble 源码 audit
+
+| 来源 | 关键发现 |
+|------|----------|
+| [Humble RPP source](Z_helpproject/navigation2_humble_patched) | 25 个 declare_parameter_if_not_declared, 无 use_fixed_curvature 等 |
+| [Humble RPP docs](https://docs.ros.org/en/humble/p/nav2_regulated_pure_pursuit_controller/) | 官方文档参数列表不含 fixed_curvature |
+| [Jazzy RPP struct](https://docs.ros.org/en/jazzy/p/nav2_regulated_pure_pursuit_controller/generated/structnav2__regulated__pure__pursuit__controller_1_1Parameters.html) | use_fixed_curvature_lookahead 在 Jazzy 存在 |
+| [PR #5547](https://github.com/ros-navigation/navigation2/pull/5547) | Keepout 动态切换修复已 backport 到 Humble (merge 2025-09-23) |
+| [PR #5134](https://github.com/ros-navigation/navigation2/pull/5134) | RPP cusp 曲率前视钳位 — Humble 未 backport (功能本身不存在) |
+
+### 远程 RDK X5 验证 (SSH MCP)
+
+| 检查项 | 结果 |
+|--------|------|
+| Nav2 版本 | **1.1.20-1jammy.20260423** (全部 31 个包) |
+| Keepout `has_updated_data_` | ✅ header 中有 (L125), PR #5547 已包含 |
+| Keepout `override_lethal_cost` | ❌ 未 backport (PR #5187) |
+| RPP binary strings | `use_fixed_curv`, `curvature_lookahead`, `use_dynamic_window` **全不存在** |
+| RPP binary strings | `allow_reversing`, `desired_linear_vel`, `use_regulated`, `use_rotate_to_heading` ✅ 存在 |
+
+### 修改 (2 文件, 仅本地)
+
+#### 1. originbot_nav2_rpp.yaml — 删除 4 个无效参数 + 3 处注释纠正
+
+| # | 改动 | 说明 |
+|---|------|------|
+| 1 | 删除 `use_dynamic_window: true` | Humble 不支持 |
+| 2 | 删除 `use_fixed_curvature_lookahead: true` | ★ 7 个月静默忽略, #5098 不适用 |
+| 3 | 删除 `curvature_lookahead_dist: 0.8` | 同上 |
+| 4 | 删除 `max_angular_decel: 2.0` | Humble 不支持 |
+| 5 | 纠正 AMCL 注释: 删除 "RPP use_fixed_curvature_lookahead 在控制层处理" | 功能不存在 |
+| 6 | 纠正 planner change_penalty 注释: 删除 "#5098 ... 曲率前视点乱跳" | bug 不适用 |
+| 7 | 新增 Humble 参数审计说明 | 防止将来再添加无效参数 |
+
+#### 2. README.md — 同步无效参数清理
+
+| # | 改动 |
+|---|------|
+| 1 | §6.1 删除 `use_fixed_curvature_lookahead` 和 `curvature_lookahead_dist` 参数行 |
+| 2 | §6.2 更新 `change_penalty` 注释: 标注 #5098 不适用 Humble |
+| 3 | §17.1 已知问题表: 更新 RPP cusp bug 两行 |
+
+### 未改动
+
+- 远程 RDK X5: 未部署 (仅本地修改)
+- `speed_profile_node.py`: 未改 (speed_limit_topic 已验证有效)
+- 行为树 XML: 未改 (本来就没有 use_fixed_curvature 引用)
+
+### 结论
+
+Humble 不能升级 — RDK X5 仅支持 Ubuntu 22.04, Jazzy 需要 24.04。源码编译也无必要 — 对我们影响最大的 Nav2 bug (#3186 楞死, Keepout multiplier 忽略) 是架构限制而非代码 bug。唯一有价值且已包含的 Keepout 动态切换补丁已在 apt 1.1.20 中。
+
+**本次清理了 7 个月的配置债**: 删除了 4 个无效参数, 纠正了基于错误假设的 3 处注释。
+
+---
+
+
+## 2026-07-08 20:00 — ★ 传感器全栈优化：时间戳对齐 + 消息类型修复 + 路点校准 + DDS切换 + IMU调频
+
+> **用户**: "帮我ssh调试深度相机和雷达，使其时间戳对齐" / "IMU和里程计也调试一下" / "综合上述改动更新文档"
+
+### 诊断发现的 3 类问题
+
+| 类别 | 问题 | 证据 |
+|------|------|------|
+| **消息类型** | `speed_profile_node.py` 发布 `std_msgs/Float32`，Nav2 `controller_server` 订阅 `nav2_msgs/SpeedLimit` → ROS2 静默丢弃 | [controller_server.cpp L210](https://api.nav2.org/nav2-humble/html/controller__server_8cpp_source.html#L210) |
+| **时间戳/TF** | LiDAR 扫描时间戳早于 TF 缓存最早记录 → costmap 丢帧 | 日志 L775: `dropping message: frame 'laser_link' ... timestamp is earlier than all the data in the transform cache` |
+| **IMU速率** | BMI088 IIO 配置 100Hz, 实际 ~46Hz (sysfs轮询+Python 开销, timer 堆积) | 日志 Madgwick msgs: 460/10s=46Hz |
+| **路径** | path_optimizer_node / depth_detector / object_tracker 声称已部署但从未存在仓库 | glob 全仓库搜索零命中 |
+
+### 修改（7 文件，全部已部署+colcon build通过）
+
+#### 1. speed_profile_node.py — 消息类型修复 (B1)
+
+| 行 | 旧 | 新 |
+|----|-----|-----|
+| L29 | `from std_msgs.msg import Float32` | `from nav2_msgs.msg import SpeedLimit` |
+| L69 | `self.create_publisher(Float32, ...)` | `self.create_publisher(SpeedLimit, ...)` |
+| L336-337 | `msg = Float32()` / `msg.data = ...` | `msg = SpeedLimit(); msg.percentage = False` / `msg.speed_limit = ...` |
+
+Nav2 `controller_server` 调用 `speedLimitCallback()` → 所有 controller plugin 的 `setSpeedLimit()`。Float32 与 SpeedLimit 类型不匹配 → ROS2 QoS 拒绝匹配 → 所有 /speed_limit 消息静默丢弃。节点从 2026-07-01 部署以来从未真正生效。
+
+#### 2. competition_master_stage3.py — 路点 data 校准
+
+基于 15 条干净 DONE CCW 轨迹（剔除 4 条 CRUISE>40s 环道卡死），逐运行最近点中位数校准：
+
+| 航点 | 旧值 | 新值 | 位移 |
+|------|------|------|------|
+| Entry | (0.37, -1.16) | **(0.33, -1.16)** | 4cm |
+| WP1 | (1.53, -1.51) | **(1.50, -1.45)** | 6cm |
+| WP2 | (3.02, -1.06) | **(3.02, -1.02)** | 4cm |
+| PostVLM | (1.02, -0.06) | **(0.96, -0.06)** | 6cm |
+
+同步更新 `cruise_ccw` + `cruise_cw`（反序）+ `entry_point`。工具改进：`recalibrate_waypoints.py` 新增 `MAX_CRUISE_S=40.0` 质量过滤。
+
+#### 3. originbot_nav2_rpp.yaml — 碰撞检测 + TF容差
+
+| # | 参数 | 旧 | 新 | 原理 |
+|---|------|-----|-----|------|
+| 1 | `max_allowed_time_to_collision_up_to_carrot` | 默认1.0 | **0.35** | P点附近锥桶致碰撞假阳性 → 缩小前视到 ~0.18m |
+| 2 | local costmap `transform_tolerance` | 默认0.1 | **0.5** | LiDAR 5Hz 扫描时间戳可早至 200ms 前 → 扩大到 500ms |
+
+#### 4. 传感器同步修复
+
+| 文件 | 改动 | 原理 |
+|------|------|------|
+| `stage3_bringup.launch.py` | + `SetEnvironmentVariable('RMW_IMPLEMENTATION', 'rmw_cyclonedds_cpp')` | CycloneDDS SHM transport, RDK X5官方推荐, 大消息(图像/点云)延迟更低 |
+| `base_minimal.launch.py` | BMI088 `rate: 100→50` | 匹配实际 sysfs 轮询能力, 消除 timer 堆积 |
+| `ekf_dual_imu.yaml` | `sensor_timeout: 0.5→0.2` + `imu0_queue_size: 20→30` | 15Hz×0.2s=3周期容错; 更多MPU6050缓冲 |
+| `imu_madgwick_bmi088.yaml` | `frequency: 100→50` | 匹配 IIO bridge 实际输出速率 |
+
+#### 5. 文档更新
+
+| 文件 | 改动 |
+|------|------|
+| `README.md` | §2.1 传感器速率+CycloneDDS, §3 节点拓扑更新, §4.1 碰撞参数, §4.3 TF容差, §4.4 speed_profile更新, §7 圈速, §8.1 平台限制 |
+| `wiki.md` | §0.1 新增 B1/B2/B3 调查发现, §2.1 BT XML确认已修复, §2.2 三笔→一笔验证债, §3 删除depth_detector, §7 路线图更新, §9 索引更新 |
+| `LEARNINGS.md` | LRN-20260708-001 (B1消息类型) + LRN-20260708-002 (B2/B3路径缺失) |
+
+### 运行分析（2 轮）
+
+| 指标 | 第1轮 (18:44) | 第2轮 (19:09) |
+|------|-------------|-------------|
+| 总耗时 | **204.4s DONE** | **15.7s Ctrl+C** |
+| NAV_TO_QR | 15.0s | 未完成 (卡在P点) |
+| CRUISE | **91.8s** (2次卡死+脱困+循环重回) | — |
+| RETURN_P | 22.2s | — |
+| 根因 | 环道弯道 inflation 0.55 撑爆 0.5m 通道 | P点锥桶 + collision detection 假阳性 → 100+次 collision ahead → 机器人从未移动 |
+
+第1轮 CRUISE 91.8s: robot 在弯道 (3.2,-1.3) 卡死→软化禁区→直驱倒车→循环重回, 浪费 ~60s。根因是 wiki.md §1 的结构性矛盾: 单一 0.55 inflation 无法同时服务大厅和环道。
+
+第2轮: `max_allowed_time_to_collision_up_to_carrot: 0.35` 修复后应解决 P 点发车假阳性问题。
+
+### SSH
+
+- 全部 7 文件上传 + CRLF fix + colcon build → 成功
+- 3 packages: origincar_bringup (2-3s), originbot_navigation (2-3s), origincar_base (2-3s)
+
+---
+
 ## 2026-07-05 22:00 — ★ 巡航路点重构：VLM 索引修复 + post-VLM 注入 RETURN_P
 
 > **用户**: "VLM 路点在第 3 个（路点1→路点2→VLM→路点3→P）" — VLM 不在巡航末尾

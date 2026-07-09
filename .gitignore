@@ -27,3 +27,7 @@ __pycache__/
 build/
 install/
 log/
+data/
+nul
+Z_MD/
+Z_helpproject/
