@@ -2,6 +2,451 @@
 
 ---
 
+## 2026-07-11 20:00 — ★★★ 项目架构大转向: Nav2环道 → 视觉控制 + Nav2大厅
+
+### 决策
+
+**旧架构 (废弃)**: Stage3 全 Nav2 — P→QR→Nav2 环道巡航→VLM→Nav2返航→P
+**新架构 (当前)**: Nav2 负责开阔大厅 + 视觉控制负责环道
+
+```
+旧: Nav2 做全部 (规划+控制+避障+禁区)
+    → 环道 0.5m 窄, inflation 撑爆, Ackermann 切内角进禁区, 死锁循环
+
+新: 大厅 = Nav2 (开阔空间, 适合规划避障)
+    环道 = 纯视觉PID居中 + 纯追踪转弯 + LiDAR锥桶绕行
+    → 不用 planner, 不用 costmap, 不用 keepout
+```
+
+### 阶段
+
+| 阶段 | 导航方式 | 范围 | 状态 |
+|------|----------|------|------|
+| **段1** (NAV_TO_QR) | Nav2 | P→QR 任务发布点 | ✅ 保留 |
+| **段2a** (NAV_TO_ENTRY) | Nav2 | QR→通道入口 | ✅ 保留 |
+| **段2b** (CHANNEL) | **视觉控制** | 环道巡航 + 锥桶绕行 | 🔧 待实现 |
+| **段3** (RETURN_P) | Nav2 | 环道出口→P | 🔧 待实现 |
+
+### 清理记录
+
+**删除**:
+| 类型 | 数量 | 详情 |
+|------|------|------|
+| 源文件 | 5 | stage1, stage3, speed_profile, waypoint_logger, yolo_costmap_bridge |
+| 归档包 | 3 | racing_obstacle_detection_yolo, racing_vision_ai, utils |
+| 启动文件 | 5 | stage1/stage3 launch, nav_bringup, origincar_bringup(old), ekf |
+| 配置文件 | 7 | ekf.yaml, imu.yaml, lds_2d.lua, lsx10 M10×2, Position.msg, smoother_server |
+| 地图/可视化 | 3 | room.png×2, keepout_gradient.png |
+| YOLO 模型 | 3 | 6.7MB .bin + config + classlist |
+
+**保留**: 8 包, 6 launch, 19 py, 5 cpp, 8 yaml, 启动入口 `stage2_bringup.launch.py`
+
+### 文档更新
+
+| 文件 | 改动 |
+|------|------|
+| `README.md` | 重写: 10 模块接口化, 每模块 input→output→params |
+| `wiki.md` | 新增: 视觉控制方案 + 清理记录 |
+| `agent_do.md` | 本条 |
+
+### 下一步
+
+见 [wiki.md](Z_MD/wiki.md) — Phase 1: 实现 `channel_controller.py` (HSV分割→PID居中→LiDAR绕行)
+
+---
+
+## 2026-07-11 19:00 — ★ keepout v3: 禁区内部恢复 LETHAL + 陡峭悬崖 + 通道河谷
+
+> **用户**: "小车现在是已经不在乎是否横穿禁区了" → EXA MCP 研究发现根因并修复
+
+### 根因
+
+v2 梯度掩码两个致命缺陷叠加:
+1. **PGM 实际产出**: 99% 像素在 250-252 → costmap cost≈2.5 (≈FREE). 禁区几乎零成本 → planner 自由穿越
+2. **设计缺陷**: keepout 全非致命 (max cost=250 < 253 INSCRIBED) → 即使梯度正确也没硬阻拦
+
+EXA MCP 研究关键发现:
+| 来源 | 关键发现 |
+|------|----------|
+| [Nav2 Keepout Docs](https://docs.nav2.org/configuration/packages/costmap-plugins/keepout_filter.html) | "Cells with occupied values covers keep-out zones where robot will never enter" — 禁区应 LETHAL |
+| [PR #5187](https://github.com/ros-navigation/navigation2/pull/5187) | `override_lethal_cost` 是官方 recovery 方案 — Humble 1.1.20 **不支持** (so 不含此功能) |
+| [getMaskCost source](https://api.nav2.org/nav2-jazzy/html/keepout__filter_8cpp_source.html) | cost = OccGrid_data × 254/100. pixel 0→OccGrid 100→cost 254(LETHAL), pixel 252→OccGrid 2→cost 5(FREE) |
+
+### 修改 (3 文件)
+
+#### 1. generate_gradient_keepout.py — v3 参数
+
+| 参数 | v2 | v3 | 原理 |
+|------|-----|-----|------|
+| `KEEPOUT_MAX_COST` | 250 | **254** | LETHAL, planner 绝不穿越 |
+| `KEEPOUT_RISE_PER_PX` | 25 | **80** | 边缘→LETHAL 仅 (254-140)/80≈1.4px≈0.07m |
+| `CHANNEL_DECAY_PX` | 5.0 | **3.0** | 通道河谷更窄聚焦 |
+| `cost_to_pixel()` | occupied_thresh=0.99 | **occupied_thresh=1.0** | pixel 0→OccGrid 100→cost 254 |
+
+#### 2. keepout_mask.yaml
+
+| 参数 | v2 | v3 |
+|------|-----|-----|
+| `occupied_thresh` | 0.99 | **1.0** |
+| `free_thresh` | 0.01 | 0.01 (不变) |
+
+#### 3. keepout_mask.pgm — 重新生成
+
+| 指标 | v2 | v3 |
+|------|-----|-----|
+| LETHAL (cost=254) | **0 px** | **3164 px (13.8%)** |
+| Near-lethal (220-253) | 0 px | 868 px (3.8%) |
+| FREE (cost≤10) | 16377 px | 17556 px (76.4%) |
+| Channel valley (10-60) | ~0 px | 1395 px (6.1%) |
+
+v2 实际产出: 16167 px @ pixel 252 (≈FREE), 210 px @ pixel 250 (≈FREE) → **禁区=零成本**
+v3 实际产出: 3164 px @ pixel 0 (LEHAL), 868 px 陡峭悬崖 → **禁区=硬墙**
+
+### 设计架构
+
+```
+通道中心 (cost 0) ──→ 通道河谷 (cost 0→60, 引导居中)
+    │
+    ├── 通道边缘 (cost 60→140, pixel 190-113, 0 px 宽 ← binary 边界)
+    │
+    └── ★ 禁区悬崖 (cost 140→254, 1.4px≈0.07m 陡升)
+            │
+            └── 禁区内部 (cost 254 LETHAL, planner 绝不穿越)
+```
+
+**四个保证** (v3):
+1. **优先车道**: 通道河谷(0→60) + cost_penalty → 引导居中
+2. **不穿越**: 禁区内部 LETHAL(254) → planner 绝不规划穿越路径
+3. **不误入**: 陡峭悬崖(140→254 @ 0.07m) → 触碰前推回
+4. **锥桶绕行**: cone bypass 是穿越禁区的唯一合法通道 (YOLO≥3帧→禁用→LiDAR自然绕行)
+
+### 未改动
+
+- competition_master_stage3.py: `_is_in_keepout_free_zone` 阈值 150 仍然正确
+- Nav2 参数: cost_penalty=4.5 不变 (LETHAL 本身就是硬阻拦)
+- 行为树 XML: 无变化
+- launch 文件: 无变化
+
+### SSH
+
+- keepout_mask.pgm + keepout_mask.yaml → 上传+备份 → colcon build → 成功 (2.46s)
+
+---
+
+## 2026-07-10 23:30 — ★ 深度相机优化: 原生 PointCloud + VoxelLayer 替代手动投影
+
+> **用户**: "我感觉深度相机没用完美利用"
+
+### 发现
+
+Aurora930 已配置 `point_cloud_enable: true` — 原生发布硬件 ToF 全帧 PointCloud2 到 `/aurora/points2` (15fps, 640×400点/帧). **无人订阅** — yolo_costmap_bridge 手动对 YOLO bbox 做 3×3 像素采样并软件投影, 丢弃了 99% 的深度数据.
+
+### 修改 (4 文件)
+
+#### 1. originbot_nav2_rpp.yaml — 添加 VoxelLayer
+
+| costmap | 配置 |
+|----------|------|
+| local | VoxelLayer: `/aurora/points2`, z_res=0.1m, z_voxels=8, mark_threshold=2, height 0.05-0.5m (去地面+仅锥桶), 3.5m 范围 |
+| global | 同上, mark_threshold=3 (更长观测窗口) |
+
+移除 `tracked_obstacles` (PointCloud2) 从 obstacle_layer → LiDAR 仅 `/scan`; 深度点云迁移至 VoxelLayer.
+
+#### 2. stage3_bringup.launch.py
+
+- 移除 `yolo_costmap_bridge` Node (VoxelLayer + 原生点云替代)
+- 更新启动时序注释 (t=3s)
+
+#### 3. CMakeLists.txt
+
+- 移除 `yolo_costmap_bridge.py` install 规则
+
+#### 4. yolo_costmap_bridge.py
+
+- 源文件保留 (历史参考), 不再编译/部署
+
+### 效果
+
+| 指标 | 之前 | 之后 |
+|------|------|--------|
+| 障碍物覆盖 | 仅 YOLO bbox (5点/帧) | 全视野 (256K→16K点/帧, 硬件降采样内选) |
+| CPU (深度管线) | Python 手动投影 ~5ms/帧 | 硬件 ToF 投影, 零 CPU |
+| 假阳性 | YOLO 误检 + bbox 高度回退误差 | VoxelLayer mark_threshold 噪声滤除 |
+| 地面滤除 | 无 (YOLO 仅看 bbox) | VoxelLayer min_obstacle_height 原生 |
+| YOLO 角色 | 障碍物标记 + 锥桶绕行决策 (耦合) | 仅用于锥桶绕行决策 (解耦) |
+
+### 数据流对比
+
+```
+之前: Aurora930 → /depth/image_raw → yolo_costmap_bridge → 手动 3D 投影 → /tracked_obstacles_cloud → obstacle_layer
+之后: Aurora930 → /aurora/points2 (原生 PointCloud2) → VoxelLayer → 3D 体素 → 2D costmap (标记+清除)
+      YOLO → /racing_obstacle_detection → competition_master (仅锥桶绕行决策, 与障碍物标记分离)
+```
+
+### 文档更新
+
+| 文件 | 改动 |
+|------|------|
+| `README.md` | §2.1 启动时序, §3.1 架构图, §3.2 话题表, §3.3 语言分工, §5.1 节点表, §6.3 观测源表, §10 YOLO管线, §20 文件索引 |
+| `agent_do.md` | 本条记录 |
+
+### 无需改动
+
+- competition_master 锥桶绕行逻辑 (YOLO 订阅依旧)
+- 相机 launch 配置 (point_cloud_enable 已为 true)
+- 行为树 XML
+
+---
+
+## 2026-07-10 23:00 — ★ 梯度 keepout v2 (双侧势场) + 修复 yaml 二值化 bug + cone-bypass 优化 + PNG
+
+> **用户**: "优化梯度 keepout 掩码, 锥桶绕行系统, 误入禁区恢复, 梯度使用png可视化"
+
+### 发现的关键 BUG
+
+`keepout_mask.yaml` 的 `occupied_thresh: 0.5 / free_thresh: 0.5` **相等** → scale 模式在 pixel≈127 处**二值化**. 上一轮 (v1) 生成的梯度 (pixel 15-255) 被压回二进制: pixel≥128→free, <128→lethal. **梯度完全失效, 从未在 costmap 生效**. 老 soft mask 用 0.99/0.01 正是为此.
+
+### 优化 1: 梯度 keepout v2 — 双侧势场
+
+上一轮 (v1) 缺陷: Manhattan 距离(菱形伪影) + 单侧梯度(通道无河谷,无居中引导) + 大部分非致命→可横穿.
+
+v2 重写 [generate_gradient_keepout.py](src/originbot_navigation/tools/generate_gradient_keepout.py):
+| 改进 | v1 | v2 |
+|------|-----|-----|
+| 距离变换 | Manhattan 4邻域 (菱形) | **八方向 chamfer** (1.0/1.414, 近欧氏平滑) |
+| 势场 | 单侧 (仅禁区梯度) | **双侧**: 通道河谷(cost 0→60居中) + 禁区斜坡(140→250) |
+| 致命像素 | 13 (dist>8px) | **0** (keepout 全 <253, 封顶250) |
+| 横穿 | 大部分非致命→可穿 | 内部cost250→代价天文, 绝不穿 |
+| 恢复方式 | ClearCostmapAroundRobot 清图 | **梯度势场自然引导** (不清图) |
+
+四个保证: (1)优先车道 通道河谷+cost_penalty (2)不死锁 全<253 footprint永不判碰 (3)不横穿 内部250 (4)势场恢复 planner沿下降cost规划出口.
+
+### 优化 2: 修复 yaml 阈值 (关键)
+
+`keepout_mask.yaml`: `free_thresh 0.5→0.01`, `occupied_thresh 0.5→0.99`. 让 pixel 3-251 线性插值为 occupancy 1-99 → cost 1-252 (非致命梯度). 无此修复梯度就是死代码.
+
+### 优化 3: 锥桶绕行 + 误入恢复
+
+`competition_master_stage3.py`:
+| 改动 | 原因 |
+|------|------|
+| 删除 `_recover_accidental_keepout()` (清图恢复) | ★ 梯度掩码下清图会**抹掉引导恢复的梯度本身** → 适得其反. 非致命梯度让 planner 自然规划出口 |
+| 误入禁区分支: 清图 → 仅诊断日志 | 势场自动恢复, 无需干预 |
+| `_is_in_keepout_free_zone` 阈值 200→150 | 梯度掩码: 通道 pixel 193-252, 禁区 <=115, 150 居中判别 |
+| 新增 `_cone_bypass_max_off_sec=15.0` | keepout 关闭安全上限, 防 YOLO 假阳性把 keepout 永久关闭 |
+
+### 优化 4: PNG 可视化
+
+`generate_gradient_keepout.py` 新增 `_write_png()` (PIL): cost 彩色映射, 放大5倍. 白=通道(free), 绿=河谷, 橙黄=禁区边缘, 深红=禁区内部(cost250). 输出 `maps/keepout_mask_gradient.png` (815x705).
+
+### 生成结果验证
+
+```
+channel=6238  keepout=4032  outside=12713
+free(cost0-10):   16484px (71.7%)  ← 通道中心+外围
+low(10-80):        2467px (10.7%)  ← 通道河谷边缘
+high(160-249):     4032px (17.5%)  ← 禁区斜坡
+lethal(253+):         0px           ← ★ keepout 全非致命
+```
+
+PNG 目视确认: 通道白色蜿蜒河谷, 诊疗区深红块, 边缘平滑绿→橙→红梯度.
+
+### 修改文件
+
+| 文件 | 改动 |
+|------|------|
+| `generate_gradient_keepout.py` | 重写: 八方向chamfer + 双侧势场 + PNG |
+| `keepout_mask.pgm` | 重新生成 (梯度势场) |
+| `keepout_mask.yaml` | 阈值 0.5/0.5 → 0.01/0.99 (修复二值化) |
+| `keepout_mask_gradient.png` | 新增 (可视化) |
+| `competition_master_stage3.py` | 删除清图恢复, 加安全超时, 阈值150 |
+| `README.md` | §7.2 势场说明; §16 圈速条目 |
+
+### 无需改动
+
+- Nav2 参数 (keepout_filter/inflation 配置)
+- 锥桶绕行状态机核心逻辑 (disable/enable/hysteresis)
+- launch 文件
+
+---
+
+## 2026-07-10 22:00 — ★ 梯度 keepout 掩码: 二进制→距离场 (v1, 被 v2 取代)
+
+> **用户**: "nav2禁区是不是还可以当优选区" / "要, 使用EXA MCP查找最佳方案"
+
+### EXA MCP 研究关键发现
+
+| 来源 | 关键发现 |
+|------|----------|
+| [Nav2 Keepout Docs](https://docs.nav2.org/tutorials/docs/navigation2_with_keepout_filter.html) | KeepoutFilter 原生支持三种模式: 禁区(254 lethal)、加权区域(1-99 可穿非致命)、优先车道(反转mask). OccupancyGrid 值直接映射为 cost. `scale` mode 支持中间像素值 |
+| [SmacPlanner config](https://docs.nav2.org/configuration/packages/smac/configuring-smac-hybrid.html) | `cost_penalty` 参数 (1.3-3.5): "drives the robot more towards the center of passages" — 加权成本×penalty → planner 自然选择通道中心 |
+| [Nav2 Inflation Tuning](https://docs.nav2.org/tuning/index.html) | "create a smooth potential to provide the best performance" — 但 inflation 仅适用于 obstacle layer, 不适用于 keepout filter. 渐变必须内嵌在 mask 像素本身 |
+| [PR #5187](https://github.com/ros-navigation/navigation2/pull/5187) | `override_lethal_cost` (Jazzy+) 是官方方案. Humble 等效方案: 用 scale 模式加权 mask 替代二进制 0/254 |
+
+### 方案: 距离场梯度 keepout 掩码
+
+**问题**: 当前 keepout_mask.pgm = 二进制 (0=禁区/254=通道). KeepoutFilter 直接写入 costmap → 无渐变 → footprint 碰 lethal → planner 拒绝规划 → 死锁.
+
+**方案**: 用纯 Python 二通距离变换生成梯度掩码:
+- 加载二进制 `keepout_mask.pgm`, 对每个禁区像素计算到最近通道像素的 Manhattan 距离
+- 映射距离→像素值: dist 0→255(免费), 1-3px→200→150, 3-7px→150→50, >7px→50→15
+- 仅保留 >8px 距离的原始黑色像素为致命 (场地外围边界)
+
+### 修改 (1 新文件, 1 掩码文件覆盖)
+
+#### 1. generate_gradient_keepout.py — 新建
+
+纯 Python (无 numpy/scipy 依赖):
+- `load_pgm()` / `save_pgm()` — P5 格式读/写
+- `distance_transform_pure_python()` — 二通 Manhattan 距离变换 O(w×h)
+- `distance_to_pixel()` — 距离→PGM 像素映射 (4 级渐变)
+- 保留场地外围边界为致命 (dist>8px + 原像素=0)
+- 保留通道中心为免费 (像素≥254)
+- 统计: 输出直方图 + 按成本分组的像素计数
+
+#### 2. keepout_mask.pgm — 覆盖
+
+| 指标 | 旧 (二进制) | 新 (渐变) |
+|------|------------|----------|
+| 致命像素 (cost 254) | **4032** | **13** |
+| 免费像素 (cost 0) | 12713 | 12713 |
+| 梯度像素 (cost 1-253) | 0 | 4032-13=4019 |
+| 通道边缘成本 | 0→254 (刃口) | 0→50→150→230 (平滑) |
+| 越界→死锁? | 是 | 否 (非致命) |
+
+**效果**:
+- **优先车道**: 通道中心 = cost 0 → planner 自然选择居中 (无强制, 靠梯度引导)
+- **不横穿**: 禁区成本 150-230 → planner 尽可能避开, 但必要时可穿行
+- **不死锁**: 无致命 cost 在通道附近 → shim 误入时 planner 照常规划 → 沿梯度回通道
+- **锥桶绕行仍然有效**: 锥桶堵通道时 keepout 禁用 → LiDAR 处理锥桶; 无锥桶误入时梯度处理
+
+#### 3. _recover_accidental_keepout() — 保留
+
+代码保留但在渐变掩码下几乎不触发 (仅 13 致命像素, 全在场地外围). 作为安全网无需任何成本.
+
+### 文档更新
+
+| 文件 | 改动 |
+|------|------|
+| `README.md` | §7.2: 新增梯度掩码说明; §16: 新增条目 |
+| `agent_do.md` | 本条记录 |
+
+### 无需改动
+
+- `keepout_mask.yaml`: 已使用 `mode: scale` — 完美支持渐变
+- Nav2 参数: keepout_filter 配置无需改动
+- competition_master 代码: 锥桶绕行 + 恢复逻辑无需改动
+- launch 文件: 无变化
+
+---
+
+## 2026-07-10 21:00 — ★ 锥桶绕行: 移除软禁区+卡死检测+直驱倒车, 替换为预测性 binary ON/OFF keepout
+
+> **用户**: "直接把软禁区去除" / "使用EXA MCP查找方案" / "日志不是给我看的, 是复制下来给你看的"
+
+### 动机
+
+场地是 5x5m 平坦 PVC 平面 — 仅锥桶+外围挡板是真实障碍物. keepout 区域物理上空旷.
+旧三级系统 (软禁区 + 1Hz卡死检测 + 直驱倒车脱困) 是**被动/滞后**的:
+- 等 3.5s 卡死才反应
+- 软 mask 仍 push planner (cost 229)
+- 紧急倒车绕过 Nav2 碰撞检测
+
+### 新方案: 预测性锥桶绕行
+
+**核心**: YOLO 检测锥桶 → **立即**禁用 keepout → LiDAR obstacle_layer 自然引导绕行穿过物理空旷的禁区 → 回通道后恢复.
+
+**状态机** (2Hz, `_check_cone_bypass()`):
+- `KEEPOUT_ON`: YOLO ≥3帧/2.0s → `_disable_keepout_for_cone()` → 发布 `/keepout_disabled` (不存在的话题 → KeepoutFilter 无效果)
+- `KEEPOUT_OFF`: 无锥桶 + 在通道自由区 (PGM 像素查询) + 移动>0.5m → `_enable_keepout()` → 发布 `/keepout_mask` (恢复)
+
+**仅 CRUISE_CHANNEL 期间启用** (RETURN_P: keepout 始终 ON)
+
+### EXA MCP 研究关键发现
+
+| 来源 | 关键发现 |
+|------|----------|
+| [Nav2 PR #5429](https://github.com/ros-navigation/navigation2/pull/5429) | 动态 keepout 切换: `updateBounds()` 需要在收到新 mask 时更新边界. 已 backport 至 Humble (#5547). 我们 Humble 1.1.20 `has_updated_data_` 已包含 |
+| [Nav2 Keepout Docs](https://docs.nav2.org/configuration/packages/costmap-plugins/keepout_filter.html) | `filter_mask_topic` 重定向 → 不同的 mask topic = 不同的 keepout 行为. 指向不存在的话题 = 无 keepout |
+| [KeepoutZone PR #5187](https://github.com/ros-navigation/navigation2/pull/5187) | `override_lethal_cost`: Jazzy+ only, Humble 未 backport. 锥桶绕行通过禁用 keepout 从源头避免进入 lethal |
+
+### 修改 (4 文件, ~250行删除, ~120行新增)
+
+#### 1. competition_master_stage3.py — 核心重构
+
+**移除** (~250 行):
+- `_soften_keepout()`, `_harden_keepout()`, `_reenable_keepout()`
+- `_start_stuck_monitor()`, `_stop_stuck_monitor()`, `_check_stuck()` (~110行卡死检测状态机)
+- `_emergency_backup_escape()`, `_finish_emergency_backup()`, `_emergency_backup_republish()` (~85行直驱倒车)
+- 所有软禁区实例变量 (`_keepout_softened`, `_soften_locked`, `_soften_cycles`, 等)
+- 所有卡死检测变量 (`_stuck_*`)
+- 所有紧急倒车变量 (`_emergency_backup_*`)
+
+**新增** (~120 行):
+| 方法 | 功能 |
+|------|------|
+| `_load_keepout_mask_pgm()` | 加载 keepout_mask.pgm 原始 P5 字节 (纯 Python, 无 numpy) |
+| `_is_in_keepout_free_zone()` | 世界坐标→PGM 像素查询: 机器人是否在通道自由区 (pixel≥200) |
+| `_is_cone_blocking()` | YOLO ≥3帧/2.0s → 锥桶堵塞确认 (比 `_has_nearby_obstacle` 更严格) |
+| `_start_cone_monitor()` | 初始化并启动 2Hz 锥桶绕行监控 (替换卡死检测) |
+| `_stop_cone_monitor()` | 停止监控, 强制重新启用 keepout |
+| `_check_cone_bypass()` | ★ 核心状态机 (2Hz): 预测性 binary ON/OFF keepout |
+| `_disable_keepout_for_cone()` | 发布 `filter_mask_topic="/keepout_disabled"` → keepout 无效果 |
+| `_enable_keepout()` | 发布 `filter_mask_topic="/keepout_mask"` → 恢复正常 |
+
+**增强调试**:
+| 新增 | 说明 |
+|------|------|
+| DIAG 日志字段 | `ko=ON/OFF(3.2s)` `yolo=5/3` `fr=F/X` (实际值/阈值, 持续时间, 自由区) |
+| `/cone_bypass_debug` 话题 | String/JSON: 状态转换 + yolo帧数 + 自由区 + 位置 |
+| Explicit re-enable failure logs | 显示具体是哪个条件阻止了恢复 (锥桶/自由区/距离) |
+| HW 仅异常时显示 | DIAG 行仅在 cpu>90% 或 cpuT>80°C 时显示硬件 |
+| 启动参数快照 | `锥桶绕行: yolo≥3f/2.0s→禁用keepout, 回通道+无锥桶+>0.5m→恢复` |
+
+#### 2. nav2_minimal.launch.py
+
+- 删除 `keepout_mask_soft_server` Node
+- 从 `lifecycle_manager_keepout` `node_names` 中移除
+
+#### 3. 存档
+
+- `keepout_mask_soft.pgm` → `.pgm.bak`
+- `keepout_mask_soft.yaml` → `.yaml.bak`
+
+#### 4. 新增文件
+
+- `originbot_navigation/tools/health_check.sh` — 关键话题频率/节点存活/锥桶绕行状态健康检查
+
+### 文档更新
+
+| 文件 | 改动 |
+|------|------|
+| `README.md` | §7: 新锥桶绕行方案; §8: 死锁脱困→锥桶绕行; §16: 新圈速条目; §17.1: Bug 缓解更新; §18.3: 锥桶绕行调参 |
+| `agent_do.md` | 本条记录 |
+| `.learnings/` | (下一步) |
+
+### 未改动
+
+- Nav2 YAML 参数 (keepout_filter 配置依旧)
+- 行为树 XML (无变化)
+- Costmap 插件栈 (keepout_filter 仍存在, 仅运行时通过 topic 切换)
+- `room.pgm` / `keepout_mask.pgm` 地图文件
+
+### 设计决策
+
+- **Binary而非灰度**: ON/OFF 无需单独软 mask PGM → 无复杂交互
+- **预测性而非响应式**: 2Hz YOLO 检测, 在卡死前行动
+- **无直驱倒车**: Nav2 自然处理锥桶避让 (planner + obstacle_layer)
+- **无震荡复杂度**: 无循环计数, 无锁定, 无软化/硬化状态 → 简单的 ON/OFF
+- **仅在 CRUISE_CHANNEL**: RETURN_P keepout 始终 ON (开阔大厅, 无需切禁区)
+- **恢复需回通道**: `_is_in_keepout_free_zone()` 确保小车不会在禁区中间重新启用 keepout
+
+### SSH
+
+- 待部署 (本地修改完成)
+
+---
+
 ## 2026-07-09 18:00 — ★ Humble RPP 参数审计: 4个无效参数清理 + 远程二进制验证
 
 > **用户**: "Humble版本更新到什么比较好" / "在我电脑上克隆，修改源码，使用EXA MCP" / "帮我远程验证，在本地修改" / "更新README和agent_do"

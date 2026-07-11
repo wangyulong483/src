@@ -54,25 +54,8 @@ install(PROGRAMS src/calibrate_gui.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
-install(PROGRAMS src/competition_master_stage1.py
-  DESTINATION lib/${PROJECT_NAME}
-)
-
+# ★ 2026-07-11 清理: 保留 stage2 (P→QR→通道入口)
 install(PROGRAMS src/competition_master_stage2.py
-  DESTINATION lib/${PROJECT_NAME}
-)
-
-install(PROGRAMS src/competition_master_stage3.py
-  DESTINATION lib/${PROJECT_NAME}
-)
-
-# speed_profile_node: publishes /speed_limit based on path curvature v(κ) = v_max/(1+β*|κ|^λ)
-install(PROGRAMS src/speed_profile_node.py
-  DESTINATION lib/${PROJECT_NAME}
-)
-
-# yolo_costmap_bridge: PerceptionTargets → PointCloud2 for Nav2 costmap
-install(PROGRAMS src/yolo_costmap_bridge.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

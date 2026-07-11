@@ -1,6 +1,6 @@
 import os
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, OpaqueFunction, TimerAction
+from launch.actions import IncludeLaunchDescription, TimerAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
@@ -9,23 +9,11 @@ from ament_index_python.packages import get_package_share_directory
 stage2_bringup.launch.py — Stage 2 总启动文件 (压缩版 + RViz2)
 
 时间线: camera 与底盘并行, Nav2 尽早启动
-  t=0s → 底盘 + TF + Madgwick + EKF + PID + 深度相机 + QR + VLM(可选)
+  t=0s → 底盘 + TF + Madgwick + EKF + 深度相机 + QR
   t=1s → Nav2 全栈 (odom/TF 已就绪, keepout 同步加载)
   t=4s → competition_master_stage2 (内部 8s timer, ~t=12s 首次发车)
   t=8s → RViz2 (所有话题就绪, 用于地图查看+确定点位)
 """
-
-def _vision_ai_if_available(context):
-    try:
-        get_package_share_directory('racing_vision_ai')
-    except Exception:
-        return []
-    return [Node(
-        package='racing_vision_ai',
-        executable='vision_ai_node',
-        name='vision_ai_node',
-        output='screen',
-    )]
 
 def generate_launch_description():
     origincar_bringup_dir = get_package_share_directory('origincar_bringup')
@@ -38,14 +26,13 @@ def generate_launch_description():
                 os.path.join(origincar_bringup_dir, 'launch', 'base_minimal.launch.py')
             )
         ),
-        # t=0s: 深度相机 + QR + VLM (与底盘并行启动)
+        # t=0s: 深度相机 + QR (与底盘并行启动)
         TimerAction(period=0.0, actions=[
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(
                     os.path.join(origincar_bringup_dir, 'launch', 'camera_all.launch.py')
                 )
             ),
-            OpaqueFunction(function=_vision_ai_if_available),
         ]),
 
         # t=1s: Nav2 导航栈 (odom+TF 已就绪)

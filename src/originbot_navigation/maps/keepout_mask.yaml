@@ -3,5 +3,8 @@ mode: scale
 resolution: 0.05
 origin: [-2.65, -4.5, 0]
 negate: 0
-occupied_thresh: 0.5
-free_thresh: 0.5
+# ★ v3 梯度 keepout (2026-07-11): occupied_thresh=1.0 确保 pixel 0→LEHAL(254).
+# free_thresh=0.01 确保 pixel 255→FREE(cost~2.5). 中间像素线性插值.
+# 禁区内部 LETHAL → planner 绝不穿越; 通道河谷 0→60 引导居中; 禁边 140→254 陡峭推回.
+occupied_thresh: 1.0
+free_thresh: 0.01

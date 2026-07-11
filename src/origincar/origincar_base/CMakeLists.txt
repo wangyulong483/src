@@ -31,20 +31,13 @@ find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
-find_package(std_srvs REQUIRED)
-find_package(std_msgs REQUIRED)
-find_package(ackermann_msgs REQUIRED)                         # CHANGE
-find_package(origincar_msg REQUIRED)                         # CHANGE
+find_package(ackermann_msgs REQUIRED)
+find_package(origincar_msg REQUIRED)
 find_package(serial REQUIRED)
-find_package(rosidl_default_generators REQUIRED)
 find_package(origincar_description REQUIRED)
-find_package(robot_localization REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
-rosidl_generate_interfaces(${PROJECT_NAME}
-  "msg/Position.msg"
- )
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
@@ -65,7 +58,7 @@ set(origincar_base_node_SRCS
 )
 
 add_executable(origincar_base_node src/origincar_base.cpp src/Quaternion_Solution.cpp)
-ament_target_dependencies(origincar_base_node tf2_ros tf2 tf2_geometry_msgs tf2_msgs rclcpp std_msgs robot_localization nav_msgs std_srvs sensor_msgs ackermann_msgs serial origincar_msg origincar_description)
+ament_target_dependencies(origincar_base_node tf2_ros tf2 tf2_geometry_msgs tf2_msgs rclcpp std_msgs nav_msgs sensor_msgs ackermann_msgs serial origincar_msg)
 
 #add_executable(testNode src/test.cpp src/Quaternion_Solution.cpp)
 #ament_target_dependencies(testNode rclcpp std_msgs nav_msgs std_srvs sensor_msgs ackermann_msgs serial origincar_msg)

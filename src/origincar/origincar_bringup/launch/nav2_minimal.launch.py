@@ -68,16 +68,6 @@ def generate_launch_description():
                 'topic_name': '/keepout_mask',
                 'frame_id': 'map',
             }], output='screen'),
-        # 软禁区 mask (occupancy~90/cost~229 可穿高成本): 环道遇锥桶堵死时切到此 mask,
-        # 规划器clip穿禁区绕行, 过后切回硬 /keepout_mask 回到环道 (competition_master 控制)
-        Node(
-            package='nav2_map_server', executable='map_server',
-            name='keepout_mask_soft_server',
-            parameters=[{
-                'yaml_filename': os.path.join(originbot_navigation_dir, 'maps', 'keepout_mask_soft.yaml'),
-                'topic_name': '/keepout_mask_soft',
-                'frame_id': 'map',
-            }], output='screen'),
         Node(
             package='nav2_map_server', executable='costmap_filter_info_server',
             name='keepout_filter_info_server',
@@ -95,7 +85,7 @@ def generate_launch_description():
             parameters=[{
                 'use_sim_time': False,
                 'autostart': True,
-                'node_names': ['keepout_mask_server', 'keepout_mask_soft_server', 'keepout_filter_info_server'],
+                'node_names': ['keepout_mask_server', 'keepout_filter_info_server'],
             }]),
 
         # t=1s: Nav2 导航栈 (压缩自3s: keepout已在t=0s激活, lifecycle可立即开始)

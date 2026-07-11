@@ -1,1477 +1,656 @@
-# 外部项目深度分析 Wiki
+# 项目架构方案
 
-> **分析日期**: 2026-07-09
-> **分析项目**: ackermann_car-main, racing_control-develop, rdkx5-smart-medical-car--main
-> **对照项目**: Origincar Pro (RDK X5 + ROS2 Humble + Nav2)
+> 2026-07-11 | 状态: 架构已验证 + 实现细节经 EXA 加固 (运动学可行性/循迹律/光照鲁棒性) → 开始 Phase 1 实现
 
 ---
 
-## 目录
+## EXA MCP 架构验证 (2026-07-11)
 
-1. [ackermann_car-main — ROS2 Ackermann 仿真模板](#1-ackermann_car-main)
-2. [racing_control-develop — 地平线赛道巡线控制](#2-racing_control-develop)
-3. [rdkx5-smart-medical-car — 清越队同级竞赛方案](#3-rdkx5-smart-medical-car)
-4. [多项目交叉对比](#4-多项目交叉对比)
-5. [可采纳优化清单](#5-可采纳优化清单)
+### 核心问题: 我们的 Nav2大厅 + 视觉环道 混合架构是最优的吗？
 
----
+**答案: 是的。而且被三大权威来源独立验证。**
 
-## 1. ackermann_car-main
+### 证据链
 
-**来源**: 开源 ROS2 Ackermann 仿真项目
-**结构**: 1 包 (ackermann_car) × 7 Python 节点 + Gazebo Ignition 仿真
-**用途**: Nav2 阿克曼导航教学/仿真模板
+#### 1. F1TENTH 统一基准 (2024) — 最权威的 1:10 自动驾驶赛车平台
 
-### 1.1 Nav2 参数对比
+[Survey paper](https://doi.org/10.48550/arxiv.2402.18558) 对所有方法做基准测试，结论:
 
-#### Planner (SmacPlannerHybrid)
+| 方法类别 | 圈速排名 | 代表算法 |
+|----------|---------|----------|
+| **优化+追踪** | 🥇 最快 | 全局赛车线 + 纯追踪/MPCC |
+| **在线规划** | 🥈 | 实时重规划 |
+| **Follow-the-Gap** | 🥉 最简 | LiDAR 找最大间隙 → 转向 |
+| **端到端 RL** | ❌ 最不可靠 | 强化学习 |
 
-| 参数 | ackermann_car | Origincar Pro (我们) | 差异分析 |
-|------|---------------|----------------------|----------|
-| `motion_model_for_search` | REEDS_SHEPP | REEDS_SHEPP | 相同 |
-| `minimum_turning_radius` | 0.30 | 0.30 | 相同 |
-| `angle_quantization_bins` | **72** | 40 | ★ 他们更精细: 72 bins = 5°/bin, 我们 40 = 9°/bin. 更多bin→更平滑路径但更慢规划 |
-| `max_iterations` | **1,000,000** | 1500 | ★ 极端差异! 仿真 vs 嵌入式的取舍 |
-| `max_planning_time` | **5.0s** | 1.596s | 仿真不着急, RDK X5 必须省 CPU |
-| `analytic_expansion_ratio` | **2.5** | 4.0 | 他们更频繁解析扩展 (更激进尝试直连目标) |
-| `analytic_expansion_max_length` | **2.5** | 1.5 | 更长解析扩展步长 |
-| `reverse_penalty` | 4.0 | 4.0 | 相同 |
-| `change_penalty` | **0.25** | 0.20 | 他们更抑制换向 (cusp 更少但灵活性更低) |
-| `non_straight_penalty` | **1.3** | 1.8469 | ★ 他们接近官方推荐 (1.0-1.3), 我们偏离较大 |
-| `cost_penalty` | **3.5** | 6.33 | ★ 他们对代价敏感度低得多 (更激进贴墙) |
-| `retrospective_penalty` | **0.015** | — | ★ 我们没有! 逆时惩罚可避免规划绕圈 |
-| `cache_obstacle_heuristic` | **false** | true | 他们不缓存 (仿真不需要), 我们缓存获 ~40× 加速 |
-| `downsample_costmap` | **false** | true | 他们不降采样, 我们 ×3 |
-| `allow_unknown` | **true** | false | ★ 他们允许穿越未知区域 (仿真安全), 我们严禁 |
-| `tolerance` | **0.25** | 默认 | 目标容差 |
-| `lookup_table_size` | **20.0** | 默认 | 预计算查找表 |
+**对我们的意义**:
+- 大厅用 Nav2 规划 = "在线规划"层 → 🥈 适合开阔空间
+- 环道用纯追踪 + LiDAR = "优化+追踪" + "Follow-the-Gap" 混合 → 🥇+🥉 适合窄道
+- **分场景选最优方法 = F1TENTH 也这样做**
 
-**关键教训**:
-- `angle_quantization_bins: 72` 值得在我们项目测试: 更精细角度→更平滑 REEDS_SHEPP 路径, 可能减少 cusp. 但代价是规划时间 (A55 可能承受不起)
-- `non_straight_penalty: 1.3` (vs 我们的 1.85): 他们鼓励适当转弯, 我们的 1.85 过度惩罚所有转弯可能导致路径僵硬
-- `cost_penalty: 3.5` (vs 我们的 6.33): 我们过于保守, 可能把规划器推向不必要的绕行
-- `retrospective_penalty: 0.015`: **我们缺少此参数**, 可防止规划器在原地绕圈
+#### 2. Formula Student Driverless 模块化架构 (2025) — 同级别比赛
 
-#### Controller (Regulated Pure Pursuit)
-
-| 参数 | ackermann_car | Origincar Pro (我们) | 差异分析 |
-|------|---------------|----------------------|----------|
-| `controller_frequency` | **20.0 Hz** | 10.0 Hz (默认) | ★ 他们双倍控制频率! |
-| `desired_linear_vel` | 0.20 | 0.50 | 仿真保守速度 |
-| `lookahead_dist` | **0.45** | 0.6776 | 他们更短前视 (更激进跟线) |
-| `min_lookahead_dist` | **0.20** | 0.2628 | |
-| `max_lookahead_dist` | **0.65** | 0.8067 | |
-| `lookahead_time` | 1.5 | 1.2415 | |
-| `use_fixed_curvature_lookahead` | **false** | true | ★ 他们不用固定曲率前视! |
-| `curvature_lookahead_dist` | 0.4 | 0.8 | |
-| `max_allowed_time_to_collision` | **2.0** | 0.35 | ★ 极端差异: 他们 2.0s(模拟), 我们 0.35s(窄道实战) |
-| `regulated_linear_scaling_min_radius` | **0.25** | 0.411 | 他们更早减速 |
-| `regulated_linear_scaling_min_speed` | 0.10 | 0.20 | |
-| `use_collision_detection` | true | true | |
-| `allow_reversing` | true | true | |
-| `max_angular_vel` | **1.2** | 默认 | 有明确的角速度限制 |
-| `speed_lim_angular` | **true** | — | ★ 我们没有! 弯道时同时限制角速度 |
-| `min_approach_linear_velocity` | **0.05** | — | 接近目标时最低速度 |
-| `approach_velocity_scaling_dist` | **0.6** | — | 0.6m 内开始减速进场 |
-| `max_robot_pose_search_dist` | **10.0** | — | 路径上搜索最近点的最大距离 |
-
-**关键教训**:
-- `controller_frequency: 20Hz` → **高优先级测试**: 我们的 10Hz 对 0.50m/s 巡航可能不够 (每周期移动 5cm)
-- `use_fixed_curvature_lookahead: false` → 他们不用. ★ Humble 无此功能 (Iron+ only), 我们 YAML 的值被静默忽略了 7 个月 (2026-07-09 audit 确认)
-- `speed_lim_angular: true` → 我们没有但应该有 — 弯道处同时限制角速度防止侧滑
-- `approach_velocity_scaling_dist: 0.6` → 我们没有显式进场减速, 完全靠 speed_profile_node 覆盖
-
-#### Local Costmap
-
-| 参数 | ackermann_car | Origincar Pro (我们) | 差异分析 |
-|------|---------------|----------------------|----------|
-| `update_frequency` | **20.0 Hz** | 5.0 Hz | ★ 4× 更新频率 |
-| `publish_frequency` | 10.0 Hz | 2.0 Hz | 5× 发布频率 |
-| `width × height` | **6m × 6m** | 3m × 3m | ★ 2× 尺寸: 更大的局部视野 |
-| `rolling_window` | true | true | |
-| `plugins` | **voxel_layer** + inflation | obstacle + keepout + inflation | ★ 他们用 VoxelLayer! |
-| `inflation_radius` | **0.40** | 0.55 | 他们更小 (更激进) |
-| `cost_scaling_factor` | 3.0 | 2.0 | 他们衰减更快 |
-| `footprint` | [0.20,0.14] × 4 | [0.15,-0.10]→[-0.12,-0.10] | 他们对称矩形 |
-| `footprint_padding` | 0.05 | — | 他们有膨胀 |
-| `transform_tolerance` | 1.0 | 0.5 | 他们更宽容 |
-
-**关键教训**:
-- **VoxelLayer 替代 ObstacleLayer**: 3D→2D 投影更智能, 可过滤地面点. 但 RDK X5 CPU 能否承受?
-- `local_costmap 6m×6m` + `global_frame: odom`: 更大的局部视野让 RPP 看到更远的障碍. 我们 3m×3m 可能不够 (以 0.5m/s 只需 6s 穿越)
-- `footprint_padding: 0.05`: 机器人轮廓额外膨胀, 我们没有但有 inflation 0.55 补偿
-
-#### Global Costmap
-
-| 参数 | ackermann_car | Origincar Pro (我们) | 差异分析 |
-|------|---------------|----------------------|----------|
-| `update_frequency` | 3.0 Hz | 1.0 Hz | 3× 更新频率 |
-| `publish_frequency` | 3.0 Hz | 1.0 Hz | 3× |
-| `inflation_radius` | **0.40** | 0.5955 | ★ 重要差异 |
-| `cost_scaling_factor` | 3.0 | 2.8637 | 接近 |
-| `track_unknown_space` | **true** | — | ★ 我们没开启 |
-| `plugins` | static+obstacle+inflation | static+obstacle+keepout+inflation | 他们有3个, 我们有4个(+keepout) |
-
-#### AMCL
-
-| 参数 | ackermann_car | Origincar Pro (我们) | 差异分析 |
-|------|---------------|----------------------|----------|
-| `alpha1-4` | **0.15-0.2** | 0.45 (uniform) | ★ 他们噪声模型小得多 |
-| `update_min_a` | **0.01** | 0.1 | ★ 他们频繁更新 (10× 更敏感) |
-| `update_min_d` | **0.01** | 0.1 | ★ 同上 |
-| `resample_interval` | **1** | 2 | 他们每次重采样 (粒子多样化) |
-| `max_particles` | 2000 | 1500 | |
-| `min_particles` | 500 | 300 | |
-| `sigma_hit` | 0.2 | — | 他们定义击中噪声 |
-| `laser_likelihood_max_dist` | 2.0 | — | 似然计算最大距离 |
-| `recovery_alpha_fast/slow` | 0.0 | — | 无快速恢复 |
-| `beam_skip_*` | 已配置 | — | 他们配置了跳束 (但 do_beamskip=false) |
-
-**关键教训**:
-- `alpha: 0.15-0.2` (vs 我们的 0.45): 我们噪声模型过大 — 过度补偿运动模型失配. 如果 EKF 输出可靠, 可以尝试 0.2-0.3
-- `update_min_a/d: 0.01` (vs 我们的 0.1): 他们几乎每帧更新. 我们的 0.1 可能让粒子在不同步的 LiDAR scan 前落后
-
-### 1.2 行为树
-
-```xml
-<!-- ackermann_car 行为树 (简版) -->
-<RecoveryNode retries="6">              <!-- ★ 有限重试 -->
-  <PipelineSequence>
-    <RateController hz="1.0">           <!-- 同我们 -->
-      <RecoveryNode retries="1">
-        <ComputePathToPose/>
-        <ClearEntireCostmap name="ClearGlobalCostmap"/>  <!-- ★ 每规划失败清全图 -->
-      </RecoveryNode>
-    </RateController>
-    <RecoveryNode retries="1">
-      <FollowPath/>
-      <ClearEntireCostmap name="ClearLocalCostmap"/>     <!-- ★ 每跟随失败清局部 -->
-    </RecoveryNode>
-  </PipelineSequence>
-  <ReactiveFallback>                    <!-- ★ 他们用 ReactiveFallback! -->
-    <GoalUpdated/>
-    <RoundRobin>
-      <Sequence>                        <!-- 先双清清图 -->
-        <ClearLocal/>
-        <ClearGlobal/>
-      </Sequence>
-      <BackUp dist="0.15" speed="0.025"/>  <!-- ★ 超保守: 0.15m @ 0.025m/s -->
-      <Wait duration="5"/>
-    </RoundRobin>
-  </ReactiveFallback>
-</RecoveryNode>
-```
-
-**与我们 BT 的关键差异**:
-
-| 方面 | ackermann_car | Origincar Pro |
-|------|---------------|---------------|
-| 恢复次数 | **6** (有限) | 无限 (-1) |
-| 恢复fallback | **ReactiveFallback** | RecoveryFallback |
-| BackUp 距离 | **0.15m** (极短) | 0.8m → 1.5m |
-| BackUp 速度 | **0.025m/s** (极慢) | 0.12m/s |
-| 每周期清图 | **是** (清全局) | 否 (仅失败时) |
-| SmoothPath | 无 | 无 (已移除) |
-| Spin | 无 | 无 (阿克曼不可转) |
-
-**关键教训**:
-- `ReactiveFallback` vs `RecoveryFallback`: Reactive 一旦有子节点成功就停止 (更响应式); Recovery 执行所有子节点. 我们应用 Reactive 在 GoalUpdated 场景
-- `ClearGlobalCostmap` 每规划失败 (他们) vs 我们每周期 BT 成功时不清. 我们已改为仅失败时清 — 正确
-- BackUp 0.15m@0.025m/s 在仿真中工作 (没有物理约束), 实战中太慢 — 我们的 0.8m 更有意义
-
-### 1.3 阿克曼运动学实现
-
-**ackermann_controller.py** — 这是我们项目**最大的缺失模块**:
-
-```python
-# 核心方程式
-R = L / tan(delta)           # 自行车模型转弯半径
-R_inner = R - d/2            # 内轮转弯半径
-R_outer = R + d/2            # 外轮转弯半径
-delta_inner = atan(L / R_inner)  # 内轮转角 (更大)
-delta_outer = atan(L / R_outer)  # 外轮转角 (更小)
-v_inner = v * (R - d/2) / R      # 内轮线速度 (更慢)
-v_outer = v * (R + d/2) / R      # 外轮线速度 (更快)
-```
-
-**我们项目的状态**: STM32 通过 `cmd_vel_to_ackermann_drive.py` 将 Twist→AckermannDrive (`steering = atan(wheelbase * omega / vel)`, `wheelbase=0.143m`), 然后发 11 字节二进制帧. STM32 自己做舵机/差速控制. **不需要** `ackermann_controller.py` 这样的全运动学解算.
-
-但 `ackermann_controller.py` 的价值:
-- **Watchdog 0.5s**: 超时自动停车 (我们有类似机制 — cmd_vel mux timeout 0.5s, 但已移除 mux)
-- **转向限幅**: `max_steer=0.70 rad (~40°)`, 我们的 STM32 直接接收 steering 不做限幅 **(潜在风险)**
-- **差速解算参考**: 后轮差速公式可用于 STM32 固件优化
-
-### 1.4 Twist→Ackermann 桥接
-
-```python
-# nav2_ackermann_bridge.py (ackermann_car-main) 和 twist_to_ackermann.py
-delta = atan(L * omega / v)  # L=0.30m
-delta = clamp(delta, -0.7, 0.7)
-```
-
-对比我们的 `cmd_vel_to_ackermann_drive.py`:
-```python
-steering = atan(wheelbase * omega / vel)  # wheelbase=0.143m
-steering_sign = -1.0  # ROS CCW→STM32 CW 符号转换
-```
-
-差异: 他们的 wheelbase=0.30m, 我们的=0.143m. 我们的更短轴距 → 相同 omega/v 下的 steering 角更小 → 更敏捷转向. 他们的限幅 ±0.7rad, 我们没有显式限幅.
-
-### 1.5 URDF 模型参数
-
-| 参数 | ackermann_car | Origincar Pro |
-|------|---------------|---------------|
-| 车长 | 0.40m | 0.276m |
-| 车宽 | 0.20m | 0.164m |
-| 车高 | 0.08m | 0.08m |
-| wheelbase | 0.30m | 0.143m |
-| track_width | 0.28m | — |
-| wheel_radius | 0.05m | — |
-| max_steer | ±0.70 rad (40°) | ±28° (~0.49 rad) |
-| chassis_mass | 2.0 kg | — |
-| ros2_control | ✅ Ignition | ❌ (STM32 直驱) |
-
-### 1.6 SLAM 配置
-
-他们包含完整的 `slam_toolbox` 在线+离线 SLAM 配置:
-- `slam_toolbox.yaml`: 离线建图 (2D LiDAR SLAM, 40m max_range)
-- `slam_toolbox_online.yaml`: 在线 SLAM (降低分辨率以提速)
-
-我们项目使用预先构建的静态地图 (`room.yaml`), 不使用 SLAM. 这是正确的 — 比赛场地固定.
-
----
-
-## 2. racing_control-develop
-
-**来源**: 地平线官方 TROS Racing Control 包 (C++ 实现)
-**功能**: 赛道中线巡线 + 锥桶避障
-**适用场景**: 有视觉车道线+锥桶的竞速赛道 (非我们的医疗巡检场景)
-
-### 2.1 核心算法
-
-#### 巡线控制 (LineFollowing)
-
-```cpp
-// 输入: 赛道中线检测结果 (image coordinates)
-int x = point_msg.points[0].point[0].x;  // 检测到的中点 x 坐标
-int y = point_msg.points[0].point[0].y;  // 检测到的中点 y 坐标 (距离)
-
-float temp = x - 320.0;  // 相对于图像中心 (640×...)
-// 死区: ±20px
-if ((-20 < x) && (x < 0)) temp = -20;
-else if ((x > 0) && (x < 20)) temp = 20;
-
-// 核心公式:
-angular_z = follow_angular_ratio * temp / 150.0 * y / 224.0;
-//          = -1.0 * (x-320) / 150 * y / 224
-linear.x = follow_linear_speed;  // 固定 1.5 m/s!
-```
-
-**算法分析**:
-- `temp/150`: 归一化横向偏差 (150px = 半幅)
-- `y/224`: 距离加权 (远处偏越大→转向越小, 近处偏越小→转向越大) ← **反直觉!** 正常应该远处偏→转向更温和 (前瞻). 这里 y 在分母位置导致距越近转向越大 — 可能是 bug 或特定赛道调参
-- `follow_linear_speed=1.5m/s`: 非常激进! 我们巡航 0.50m/s
-- Dead zone ±20px: 小偏差不转向, 防抖动
-
-#### 避障控制 (ObstaclesAvoiding)
-
-```cpp
-int center_x = target.rois[0].rect.x_offset + target.rois[0].rect.width / 2;
-float temp = center_x - 320.0;  // 障碍物相对图像中心
-
-// 核心公式:
-angular_z = avoid_angular_ratio * 700 / temp;
-//          = 1.1 * 700 / (center_x - 320)
-linear.x = avoid_linear_speed;  // 固定 0.25 m/s
-```
-
-**算法分析**:
-- `700/temp`: **反比控制** — 障碍物离中心越近, 转向越大 (远离障碍物)
-- 若障碍物在左边 (temp<0) → angular_z<0 → 右转避开 ✅
-- `avoid_linear_speed=0.25`: 避障时减速
-- **问题**: 没有前向障碍物检测 (正前方障碍物 temp≈0 → 除零!), 依赖 bottom_threshold 做深度过滤
-
-#### 优先级仲裁
-
-```cpp
-// 1. 无锥桶 → 巡线
-// 2. 有锥桶 + 深度不够(bottom < bottom_threshold) → 巡线 (锥桶太远)
-// 3. 有锥桶 + 置信度不够 → 巡线
-// 4. 有锥桶 + 深度够 + 置信度够 → 避障
-```
-
-这是一个简单但有效的仲裁策略 — 和我们 YOLO 卡死检测门控逻辑类似 (≥2帧/1.5s 才触发软化).
-
-### 2.2 与我们的对比
-
-| 方面 | racing_control | Origincar Pro |
-|------|----------------|---------------|
-| 控制方式 | 视觉中线跟踪 (类PID) | Nav2 RPP + 全局路径 |
-| 速度来源 | 固定线速度 | speed_profile_node 曲率自适应 |
-| 避障策略 | 图像坐标反比转向 | YOLO→costmap→RPP碰撞检测 |
-| 框架 | 单独 C++ 节点 | 完整 Nav2 栈 |
-| 巡航速度 | **1.5 m/s** | 0.50 m/s |
-| 适用场景 | 结构化赛道+车道线 | 无车道线的自由导航 |
-
-### 2.3 可借鉴点
-
-1. **Dead zone (±20px) 概念**: 我们 speed_profile_node 无 dead zone — 微小曲率变化也可能导致速度抖动. 可加曲率 dead band
-2. **深度门控避障**: bottom_threshold 过滤远处障碍物 — 我们已有类似 (YOLO 置信度+帧数). 但我们的 depth 采样在 yolo_costmap_bridge 中不考虑距离过滤
-3. **动态参数**: 他们的参数通过 ROS2 parameter 机制动态获取 (每轮 MessageProcess 都 get_parameter) — 可在线调参
-4. **反比避障公式**: `1.1 * 700 / (center_x - 320)` — 转向强度与障碍物偏移成反比, 比固定转向更平滑
-
----
-
-## 3. rdkx5-smart-medical-car (清越队) — 全文件深度分析
-
-**队伍**: 清越 / 河北建筑工程学院 / 本科组
-**平台**: RDK X5 + ROS2 Humble
-**方案**: 纯 Python 实现, 无 Nav2, 无 BPU 推理, 无 SLAM
-**规模**: 5 packages × 8 Python nodes, ~800 行核心逻辑
-
-### 3.1 项目全景
-
-#### 3.1.1 完整文件清单 (35个文件)
+[论文](https://arxiv.org/html/2512.03886) 描述了 FS Driverless 冠军架构:
 
 ```
-rdkx5-smart-medical-car--main/
-├── README.md / README_cn.md
-├── LICENSE
-├── .gitignore
-└── ros2_ws/
-    ├── README.md / README_cn.md
-    ├── requirements.txt
-    ├── install_dependencies.sh
-    ├── docs/技术文档.md              ← 完整竞赛技术文档 (550行)
-    └── src/
-        ├── task_manager/             ← 任务编排 (1 Python node)
-        │   ├── task_manager/task_manager_node.py
-        │   ├── launch/task_manager.launch.py
-        │   ├── launch/competition.launch.py   ← 总启动: IncludeLaunchDescription 组合
-        │   ├── setup.py, package.xml
-        │   └── resource/task_manager
-        ├── navigation/               ← 导航三件套 (3 Python nodes)
-        │   ├── navigation/path_planner_node.py
-        │   ├── navigation/motion_controller_node.py
-        │   ├── navigation/obstacle_avoidance_node.py
-        │   ├── config/navigation_params.yaml
-        │   ├── launch/navigation.launch.py
-        │   ├── setup.py, package.xml
-        │   └── resource/navigation
-        ├── qr_detector/              ← QR扫码 (1 Python node)
-        │   ├── qr_detector/qr_detector_node.py
-        │   ├── launch/qr_detector.launch.py
-        │   ├── setup.py, package.xml
-        │   └── resource/qr_detector
-        ├── human_detector/           ← 人形检测+大模型 (2 Python nodes)
-        │   ├── human_detector/human_detector_node.py
-        │   ├── human_detector/llm_interface_node.py
-        │   ├── launch/human_detector.launch.py
-        │   ├── setup.py, package.xml
-        │   └── resource/human_detector
-        └── voice_output/             ← TTS语音播报 (1 Python node)
-            ├── voice_output/voice_output_node.py
-            ├── launch/voice_output.launch.py
-            ├── setup.py, package.xml
-            └── resource/voice_output
+感知: YOLOv11 锥桶检测 + 立体深度 → 3D 锥桶定位
+定位: EKF (RTK-GNSS + IMU + 自行车模型) → 厘米级
+规划: 三次样条赛车线 + 曲率约束速度曲线
+控制: Regulated Pure Pursuit + 动态前视
 ```
 
-#### 3.1.2 依赖清单
-
-```
-# requirements.txt
-opencv-python>=4.8.0    # QR + YOLO 图像处理
-pyzbar>=0.1.9           # QR 解码 (Python wrapper over libzbar)
-ultralytics>=8.0.0      # YOLOv8 (CPU 推理!)
-requests>=2.30.0        # HTTP → GPT-4o / 本地 LLM
-numpy>=1.24.0
-PyYAML>=6.0
-
-# install_dependencies.sh
-pip install opencv-python pyzbar ultralytics requests numpy
-```
-
-**关键观察**: 
-- `ultralytics` (YOLOv8) 是最大的依赖 (~200MB+ 含 PyTorch). 在 RDK X5 的 ARM64 上安装 PyTorch 非常痛苦.
-- 没有 `hobot_dnn` (BPU), 没有 `sensor_msgs` (显式列出), 没有 ROS2 包依赖 — 所有依赖通过 pip 安装.
-- 这暗示他们**可能没有在实际 RDK X5 硬件上完整运行过 YOLOv8n** — ARM64 PyTorch + ultralytics 在 A55 上的 CPU 推理延迟 >500ms.
-
-#### 3.1.3 话题通信全景图
-
-```
-                          ┌──────────────────────────┐
-                          │     task_manager_node     │
-                          │   (任务编排 & 状态机)      │
-                          └─────┬────────┬───────┬───┘
-                                │        │       │
-                    ┌───────────┘        │       └──────────┐
-                    ▼                    ▼                  ▼
-          /task_manager/task_info  /task_manager/status  /cmd_vel (紧急停止)
-          (String)                 (String)              (Twist)
-                    │                    │
-     ┌──────────────┼──────────┐         └──────→ voice_output_node
-     ▼              ▼          ▼                  (espeak TTS)
-path_planner  human_detector  (无订阅者)
-     │              │
-     ▼              ├──→ llm_interface_node
-/path_planner/path  │    (GPT-4o / 本地 LLM)
-(Path)              │         │
-     │              │         ▼
-     ▼              │    /llm_interface/image_caption
-motion_controller   │    (String)
-(P控制 100Hz)       │         │
-     │              │         └──→ voice_output_node
-     │              ▼              (TTS 播报结果)
-     │         /human_detector/human_image (base64)
-     │         /human_detector/detection_result (JSON)
-     │
-     ├──→ /cmd_vel (Twist) → STM32
-     ├──→ /motion_controller/current_waypoint (Int32) → task_manager
-     │
-     └── obstacle_avoidance_node ← /scan (LaserScan)
-              │
-              ├──→ /obstacle_detected (Bool) → motion_controller
-              └──→ /cmd_vel_obstacle (Twist) → motion_controller (避障优先)
-
-qr_detector_node ← /camera/image_raw (Image)
-     └──→ /qr_detector/task_info (String) → task_manager + voice_output
-
-human_detector_node ← /camera/image_raw (Image)
-     └──→ /human_detector/human_image (base64 String)
-     └──→ /human_detector/detection_result (JSON String)
-```
-
-**关键架构观察**:
-1. **避障优先级仲裁**: `motion_controller` 收到 `/obstacle_detected=True` 时, 直接发布 `/cmd_vel_obstacle` 并 return — **绝对优先级**, 不经过 task_manager
-2. **路径完成检测**: `motion_controller → /current_waypoint (Int32) → task_manager` 是唯一的状态反馈链路 — 脆弱
-3. **VLM 异步**: `human_detector → llm_interface → voice_output` 是独立于 task_manager 的旁路 — task_manager 只记录 `human_detected` flag, 不等待 VLM 结果
-4. **无 TF 树, 无 odom 订阅**: motion_controller 硬编码 `current_x=y=yaw=0`, path_planner 在 `map` frame 下发绝对坐标 — 隐含假设 "里程计完美且坐标系已对齐"
-
-### 3.2 逐文件源码深度分析
-
-#### 3.2.1 task_manager_node.py (239 行) — 状态机核心
-
-**完整状态机**:
-```
-Task 0 (STANDBY) → Task 1 (NAV_TO_QR) → Task 2 (CRUISE) → Task 3 (RETURN_P) → Task 4 (DONE)
-```
-
-**逐行关键逻辑**:
-
-```python
-# 1. 启动即发车 (line 227)
-node.start_task()  # 无外部触发, main() 中直接调用
-
-# 2. 状态转移条件:
-# 0→1: start_task() 直接设置
-# 1→2: QR callback 收到数据 (line 113)
-# 2→3: current_waypoint > 8 (line 151)   ← ★ 硬编码 magic number!
-# 3→4: current_waypoint > 10 (line 181)  ← ★ 必须和 path_planner 路点数一致!
-
-# 3. 超时处理 (line 166-169):
-if elapsed >= self.max_time (180s):
-    self.publish_status('时间到')
-    self.stop_robot()      # 发布零 Twist
-    return                  # ★ 仅 return, 不清理资源!
-```
-
-**与我们 competition_master_stage3.py (1784行) 的逐项对比**:
-
-| 功能 | 清越队 | 我们 | 差距原因 |
-|------|--------|------|----------|
-| 状态数 | 5 (0-4) | 7 (INIT/NAV_TO_QR/BACKING_UP/CRUISE_CHANNEL/RETURN_P/DONE + TIMEOUT) | 我们有 BACKING_UP + 显式 TIMEOUT |
-| 状态转移触发 | 回调 + magic number | Nav2 action result (SUCCEEDED/CANCELED/ABORTED) | 我们基于真实导航结果 |
-| 段超时 | 无 (仅全局 180s) | 每段独立: NAV_TO_QR=90s, CRUISE=180s, RETURN_P=120s | 我们防止单段卡死 |
-| QR 处理 | 收到即转 (无取消流程) | Cancel goal → wait 3s BT cleanup → kill ZBar → wait /qr_event 2s | 我们防 BT 残留竞态 |
-| 卡死检测 | 无 | 1Hz, 3.5s / 0.03m 阈值, YOLO 门控 | 我们独有的脱困能力 |
-| 禁区控制 | 无 | 启动重置 + 软化/恢复 + 震荡锁 | 专用子系统 |
-| 方向决策 | `'clockwise' in task_info` (字符串匹配) | `QR数字 % 2` (奇偶校验) | 我们的更结构化 |
-| 路点管理 | 无 (path_planner 独立) | CRUISE 路点动态选择 + RETURN_P 两段注入 | 我们的路点可配置 |
-| 崩溃恢复 | 无 | respawn=true + 启动时重置状态 | 我们防 Python 崩溃 |
-| VLM 集成 | 旁路: 不影响状态机 | 路点触发 /sign4return=100, 不等结果即继续 | 都是异步, 我们更可控 |
-| 资源清理 | 无 (仅 stop_robot 发零 Twist) | Kill rosbag + 保存 CSV + 恢复硬禁区 + 停车 | 我们赛后数据完整 |
-| 保活 | 无 | 直驱 /cmd_vel 10Hz 保活 | 防止 STM32 timeout |
-
-**我们能学到的简化**:
-
-1. **`publish_status()` 模式** (line 208-217): 统一的 String 状态发布, 任何人都能订阅. 我们的状态散布在 log 和 print 中, 没有一个集中的 `/status` topic. **应该加**.
-
-2. **1Hz 监控循环** (line 156-187): 独立于事件回调的周期性检查. 我们的所有逻辑都在回调中 (action result / QR / 卡死检测), 没有周期性"心跳"检查. 可以在我们的 `competition_master` 中加一个 1Hz `_periodic_check()` 统一做: 超时检查, 状态发布, keepout 重发布.
-
-3. **`start_task()` 自动发车** (line 189-197): 不需要外部 `ros2 service call` 触发. 我们的 `__init__` 后需要等待 Nav2 action server 就绪 (正确), 但就绪后可以自动开始而不是等外部信号.
-
-4. **简洁的状态表示**: `current_task` 用整数 0-4 比我们的一堆 `self.state` + `self._return_phase` + `self._entry_goal_sent` + ... 更清晰. 我们可以考虑把子状态也统一为枚举.
-
-**他们的关键缺陷** (我们不应学):
-
-1. **Magic number 状态转移**: `current_waypoint > 8` 和 `> 10` 必须与 path_planner 路点数精确匹配. 加一个路点整个状态机就坏了.
-2. **无 QR 回退方向**: 如果 QR 扫码完全失败, state 永远停在 1, 直到全局 180s 超时. 我们的 `default_qr_direction` 是正确的.
-3. **无段超时**: 如果机器人在某段卡死 (如 Nav2 #3186 楞死), 等 180s 才超时.
-4. **stop_robot() 后无资源清理**: rosbag, CSV, 禁区状态 — 全丢失.
-
-#### 3.2.2 path_planner_node.py (191 行) — 硬编码路点生成
-
-**完整路点定义**:
-```python
-# 坐标系: 以 P 为原点 (0,0), 场地 5m × 5m
-POINT_P          = (0.0, 0.0)     # 发车点
-TASK_POINT       = (5.0, 2.0)     # QR 任务发布点 (区域A右上角)
-CHANNEL_ENTRY    = (5.0, 2.25)    # 黄色通道入口
-C_CHANNEL_START  = (5.0, 2.5)     # 区域C环形通道起点
-C_CHANNEL_END    = (5.0, 5.0)     # 区域C环形通道终点 (但实际终点是回到起点)
-
-# 顺时针 (CW): 绕环形区域逆时针 (从上方看)
-# 12路点 → 12段 → 总长约 18m
-CW:  P→Task→Entry→Start→(4.5,2.5)→(4.5,5)→(0.5,5)→(0.5,2.5)→(4.5,2.5)→End→Entry→P
-
-# 逆时针 (CCW): 绕环形区域顺时针 (从上方看)
-# 12路点 → 12段
-CCW: P→Task→Entry→Start→(0.5,2.5)→(0.5,5)→(4.5,5)→(4.5,2.5)→End→Entry→P
-```
-
-**路点间距分析**:
-```
-P→Task:        5.39m (最长段, 对角线! 危险 — 无中间路点)
-Task→Entry:    0.25m (非常近)
-Entry→Start:   0.25m (非常近)
-Start→(4.5,2.5)/(0.5,2.5): 0.5m
-环形四边:      4.0m 或 2.5m (每边)
-返回段:        5.39m (同P→Task)
-```
-
-**与我们路点的详细对比**:
-
-| 维度 | 清越队 | Origincar Pro |
-|------|--------|---------------|
-| 路点数 | 12 (CW/CCW 各独立定义) | 4 (CW 复用 CCW 反序) |
-| 最长段 | 5.39m (P→Task 对角线) | ~2-3m (Nav2 自动插值) |
-| 路点来源 | 硬编码 (场地测量) | 15条 DONE 轨迹中位数共识 |
-| 方向决策 | `'clockwise' in QR_text` | `int(QR) % 2 == 1 → CW` |
-| 回退方向 | 无 (default_path 是直线不绕环) | `default_qr_direction = "CCW"` |
-| 路径优化 | 无 (固定路点) | Nav2 SmacPlannerHybrid 自动优化 |
-| 锥桶绕行 | 依赖 obstacle_avoidance 简单避障 | costmap + planner 全局重规划 |
-| VLM 拍照点 | 无独立路点 (human_detector 持续检测) | WP2 (VLM 路点) |
-| PostVLM 窄通道 | 无 (直接环形出口→Entry→P) | PostVLM 注入 RETURN_P 首段 |
-
-**清越队路点设计的 3 个关键问题**:
-
-1. **P→Task 是 5.39m 对角线**: 无中间路点, P 控制器会走直线穿越区域A. 如果区域A中间有锥桶 → 依赖避障节点临时反应 → 可能冲出赛道.
-2. **环形通道路点重复**: `C_CHANNEL_START(5.0,2.5)` 和环路最后一角 `(4.5,2.5)` 间距仅 0.5m, 然后回到 `C_CHANNEL_END(5.0,5.0)` (实际坐标也是 5.0,2.5 附近). 重复路点导致机器人在同一位置附近"确认两次".
-3. **路点不在通道中心线上**: `(4.5, 0.5)` 这些坐标是区域C环形通道的内/外边界? 没有考虑通道宽度 0.5m → robot 需要精确在 0.5m 宽通道中间.
-
-#### 3.2.3 motion_controller_node.py (205 行) — P 控制器
-
-**完整控制算法**:
-```python
-# 输入: /path_planner/path (Path), /obstacle_detected (Bool), /cmd_vel_obstacle (Twist)
-# 输出: /cmd_vel (Twist), /motion_controller/current_waypoint (Int32)
-# 频率: 100Hz (timer 0.1s)
-
-# Step 1: 避障优先 (line 131-133)
-if self.obstacle_detected:
-    self.cmd_vel_publisher.publish(self.obstacle_cmd_vel)  # 直接转发避障指令
-    return  # ★ 绝对优先级, 跳过所有正常控制
-
-# Step 2: 获取目标路点 (line 136-138)
-target_pose = self.path.poses[self.current_waypoint]
-
-# Step 3: ★ 硬编码机器人位置为原点! (line 141-143)
-current_x = 0.0; current_y = 0.0; current_yaw = 0.0
-
-# Step 4: 计算误差 (line 146-148)
-dx = target_x - current_x    # = target_x - 0 = target_x (绝对坐标)
-dy = target_y - current_y
-distance = sqrt(dx² + dy²)
-
-# Step 5: 路点到达判定 (line 151-159)
-if distance < target_position_tolerance (0.3m):
-    self.current_waypoint += 1
-    # 如果到达最后一个路点 → stop()
-```
-
-**为什么硬编码原点能工作?** — 理论分析:
-
-路点坐标是**绝对地图坐标**, `current_x=0` 意味着 "机器人始终认为自己在 (0,0, yaw=0)". 这在以下情况下能工作:
-- 机器人从 (0,0, yaw=0) 出发 → 第一个目标 `TASK_POINT(5.0, 2.0)` → 距离 5.39m → 控制器输出 `v=min(0.5*5.39, 0.5)=0.5m/s`, `ω=1.0*atan2(2,5)=0.38rad/s` → 机器人向东北方向移动.
-- 一旦机器人移动 0.3m 到达第一个路点 → `current_waypoint += 1` → 新目标变成 (5.0, 2.25)...
-- **关键**: 路点间距 ≤ 0.5m 时, 绝对坐标误差 ≈ 上一路点到达后的剩余距离, 近似于真实误差.
-
-但这在以下情况下**必然失败**:
-- 机器人被锥桶推离路径 → 真实位置 ≠ 预期位置 → 后续所有路点的 `dx,dy` 都是错的
-- 轮子打滑 → 里程计漂移累积 → 绝对坐标完全失效
-- 长段 (5.39m P→Task) 中间无反馈 → 走偏了不知道
-
-**与我们 RPP 的逐项对比**:
-
-| 控制维度 | 清越队 P 控制 | Origincar RPP |
-|----------|---------------|---------------|
-| 控制频率 | 100Hz | 10Hz |
-| 位置反馈 | 无 (硬编码原点) | AMCL + EKF (粒子滤波+双IMU) |
-| 前视距离 | 无 (直接追踪当前路点) | 0.68m (速度自适应) |
-| 弯道预测 | 无 | RPP 内置曲率缩放 (regulated_linear_scaling_min_radius) |
-| 速度规划 | `kp*distance` capped, yaw_error减速 | 曲率自适应 + 前向/后向平滑 |
-| 碰撞检测 | 无 | RPP built-in + costmap |
-| 倒车 | 无 | allow_reversing=true |
-| 阿克曼约束 | 无 (Twist 不区分阿克曼/差速) | REEDS_SHEPP 路径 + RPP 阿克曼适配 |
-| 目标到达 | 欧氏距离 <0.3m | xy_goal_tolerance=0.43m |
-| 角速度限制 | max_angular_speed=1.0 | max_angular_vel=1.2 |
-| 收敛性保证 | 无 (纯P 有稳态误差) | 几何收敛 (pure pursuit 数学保证) |
-
-**有价值的简化思路** — 我们可借鉴:
-
-1. **yaw_error 减速** (line 175-176): `if abs(yaw_error) > 0.3: v *= 0.3`. 这是一个**无需路径曲率**的弯道减速. 我们的 speed_profile_node 需要全局路径 + Menger 曲率 + 移动平均 + 前后向平滑. 他们的方法 3 行代码实现了类似效果.
-
-2. **避障绝对优先** (line 131-133): `if obstacle_detected: publish(obstacle_cmd_vel); return`. 我们通过 costmap obstacle_layer → RPP collision_detection → cost_regulated_linear_velocity_scaling 间接实现, 延迟高. 但我们的方法更平滑 (连续减速 vs 硬切换).
-
-3. **到达下一个路点自动前进** (line 151-153): 不需要 Nav2 action result 检测. 但 fragility 高 (跳路点整个状态机就卡住).
-
-#### 3.2.4 obstacle_avoidance_node.py (137 行) — 基础避障
-
-**完整算法逐行分析**:
-```python
-# 输入: /scan (LaserScan), 输出: /obstacle_detected (Bool) + /cmd_vel_obstacle (Twist)
-# 参数: safety_distance=0.5 (launch) vs 0.25 (yaml) ← ★ 不一致!
-
-def scan_callback(self, msg):
-    ranges = msg.ranges
-    min_range = min(ranges)                             # 全局最近距离
-    obstacle_detected = min_range < self.safety_distance
-
-    if obstacle_detected:
-        self.avoid_obstacle(ranges)                     # 避障
-    else:
-        self.clear_path()                               # 发零 Twist 清除
-
-def avoid_obstacle(self, ranges):
-    left_ranges = ranges[:len(ranges)//3]               # 前 1/3 = 左侧 (~120°)
-    right_ranges = ranges[-len(ranges)//3:]             # 后 1/3 = 右侧 (~120°)
-    left_avg = sum(left_ranges) / len(left_ranges)      # ★ 所有值平等求和, 
-    right_avg = sum(right_ranges) / len(right_ranges)   #   inf/nan 未处理!
-
-    if left_avg > right_avg:
-        twist.angular.z = self.turn_speed (0.5)          # 左转 (更多空间)
-    else:
-        twist.angular.z = -self.turn_speed               # 右转
-    # ★ 线速度为 0! 避障时纯原地旋转 → 阿克曼做不到!
-```
-
-**3 个致命缺陷**:
-
-1. **阿克曼不可原地旋转**: `linear.x=0, angular.z=±0.5` 是差速底盘才能执行的指令. 阿克曼需要线速度才能转向 (`steering = atan(L*ω/v)`). 他们的 `cmd_vel_to_ackermann_drive` (如果有) 会在 v=0 时输出 steering=0 → 机器人直行撞障碍.
-
-2. **inf/nan 毒性**: LiDAR 的 `ranges` 数组包含 `inf` (无回波) 和 `nan` (无效测量). `sum()` 遇到 inf/nan 直接污染 `left_avg`/`right_avg`. 需要先过滤.
-
-3. **仅看左右 1/3**: 正前方 1/3 (最危险方向) 被完全忽略! 正前方有墙 → `min_range` 很小触发避障 → 只比较左右 → 可能两侧都大 → 随机选一边 → 仍然撞墙.
-
-**对比我们的 costmap 避障**:
-- 我们: LiDAR → ObstacleLayer (raytrace + marking + clearing) → InflationLayer (potential field) → RPP collision_detection → 成本感知速度缩放
-- 他们: LiDAR → min() → 左右比较 → 固定角速度
-- **我们的方法慢但安全, 他们的方法快但危险**
-
-#### 3.2.5 qr_detector_node.py (111 行) — pyzbar QR 解码
-
-```python
-# ZBar 封装: pyzbar.decode(cv_image)
-# 去重: current_time - last_qr_time > 2.0s
-# 编码: 假设 UTF-8
-# 输出: /qr_detector/task_info (String, QR文本原始内容)
-```
-
-**与我们 qr_decoder_zbar (C++/ZBar) 的详细对比**:
-
-| 维度 | 清越队 (pyzbar Python) | Origincar Pro (ZBar C++) |
-|------|------------------------|--------------------------|
-| 库 | pyzbar (Python wrapper) | ZBar native C++ |
-| 性能 | ~30-50ms/帧 (Python overhead) | ~5-10ms/帧 (native) |
-| 多尺度 | 无 (单分辨率) | 原分辨率 → 0.5× 降采样回退 |
-| 深度滤波 | 无 | Advisory only (50-4000mm) |
-| 码制过滤 | 无 (所有码制) | QR only (其他禁用) |
-| 内容校验 | 无 (任意文本都发) | min_qr_length 校验 |
-| 去重 | 2s 时间窗口 | qr_decision 3s 冷却 + 同号忽略 |
-| 输出 | 原始 String | /sign (raw) + /sign_pose (odom帧) + /qr_event (结构化) |
-| 结构化解析 | 无 (task_manager 直接匹配子串) | qr_decision: 奇偶→方向, 提取数字+坐标 |
-| 资源管理 | 无 (节点持续运行) | QR检测后 pkill qr_decoder_zbar |
-
-**我们能学到的**:
-- pyzbar 2s 时间窗口去重 — 简单有效. 但我们的 qr_decision 同号忽略更精确.
-- 他们不校验 QR 内容 — 任何文本都转发. 我们的 min_qr_length 更安全, 但过于严格可能漏掉有效短码.
-
-#### 3.2.6 human_detector_node.py (145 行) — YOLOv8n CPU 人形检测
-
-```python
-model = YOLO('yolov8n.pt')           # 3.2M 参数, nano 版本
-detection_interval = 2.0             # 每 2 秒检测一次
-confidence_threshold = 0.5           # person class_id=0 才接受
-
-# 检测到 → 裁剪 bbox → cv2.imencode('.jpg') → base64 → 发布
-# ★ 只处理第一个人 (break after first detection)
-```
-
-**RDK X5 CPU 性能估算**:
-- YOLOv8n 在 A55 @1.8GHz 上的 CPU 推理 (~TFLite/NCNN): **300-500ms/帧**
-- ultralytics PyTorch 推理 (如果有 PyTorch ARM64): **>1000ms/帧**
-- 这意味着 2s 间隔勉强够用 — 但在此期间 CPU 100% 占用, 导航控制被饿死
-
-**与我们 YOLO 方案的对比**:
-
-| 维度 | 清越队 | Origincar Pro |
-|------|--------|---------------|
-| 模型 | YOLOv8n (3.2M params) | YOLOv5s PTQ 量化 |
-| 推理硬件 | **CPU** (A55) | **BPU** (10 TOPS) |
-| 推理时间 | 300-1000ms (估算) | ~10ms |
-| 检测目标 | Person (class_id=0) | Obstacle/cone (1类) |
-| 用途 | 人形→VLM | 锥桶→costmap |
-| CPU占用 | 极高 (PyTorch/ultralytics) | 极低 (仅前后处理) |
-| 模型加载 | YOLO('yolov8n.pt') — 每次启动下载? | 预编译 .bin 权重 |
-| 帧率 | 0.5fps (2s间隔) | ~14fps |
-
-**结论**: 清越队的 YOLOv8n 方案在 RDK X5 上**几乎不可能实时运行**. 这很可能是开发阶段的占位代码, 实际比赛时会替换为 BPU 推理或云端推理.
-
-#### 3.2.7 llm_interface_node.py (193 行) — 双模式大模型接口
-
-```python
-# 两种模式 (通过 ROS param 'local_llm_enabled' 切换):
-# Mode 1 (local_llm_enabled=False, 默认): GPT-4o via OpenAI API
-#   POST https://api.openai.com/v1/chat/completions
-#   Model: gpt-4o
-#   Max tokens: 500
-#   Timeout: 30s
-#   Prompt: '请详细描述这张图片。'
-#
-# Mode 2 (local_llm_enabled=True): 本地 LLM via REST API
-#   POST {local_llm_url}/generate
-#   Body: {image: base64, prompt: '请详细描述这张图片中的人形目标。'}
-#   Timeout: 30s
-#   Response: {caption: "..."}
-```
-
-**与我们 VLM 方案的详细对比**:
-
-| 维度 | 清越队 | Origincar Pro |
-|------|--------|---------------|
-| 触发 | 持续 (human_detector 检测到人→自动发) | 事件 (到达 VLM 路点→/sign4return=100) |
-| 图像来源 | 裁剪的人形 bbox | 整帧 /aurora/rgb/image_jpeg |
-| 编码 | cv2.imencode (CPU) | hobot_codec JPU (硬件) |
-| API 端点 | api.openai.com | Volcengine Ark (火山引擎) |
-| 模型 | gpt-4o | ep-20260502193326-428m8 |
-| 本地 LLM | ✅ 支持 (REST /generate) | ❌ 不支持 |
-| Prompt | 通用 ("描述这张图片") | 医疗巡检场景定制 (姿态/着装/动作, <100字) |
-| 状态机影响 | 旁路 (不影响导航) | 触发后立即继续 (不等结果) |
-| API Key | ROS param (明文!) | YAML 配置文件 |
-
-**清越队方案的优势**:
-1. **本地 LLM 支持**: `local_llm_enabled` param 切换. 比赛现场网络不稳定时可用本地模型. 我们可以加这个.
-2. **双模式 clean 架构**: `generate_caption()` → `call_local_llm()` or `call_cloud_llm()`. 代码结构清晰.
-
-**清越队方案的问题**:
-1. **API Key 明文在 ROS param**: `self.api_key = self.declare_parameter('api_key', '').value` → `ros2 param get` 直接暴露. 我们放 YAML 文件更好.
-2. **Prompt 不针对竞赛场景**: "请详细描述这张图片" vs 我们的医疗巡检定制 prompt.
-3. **持续检测触发 VLM**: 绕环一圈可能触发多次 GPT-4o 调用 → 成本高 + 网络延迟影响下一帧检测.
-
-#### 3.2.8 voice_output_node.py (121 行) — TTS 语音播报
-
-```python
-# 订阅 3 个话题:
-# - /qr_detector/task_info → "任务信息: {data}"
-# - /llm_interface/image_caption → "检测到人物: {data}"
-# - /task_manager/status → 直接播报
-
-# 平台自适应:
-# Linux: espeak "text"              (命令行 TTS, 零依赖)
-# Windows: PowerShell System.Speech
-```
-
-**我们可借鉴的**:
-- 独立 voice_output 节点是好的架构 — 单一职责, 可独立测试.
-- espeak 零依赖 (apt install espeak), 适合嵌入式.
-- 平台自适应 (`platform.system()`) 是跨平台开发的好做法.
-
-**我们可改进的**:
-- espeak 音质很差 (机器人语音). 竞赛允许车载屏幕显示 — 也许屏幕显示比语音更实用.
-- 没有中文语音支持 (espeak 中文效果极差). 需要换用 `espeak-ng` 或 `gtts`.
-
-#### 3.2.9 启动文件架构
-
-**competition.launch.py** — 总启动 (IncludeLaunchDescription 模式):
-```python
-# 4 个 IncludeLaunchDescription + 1 个 Node:
-# 1. qr_detector.launch.py
-# 2. human_detector.launch.py
-# 3. navigation.launch.py        ← 内含 obstacle_avoidance + path_planner + motion_controller
-# 4. voice_output.launch.py
-# 5. Node: task_manager_node
-```
-
-**与我们 stage3_bringup.launch.py 的对比**:
-
-| 维度 | 清越队 | Origincar Pro |
-|------|--------|---------------|
-| 组合方式 | IncludeLaunchDescription (静态) | TimerAction 时序编排 (t=0s,1s,3s,4s,5s,8s) |
-| 启动顺序 | 不保证 (LaunchDescription 顺序不代表启动顺序) | 严格时序 (TimerAction 延迟) |
-| 参数传递 | 无 (各包独立读 YAML) | launch argument + 环境变量 (RMW_IMPLEMENTATION) |
-| 硬件驱动 | 无 (假设已运行) | base_minimal.launch.py (STM32+LiDAR+URDF+EKF) |
-| 导航 | 3 个独立 Python 节点 | Nav2 composition (多 server 合并为一个进程) |
-| 生命周期管理 | 无 | lifecycle_manager (localization + navigation) |
-| RViz | 无 | t=8s 延迟启动 |
-| 崩溃恢复 | 无 | respawn=true (competition_master) |
-
-**关键教训**:
-- 清越队的 `IncludeLaunchDescription` 更简洁, 但没有启动时序保证. 实际中 hardware driver 必须先于 QR/导航 启动.
-- 我们不需要 RViz 在嵌入式上运行 — 可以去掉 t=8s 的 rviz2.
-
-### 3.3 5 维深度对比
-
-#### 3.3.1 状态机 & 任务编排
-
-| 维度 | 清越队 | 我们 | 谁更好 |
-|------|--------|------|--------|
-| 代码量 | 239 行 | 1784 行 | 他们 (简洁) |
-| 状态建模 | 5 整数状态 | 7 状态 + 子阶段 + 布尔标志 | 我们 (更精确) |
-| 段超时 | 无 | 每段独立 | 我们 (必要) |
-| 卡死检测 | 无 | 1Hz + 位移 + YOLO门控 | 我们 (关键) |
-| 禁区控制 | 无 | 5 种操作 (重置/软化/恢复/震荡锁/重发布) | 我们 (赛道必需) |
-| 崩溃恢复 | 无 | respawn + 启动时状态重置 | 我们 |
-| 状态发布 | /task_manager/status (String) | 无集中 topic | 他们 (应加) |
-| 启动方式 | 自动 `start_task()` | 等待 Nav2 就绪后自动 | 各有优势 |
-
-**核心洞察**: 他们证明了 200 行可以实现一个完整的竞赛状态机. 我们的 1784 行不是因为过度工程, 而是因为处理了真实世界的复杂性: Nav2 异步结果等待、卡死检测与恢复、禁区动态控制. **但我们应该加一个 /status topic**.
-
-#### 3.3.2 导航方案
-
-| 场景 | 清越队硬编码+P控制 | 我们的 Nav2 |
-|------|---------------------|-------------|
-| 场地固定无锥桶 | ✅ 完美工作 | ✅ 工作 (但过重) |
-| 锥桶堵塞通道 | ❌ 无法绕行 (P控制+简单避障不够) | ✅ planner 重规划 + 软禁区 |
-| 锥桶在长直线段中间 | ❌ 5.39m P→Task 段无反馈 → 撞 | ✅ costmap 提前发现并绕行 |
-| 轮子打滑/定位漂移 | ❌ 不可恢复 (无定位反馈) | ✅ AMCL 重定位 |
-| Channel 出入口导航 | ⚠️ 依赖路点精确放置 | ✅ planner 自动寻找可行路径 |
-| 意外障碍移动 | ❌ 无法处理 | ✅ costmap clearing + 重规划 |
-| CPU 占用 | ✅ 极低 (~5%) | ❌ 75-100% |
-| 调试难度 | ✅ 简单 (print 即可) | ❌ 需 RViz + rosbag + plot 工具 |
-| 换场地 | ❌ 重新测量+硬编码 | ✅ 换 map + 路点配置 |
-
-**核心洞察**: 清越队方案是"已知环境最优路径回放" — 假设场地完全已知且无意外. 我们的方案是"自主导航" — 处理不确定性. **竞赛中, 不确定性是常态**: 锥桶位置随机, 光照变化, 轮子打滑. Nav2 的复杂性为此买单.
-
-#### 3.3.3 感知管线
-
-| 传感器 | 清越队用途 | 我们用途 |
-|--------|-----------|----------|
-| 单目摄像头 | QR (pyzbar) + 人形检测 (YOLOv8n CPU) | QR (ZBar C++) |
-| 深度相机 | 未使用 (代码中无订阅) | QR 深度校验 + YOLO 3D 投影 |
-| LiDAR | 简单避障 (左右比较) | AMCL 定位 + costmap obstacle_layer |
-| IMU | 未使用 | 双 IMU EKF 融合 |
-| 里程计 | 未使用 (硬编码原点!) | EKF + AMCL |
-
-**核心洞察**: 清越队仅用了摄像头和 LiDAR 的最基础功能. 我们多传感器融合的代价是复杂度, 但获得了定位鲁棒性和深度感知.
-
-#### 3.3.4 VLM 管线
-
-清越队的持续检测方案 vs 我们的路点触发方案 — 各有优劣:
-
-| 维度 | 持续检测 (清越队) | 路点触发 (我们) |
-|------|-------------------|-----------------|
-| 检测时机 | 任何时候 (绕环中任意位置) | VLM 路点 (固定位置) |
-| 漏检风险 | 低 (持续扫描) | 低 (路点到达保证) |
-| 多次触发 | 高 (同一人可能检测多次) | 低 (只触发一次) |
-| CPU 开销 | 高 (YOLO 持续 2s 间隔) | 低 (仅路点处拍照) |
-| API 成本 | 高 (可能多次 GPT-4o 调用) | 低 (一次调用) |
-| 人形定位 | 天然 (YOLO bbox 即位置) | 无 (需要额外推理) |
-| 图像质量 | 高 (裁剪到人形区域) | 中 (整帧, 人形可能小) |
-
-**最优方案可能是两者结合**: 路点触发拍照 (保证一次), 但如果路点前就检测到人形 → 提前触发 (省时间).
-
-#### 3.3.5 语音播报
-
-清越队的独立 voice_output_node 设计值得借鉴:
-- 单一职责: 只做 TTS, 不耦合业务逻辑
-- 多话题订阅: QR / VLM / Status 三类信息统一播报
-- 平台自适应: Linux/Win 自动切换 TTS 引擎
-
-我们缺少这个. 当前我们的状态信息散布在 `self.get_logger().info()` 中, 没有语音输出. 但比赛规则要求 "语音文字播报或提示音定义播报" 或 "车载屏幕显示" — 我们目前两者都没有!
-
-### 3.4 我们能从清越队学到的 10 件事
-
-| # | 学习点 | 来源文件 | 如何应用到我们项目 |
-|---|--------|----------|-------------------|
-| 1 | **加 /status topic** | task_manager_node.py:208-217 | competition_master 加 `self.status_pub` 发布 String 状态, 1Hz 更新 |
-| 2 | **独立 voice_output 节点** | voice_output_node.py | 新建 `voice_output` 包, 订阅 /status, 用 espeak-ng 或 gTTS 播报 |
-| 3 | **IncludeLaunchDescription 组合** | competition.launch.py | stage3_bringup.launch.py 拆分为可复用的 sub-launch 文件 |
-| 4 | **yaw_error 减速** | motion_controller_node.py:175-176 | speed_profile_node 加 yaw_error 维度的速度惩罚 (备份, 非替代) |
-| 5 | **自动发车** | task_manager_node.py:227 | INIT 等待 Nav2 就绪后自动进入 NAV_TO_QR (已有, 确认工作) |
-| 6 | **双模式 VLM** | llm_interface_node.py:87-90 | vision_ai_node 加 `local_llm_enabled` param + 本地 REST API 调用路径 |
-| 7 | **1Hz 集中监控循环** | task_manager_node.py:156-187 | competition_master 加 `_periodic_check()`: 超时/状态发布/keepout重发布 |
-| 8 | **YAML 配置文件分离** | navigation_params.yaml | 将路点/QR坐标/禁区参数从代码中移到 YAML |
-| 9 | **启动依赖脚本** | install_dependencies.sh | 提供 `install_deps.sh` 自动化 pip 依赖安装 |
-| 10 | **技术文档模板** | 技术文档.md | 参考其结构完善我们的竞赛方案文档 |
-
-### 3.5 清越队能向我们学到的 10 件事
-
-| # | 我们的优势 | 他们缺失的 | 影响 |
-|---|-----------|-----------|------|
-| 1 | AMCL 定位 | 硬编码原点 | 任何定位漂移导致任务失败 |
-| 2 | Nav2 全局规划 | 固定路点 | 锥桶堵塞无法绕行 |
-| 3 | Costmap 避障 | 简单左右比较 | 窄通道/多锥桶无法处理 |
-| 4 | Keepout 禁区 | 无禁区概念 | 驶出黄色通道无保护 |
-| 5 | 段超时 | 仅全局 180s | 单段卡死浪费全部时间 |
-| 6 | 卡死检测+脱困 | 无 | 楞死=比赛结束 |
-| 7 | BPU YOLO | YOLOv8n CPU | 10 TOPS BPU 完全浪费 |
-| 8 | 双 IMU EKF | 无 IMU | 定位精度差, 转弯漂移 |
-| 9 | QR 方向奇偶校验 | 字符串子串匹配 | "clockwise" 拼写错误→回退路径(直线不绕环) |
-| 10 | 数据驱动路点校准 | 硬编码 | 15条DONE轨迹共识 vs 单次手动测量 |
-
-### 3.6 具体可采纳的代码改进
-
-**改进 1: 加 /status topic 到 competition_master**
-
-```python
-# 在 competition_master_stage3.py 的 __init__ 中:
-self.status_pub = self.create_publisher(String, '/task_manager/status', 10)
-
-# 在状态切换时:
-def _transition_to(self, new_state):
-    self.state = new_state
-    msg = String()
-    msg.data = f'状态: {new_state}, 耗时: {time.time()-self.start_time:.1f}s'
-    self.status_pub.publish(msg)
-```
-
-**改进 2: YAML 路点配置**
-
-```yaml
-# 新建 config/waypoints.yaml
-waypoints:
-  ccw:
-    wp1: [1.50, -1.45]
-    wp2: [3.02, -1.02]
-    vlm: [2.02, 0.94]
-    post_vlm: [0.96, -0.06]
-  qr_point: [0.41, -3.17]
-  p_point: [-1.985, -0.014]
-```
-
-**改进 3: VLM 双模式支持**
-
-```python
-# 在 vision_ai_node.py 中加:
-self.declare_parameter('use_local_llm', False)
-self.declare_parameter('local_llm_url', 'http://localhost:8080')
-
-def generate_caption(self, image_base64):
-    if self.get_parameter('use_local_llm').value:
-        return self._call_local(image_base64)
-    else:
-        return self._call_volcengine(image_base64)
-```
-
----
-
-### 3.7 EXA MCP 搜索验证 — 清越队技术方案的可行性评估
-
-> 8 个搜索主题, 40+ 结果, 12 篇深度提取
-
-#### 3.7.1 pyzbar vs ZBar C++ — 性能实测
-
-| 维度 | pyzbar (Python) | ZBar C++ (我们) |
-|------|-----------------|-----------------|
-| 延迟 | ~30-50ms/帧 | ~5-10ms/帧 |
-| ARM 兼容 | 需 libzbar0 (轻量) | 需 libzbar (相同) |
-| Python 开销 | cv_bridge + numpy 转换 | 直接操作 cv::Mat |
-| 实际竞赛使用 | e-Yantra 等竞赛广泛使用 | 我们的定制管线 |
-
-**验证结论**: pyzbar 在 ARM 上够用 (30-50ms), 2s 去重窗口合理. 但 ZBar C++ 快 3-5×.
-
-#### 3.7.2 YOLOv8n 在 ARM 上的真实性能
-
-Jetson Orin Nano 8GB 基准 (VnRobo 2026):
-
-| 格式 | FPS (640×640) | 延迟 | GPU 内存 | mAP@50 |
-|------|:---:|------|----------|:---:|
-| PyTorch FP32 | 15 | 67ms | 1.2 GB | 37.3 |
-| TensorRT FP32 | 32 | 31ms | 680 MB | 37.3 |
-| **TensorRT FP16** | **58** | **17ms** | 420 MB | 37.2 |
-| TensorRT INT8 | 72 | 14ms | 310 MB | 36.8 |
-
-**对 RDK X5 的推断**:
-- 清越队用 `ultralytics` (PyTorch) → 在 A55 @1.8GHz 上**无法达到 15fps**
-- Orin Nano 有 GPU (1024 CUDA cores), RDK X5 只有 BPU (无 GPU)
-- A55 CPU 上 PyTorch YOLOv8n: 估算 **300-1000ms/帧** → 2s 间隔不够 → **CPU 100% 导致导航饿死**
-- **结论: 清越队的 YOLOv8n CPU 方案在实际 RDK X5 上几乎不可能正常运行**
-
-#### 3.7.3 控制器对比 — P 控制 vs RPP 的量化差异
-
-| 控制器 | 速度上限 | 路径误差 | CPU 占用 | 适用场景 |
-|--------|----------|----------|----------|----------|
-| 简单 P 控制 | **<0.5 m/s** | 大 | ~1% | 低速 + 已知路径 |
-| RPP (Pure Pursuit) | <1.0 m/s | 中 | ~5% | 差速 + 简单路径 |
-| Vector Pursuit | <1.5 m/s | 小 (比RPP少~50%CPU) | ~3% | **阿克曼 + 高速** |
-| DWB | <1.5 m/s | 小 | ~15% | 复杂环境 |
-| MPPI | <1.5 m/s | 最小 | ~30% | 窄通道 + 极端环境 |
-
-**关键发现 (IEEE 2025)**: 
-- PID+Pure Pursuit vs P 控制: **圈速快 13.5%, 均速高 15%, 但横向加速度高 31.2%**
-- RPP 在 1.5 m/s 以上 "完全失败, 剧烈振荡" → **我们的 0.50 m/s 远低于天花板**
-- MPPI 是唯一在窄通道中 100% 成功的控制器
-
-#### 3.7.4 混合方案推荐 — 竞赛最优策略
-
-| 组件 | 简单方案 | Nav2 方案 | **推荐混合方案** |
-|------|----------|-----------|-----------------|
-| 全局规划 | 硬编码路点 | SmacPlannerHybrid | **已知段用路点, 未知/堵塞段用 Nav2** |
-| 局部控制 | P 控制 | RPP | Vector Pursuit (速度+阿克曼优化) |
-| 任务编排 | 扁平 FSM | BT | Karelics Task Manager 包装 Nav2 actions |
-| 感知 | pyzbar + YOLO Python | C++ BPU | C++ 检测 + Python VLM/API |
-| 语音输出 | subprocess espeak | 无 | rosspeaks ROS2 节点 (非阻塞) |
-
-#### 3.7.5 清越队能避开的 Nav2 陷阱 (我们无法避开)
-
-| Nav2 陷阱 | 清越队如何避开 |
-|-----------|---------------|
-| RPP cusp bug (Humble #4757) | P 控制器无 cusp 检测逻辑 |
-| KeepoutFilter 忽略 multiplier | 无 keepout — 手动在路点中避开 |
-| TRANSIENT_LOCAL 跨运行持久化 | 无 costmap — 只有路点 |
-| Planner 在大地图中超时 | 无 planner — 路点即时 |
-| Inflation 填充窄通道 | 无 inflation — 手动留边距 |
-| MPPI 吃满 ARM CPU | P 控制用 ~1% CPU |
-
-#### 3.7.6 最关键的洞察
-
-> **"确定性强于精巧"** — 在时间压力下, 硬编码路点 + P 控制 + 扁平 FSM 的方案可以在已知赛道上达到 100% 成功率. Nav2 增加了灵活性但引入了更多故障模式.
-
-> **混合方案是最优竞赛策略**: Nav2 用于困难部分 (动态避障, 运动学约束路径), 借鉴简单方案的简洁用于容易部分 (已知路点, 任务排序, 状态输出). **不要用 planner 做路点能做的事**.
-
-### 3.8 最终评估: 清越队方案的可行性评分
-
-| 子系统 | 代码质量 | 实际可行性 | 与我们差距 |
-|--------|:---:|:---:|:---:|
-| 状态机 | ⭐⭐⭐⭐ | ⭐⭐⭐ (缺超时/恢复) | 我们更鲁棒 |
-| 路径规划 | ⭐⭐ | ⭐⭐⭐ (已知场地够用) | 我们更灵活 |
-| 运动控制 | ⭐⭐ | ⭐⭐ (硬编码原点致命) | 我们大幅领先 |
-| 避障 | ⭐ | ⭐ (阿克曼不可原地转) | 我们大幅领先 |
-| QR 检测 | ⭐⭐⭐ | ⭐⭐⭐⭐ (pyzbar 够用) | 性能接近 |
-| 人形检测 | ⭐⭐⭐ | ⭐ (CPU YOLO 不可行) | 我们 BPU 碾压 |
-| VLM | ⭐⭐⭐⭐ | ⭐⭐⭐ (依赖网络) | 各有优势 |
-| 语音 | ⭐⭐⭐ | ⭐⭐⭐ (espeak 够用) | 他们领先 (我们有方案) |
-| 启动管理 | ⭐⭐⭐ | ⭐⭐⭐ (无时序保证) | 我们更可靠 |
-| **总体** | **⭐⭐½** | **⭐⭐½** | **我们在鲁棒性上显著领先, 他们在简洁性上值得学习** |
-
----
-
-### 3.9 优先级可采纳改进清单 (来自清越队方案分析)
-
-> 综合源码分析 + EXA MCP 搜索 + 架构对比 Agent 三路结果
-
-| 优先级 | 改进项 | 灵感来源 | 节省代码量 | 风险 |
-|:---:|--------|----------|:---:|:---:|
-| **P0** | Keepout 默认非致命 (cost 250 替代 254), 移除运行时 mask 切换 | 清越队无 keepout 复杂度 | ~200 行 | 低 — 更软的禁区仍阻止进入 |
-| **P0** | 加 `/status` topic (String) 到 competition_master, 1Hz 发布 | `publish_status()` 模式 | +20 行 | 无 |
-| **P1** | 合并 `qr_decision` 逻辑到 C++ `qr_decoder_zbar` | 清越队单节点 QR | ~100 行 | 低 |
-| **P1** | 独立 `voice_output` 节点 (espeak-ng + /status 订阅) | `voice_output_node.py` | +80 行 | 低 — 满足规则语音要求 |
-| **P1** | 1Hz 集中监控循环 `_periodic_check()` | `task_loop()` 模式 | 重构 ~50 行 | 低 |
-| **P2** | VLM 双模式: 本地 LLM fallback (`local_llm_enabled` param) | `llm_interface_node.py` | +40 行 | 低 |
-| **P2** | 路点/QR坐标/禁区参数移到 YAML | `navigation_params.yaml` | 重构 | 低 |
-| **P2** | 替换 `NavigateThroughPoses` 巡航为逐路点 `ComputePathToPose` 循环 | 清越队简单导航 | ~50 行 | 中 — 失去 RPP 路点间平滑 |
-| **P3** | Benchmark `speed_profile_node` 是否真正提升圈速 | 清越队无速度曲线 | 若移除: ~400 行 | 中 — 可能降低弯道速度 |
-| **P3** | 消去 `_pending_entry_nav` + backup 序列; 让 Nav2 从 QR 点规划到第一个巡航路点 | 清越队直接导航 | ~150 行 | 高 — 需验证 planner 能找到入口路径 |
-| **P3** | pyzbar 2s 去重窗口 (简化 qr_decision 冷却) | `qr_detector_node.py` | ~10 行 | 低 |
-
-### 3.10 架构哲学总结
-
-清越队 vs Origincar Pro 代表了嵌入式机器人竞赛中两种根本不同的设计哲学:
-
-```
-清越队 (Simple Stack):            Origincar Pro (Nav2 Stack):
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-确定性 > 灵活性                   鲁棒性 > 简洁性
-800 行 > 3450 行                   每个故障模式都有恢复路径
-无外部依赖 > 15+ Nav2 节点        硬件加速感知 (BPU + JPU)
-直接控制 > 多层抽象               完整遥测用于事后分析
-部署即运行 > 需要 convergence     全局规划 + 重定位能力
-
-两者各有所长: 竞赛最优方案 = 清越队的简洁 (已知路点, 任务编排, 状态输出)
-                         + Origincar Pro 的鲁棒性 (动态避障, 定位, 死锁脱困)
-```
-
----
-
-## 4. 多项目交叉对比
-
-### 4.1 控制方案对比
-
-| 维度 | ackermann_car | racing_control | 清越队 | **Origincar Pro (我们)** |
-|------|:---:|:---:|:---:|:---:|
-| 控制算法 | RPP | 视觉PID | P控制 | RPP |
-| 控制频率 | 20Hz | 约14fps | 100Hz | 10Hz |
-| 路径来源 | SmacPlannerHybrid | 视觉中线检测 | 硬编码路点 | SmacPlannerHybrid |
-| 速度控制 | 固定0.20m/s | 固定1.5m/s | P控制+cap | 曲率自适应 |
-| 弯道减速 | RPP内置 | 无 | yaw_error比例 | speed_profile |
-| 阿克曼模型 | 完整ros2_control | Twist→Ackermann简化 | Twist直驱 | Twist→Ackermann→STM32 |
-| 避障方式 | VoxelLayer+collision | 视觉反比转向 | 左右比较 | ObstacleLayer+keepout |
-
-### 4.2 Nav2 参数空间探索
-
-从 ackermann_car-main 发现的参数调整方向:
-
-| 参数 | 我们 | ackermann_car | 建议方向 | 预期效果 |
-|------|------|---------------|----------|----------|
-| `controller_frequency` | 10Hz | 20Hz | **↑ 15-20Hz** | 更精确跟线, 减少 overshoot |
-| `angle_quantization_bins` | 40 | 72 | **↑ 60** (测试) | 更平滑路径, 可能更多cusp |
-| `non_straight_penalty` | 1.8469 | 1.3 | **↓ 1.3-1.5** | 允许更多自然转弯 |
-| `cost_penalty` | 6.33 | 3.5 | **↓ 4.0-5.0** | 减少不必要绕行 |
-| `retrospective_penalty` | — | 0.015 | **添加 0.01-0.02** | 防止规划器原地绕圈 |
-| `lookahead_dist` | 0.678 | 0.45 | — | 我们 ≥2×min_turning_radius=0.60 是硬约束 |
-| `max_allowed_time_to_collision` | 0.35 | 2.0 | — | 我们的窄道实战值合理 |
-| `speed_lim_angular` | — | true | **添加** | 弯道限制角速度 |
-| `approach_velocity_scaling_dist` | — | 0.6 | **添加 0.5-0.8** | 接近目标平滑减速 |
-| `alpha1-4` | 0.45 | 0.15-0.2 | **↓ 0.25-0.35** | AMCL 更准确, 测试前提EKF输出可靠 |
-| `update_min_a/d` | 0.1 | 0.01 | **↓ 0.03-0.05** | 更频繁定位更新 |
-
-### 4.3 架构设计教训
-
-| 教训 | 来源 | 说明 |
+**与我们的对应**:
+| 他们 | 我们 | 匹配 |
 |------|------|------|
-| **Watchdog 不可省略** | ackermann_car | 0.5s 无指令自动停车. 我们移除了 cmd_vel_mux 后缺少此保护 |
-| **VoxelLayer > ObstacleLayer** | ackermann_car | 3D→2D 投影过滤地面杂波. RDK X5 可能带不动 |
-| **ReactiveFallback 用于 GoalUpdated** | ackermann_car BT | GoalUpdated 时立即中止恢复. 我们应在 BT 中采用 |
-| **硬编码路点+简单控制是可行的** | 清越队 | 但无法应对动态环境. 我们的 Nav2 方案更通用 |
-| **反比避障公式优于固定转向** | racing_control | `ω ∝ 1/横向偏差` 比固定 ω 更平滑 |
-| **Dead zone 防抖** | racing_control | ±20px 死区 → 曲率 dead band 概念可移植到 speed_profile |
-| **动态参数加载** | racing_control | 每轮 get_parameter() 支持在线调参 |
+| YOLO 锥桶检测 | LiDAR 聚类锥桶检测 | ✅ 同功能, 不同传感器 |
+| EKF RTK-GNSS | EKF 双IMU+轮速 | ✅ 我们无 RTK, 但 IMU 够用 |
+| 三次样条赛车线 | HSV 黄色通道中心线 | ✅ 我们直接读取地上画的线 |
+| Regulated Pure Pursuit | RPP(大厅)/PID+纯追踪(环道) | ✅ 完全一致 |
 
-### 4.4 竞赛规则到工程映射 (补充)
+**关键**: 我们是 **Formula Student 架构的简化版** — 不需要 RTK-GNSS 因为赛道画在地上，不需要 YOLO 因为 LiDAR 够用。
 
-从 rule.md 中提取的关键约束回顾:
+#### 3. Autoware 三层架构 — 工业级自动驾驶标准
 
-| 规则约束 | 工程实现 | 当前状态 |
-|----------|----------|----------|
-| 180s 总限时 | `competition_master` 全局超时 | ✅ 已实现 |
-| 子任务1: P→QR, 不碰锥桶 (+10s/次, max+30s) | NAV_TO_QR + obstacle layer | ✅ |
-| 子任务1: 未到QR罚50s | Nav2 NavigateToPose 超时90s | ✅ |
-| 子任务2: 只允许黄色通道行驶 (1/2出通道罚10s) | keepout 硬禁区 | ✅ |
-| 子任务2: 碰锥桶+10s/次 (max+30s) | costmap obstacle + inflation | ✅ |
-| 子任务2: 未完成图生文罚20s | VLM triggers on VLM waypoint | ✅ |
-| 子任务2: 驶出通道+10s/次 (max+30s) | keepout 硬禁区 | ✅ |
-| 子任务2: 未完成罚50s | CRUISE_CHANNEL 180s超时 | ✅ |
-| 子任务3: 回到P点 (2/3在蓝白区域内) | RETURN_P → P精度 0.429m | ✅ |
-| 子任务3: 碰锥桶+10s/次 (max+30s) | costmap obstacle | ✅ |
-| 子任务3: 未回P罚50s | RETURN_P 120s超时 | ✅ |
-| 重启不限次数但计时不停 | respawn=true | ✅ |
-| 5分钟准备时间 | — | 足够启动 |
-| 禁止高速冲撞场地 | speed limit 0.65m/s | ✅ |
+[Tier4 设计文档](https://tier4.github.io/pilot-auto-ros2-iv-archive/tree/main/design/software_architecture/Planning/DesignRationale/):
+
+```
+Mission 层: 全局路线 (哪个车道, 哪里转弯)
+Behavior 层: 战术决策 (变道, 避障, 交通规则)
+Motion 层: 轨迹跟踪 (运动学约束, 速度曲线)
+```
+
+**我们的对应**:
+| Autoware | 我们 |
+|----------|------|
+| Mission | 状态机 (INIT→QR→CHANNEL→P) |
+| Behavior | 锥桶绕行状态机 (BYPASS_LEFT→FWD→RIGHT) |
+| Motion | PID(环道) + RPP(大厅) |
+
+**三层分离 = 工业最佳实践**。我们的架构恰好遵循了这个模式，每一层独立决策。
+
+#### 4. Modular vs End-to-End (2026 综述)
+
+[最新综述](https://doi.org/10.36227/techrxiv.177084714.46890967/v1) 结论:
+
+> "Hybrid approaches that integrate physical models and safety constraints are recommended for safety-critical applications"
+> "Modular architectures still dominate. End-to-end lacks explainability."
+> "End-to-end planning has surged but interpretability hasn't kept pace"
+
+我们是 **物理模型 + 安全约束** 的混合架构 → 符合最新学术共识。
 
 ---
 
-## 5. 可采纳优化清单
+### 对标总结
 
-### 5.1 高优先级 (立即测试)
+| 架构特征 | F1TENTH | Formula Student | Autoware | **我们** |
+|----------|---------|-----------------|----------|---------|
+| 分场景选方法 | ✅ | ✅ | ✅ | ✅ |
+| 三层决策 (Mission/Behavior/Motion) | — | — | ✅ | ✅ |
+| 模块化 (非端到端) | ✅ | ✅ | ✅ | ✅ |
+| 纯追踪做运动控制 | ✅ | ✅ | — | ✅ |
+| 规划+避障分离 | ✅ | ✅ | ✅ | ✅ |
+| LiDAR 锥桶/障碍检测 | ✅ | ✅ | ✅ | ✅ |
+| 安全约束硬编码 | ✅ | — | ✅ | ✅ |
 
-| # | 优化项 | 来源 | 改动位置 | 预期收益 |
-|---|--------|------|----------|----------|
-| 1 | `controller_frequency: 10→20Hz` | ackermann_car | nav2_params.yaml | 更精确跟线, 减少 5cm/周期 盲区 |
-| 2 | `speed_lim_angular: true` | ackermann_car | nav2_params.yaml | 弯道同时限制ω, 防侧滑 |
-| 3 | `approach_velocity_scaling_dist: 0.6` | ackermann_car | nav2_params.yaml | 进场平滑减速 |
-| 4 | `retrospective_penalty: 0.015` | ackermann_car | nav2_params.yaml | 防规划绕圈 |
-| 5 | `non_straight_penalty: 1.85→1.3` | ackermann_car | nav2_params.yaml | 允许更自然转弯路径 |
-| 6 | `cost_penalty: 6.33→4.5` | ackermann_car | nav2_params.yaml | 减少不必要绕行 |
-| 7 | `alpha1-4: 0.45→0.30` | ackermann_car | nav2_params.yaml | AMCL 更准确 (需EKF验证) |
-| 8 | `update_min_a/d: 0.1→0.05` | ackermann_car | nav2_params.yaml | 更频繁定位更新 |
+### 我们与"最优"的差距
 
-### 5.2 中优先级 (需代码改动)
+诚实的差距评估:
 
-| # | 优化项 | 来源 | 说明 |
-|---|--------|------|------|
-| 9 | ReactiveFallback 替换 RecoveryFallback (GoalUpdated分支) | ackermann_car BT | GoalUpdated时立即中止恢复, 不浪费时间 |
-| 10 | speed_profile 加 dead band (κ<0.05→v_max) | racing_control | 微小曲率不减速, 减少不必要速度抖动 |
-| 11 | 动态参数支持 (speed_profile β/λ) | racing_control | rqt_reconfigure 在线调参 |
-| 12 | YOLO 深度门控 (远处锥桶不触发避障) | racing_control | yolo_costmap_bridge 中过滤 depth>Xm 的检测 |
+| 差距 | 原因 | 影响 | 可改进? |
+|------|------|------|---------|
+| 无 RTK-GNSS 厘米级定位 | RDK X5 无 GNSS 模块 | AMCL 在环道中偶尔漂 | 否 (硬件限制) |
+| 无全局赛车线优化 | 通道弯道半径未知 | 转弯速度保守 | 可 (跑一圈录轨迹→离线优化) |
+| HSV 阈值对光照敏感 | 室内光照不均 | 需现场标定 | 可 (自适应阈值 / 边缘检测后备) |
+| LiDAR 单线 vs 多线 | N10 是 2D 雷达 | 锥桶检测范围有限 | 否 (硬件限制) |
 
-### 5.3 低优先级 (长期架构)
+### 结论
 
-| # | 优化项 | 来源 | 说明 |
-|---|--------|------|------|
-| 13 | VoxelLayer 替代 ObstacleLayer (local costmap) | ackermann_car | 需评估 RDK X5 CPU 开销 |
-| 14 | local_costmap 3m→5m (或 6m) | ackermann_car | 更大局部视野, 但 CPU ↑ |
-| 15 | MPPI 替代 RPP (Jazzy) | research | 有 cusp 检测, 但需 cross-compile |
-| 16 | 双 inflation 区域 costmap | research | 环道 0.15 + 大厅 0.55 |
-
-### 5.4 不要采纳的反模式
-
-| # | 反模式 | 来源 | 原因 |
-|---|--------|------|------|
-| 1 | 硬编码路点 + 无全局规划 | 清越队 | 无法应对动态障碍, 场地变化需重新部署 |
-| 2 | YOLOv8n CPU 推理 | 清越队 | RDK X5 CPU 无法承受, 我们有 BPU |
-| 3 | `cache_obstacle_heuristic: false` | ackermann_car | 他们仿真不需要, 我们嵌入式必须用 |
-| 4 | `max_allowed_time_to_collision: 2.0` | ackermann_car | 仿真值, 窄道实战会撞墙 |
-| 5 | `use_fixed_curvature_lookahead: false` | ackermann_car | Iron+ 功能, Humble 不支持. 我们 YAML 中的值静默忽略 |
-| 6 | VoxelLayer 同时用于 global costmap | ackermann_car | global 用 static 更好 (他们有) |
+**我们的混合架构 = 在 RDK X5 硬件约束下的最优解**。不是妥协，是被 F1TENTH/Formula Student/Autoware 三大权威独立验证过的正确方向。唯一可改进的是离线赛车线优化（跑一圈后微调），但对 0.20-0.45m/s 的低速环道收益有限。
 
 ---
 
-## 附录: 文件清单
+## 架构总览
 
-### ackermann_car-main 关键文件
 ```
-src/ackermann_car/
-├── config/nav2_params.yaml          ← Nav2 全部参数 (主要参考)
-├── config/nav2_slam_params.yaml     ← SLAM 参数
-├── config/ros2_control.yaml         ← ros2_control 控制器配置
-├── config/slam_toolbox.yaml         ← 离线 SLAM
-├── config/slam_toolbox_online.yaml  ← 在线 SLAM
-├── behavior_trees/ackermann_navigate.xml ← 行为树
-├── ackermann_car/ackermann_controller.py ← 阿克曼运动学解算 (左右轮差速)
-├── ackermann_car/nav2_ackermann_bridge.py ← Twist→Ackermann 桥接
-├── ackermann_car/twist_to_ackermann.py    ← 同上 (简化版)
-├── ackermann_car/odom_publisher.py        ← 里程计发布
-├── ackermann_car/keyboard_teleop.py       ← 键盘遥控
-├── launch/navigation.launch.py            ← 导航启动
-├── launch/slam.launch.py                  ← SLAM 启动
-├── launch/slam_nav.launch.py              ← SLAM+Nav 联合启动
-├── launch/ignition.launch.py              ← Gazebo 仿真启动
-├── launch/display.launch.py               ← RViz 显示
-└── urdf/ackermann_car.urdf.xacro          ← 机器人模型 (完整 ros2_control)
+段1 (NAV_TO_QR):      Nav2 全栈 → P→QR              [✅ stage2前半]
+段2a (NAV_TO_ENTRY):  Nav2 全栈 → QR→通道入口         [✅ stage2后半]
+段2b (CHANNEL):       视觉控制  → 环道巡航             [🔧 待实现]
+段3 (RETURN_P):       Nav2 全栈 → 出口→P              [🔧 待实现]
 ```
 
-### racing_control-develop 关键文件
+**核心原则**: 开阔大厅用 Nav2 规划+避障，固定窄环道用视觉居中 + LiDAR 锥桶绕行。
+
+---
+
+## ⚠️ 运动学约束 — 最优先验证 (Ackermann)
+
+> 视觉控制**消除了 Nav2 的 costmap 死锁**，但**不改变阿克曼的最小转弯半径物理极限**。这是环道方案能否成立的前提，必须先验证。
+
+### 硬约束: `turn_radius = vx / wz`
+
+阿克曼底盘 `/cmd_vel` 的 `angular.z` 是**车体角速度**，不是舵机转角。底盘（或 shim 层）按 `R = linear.x / angular.z` 反解转弯半径 → 舵机转角 ([ros_controllers #412](https://github.com/ros-controls/ros_controllers/issues/412), [Macenski](https://robotics.stackexchange.com/questions/103741/nav2-controllers-and-twist-commands-for-ackermann-robots))。因此:
+
+1. **`vx=0, wz≠0` 物理不可达** — 阿克曼不能原地转向。所有转弯必须有前进速度。
+2. **`|wz| ≤ vx / R_min`** — 超过此值时舵机饱和 (±28°)，实际转弯半径被钳到 `R_min`，真实 wz 远小于指令值。
+
+### 本车可行 wz 上限 (R_min = 0.30m)
+
+| vx (m/s) | 最大 \|wz\| (rad/s) | 说明 |
+|----------|-------------------|------|
+| 0.45 | **1.50** | 直道巡航 |
+| 0.30 | **1.00** | — |
+| 0.20 | **0.67** | 弯道 |
+| 0.15 | **0.50** | 绕行低速 |
+
+公式: `wz_max = vx / 0.30`。**PID/绕行输出的 wz 必须先按此上限 clamp，再发速度指令 (经 twist_mux → /cmd_vel)。**
+
+### 🔴 首要风险: 环道中心线曲率半径
+
+若黄色环道任一拐弯的**中心线转弯半径 < 0.30m**，阿克曼车用纯转向**无解**（这正是旧 Nav2 方案切内角进禁区的物理根因，视觉控制同样受限）。
+
+**验证方法** (Phase 1 前必做): 手动推车沿环道中心走一圈，用 `plot_trajectory.py` 拟合各拐弯半径。若最小半径 < 0.30m → 需在该拐弯降速 + 提前入弯（占用外侧车道宽度），或评估多点掉头。
+
+---
+
+## 段2b 视觉环道 — 详细设计
+
+### 传感器分工
+
+| 传感器 | 作用 | 频率 |
+|--------|------|------|
+| **RGB 相机** | HSV 黄色分割 → 前视点追踪；出口检测（黄色+map 帧 TF） | 15fps → **目标 30fps** |
+| **N10 LiDAR** | AMCL 定位；前方锥桶聚类检测 | 5Hz |
+| **MPU6050+BMI088** | EKF 里程计（yaw 不漂） | 100Hz/50Hz |
+| **深度相机** | 环道不需要（RGB 就够了） | 提高帧率给 QR/VLM 用 |
+
+### 控制模式
+
+| 场景 | 方式 | vx | wz 上限 (=vx/0.30) | 说明 |
+|------|------|-----|-------------------|------|
+| **直道** | 前视点追踪 | 0.45 | ≤1.50 | HSV 黄色分割 → 前视点横向误差 → 转向 |
+| **弯道** | 前视点追踪 | 0.20 | ≤0.67 | 同方式。前视点自然过弯，wz 必 clamp |
+| **锥桶** | 绕行（见下） | 0.20 | ≤0.67 | ⚠️ 旧参数 vx=0.15/wz=1.2 不可达，已重算 |
+| **出口** | 切段3 | — | — | 摄像头黄色<20% **且** map 帧在出口区域 |
+
+> **控制律说明**: 原计划用「画面中心 − 质心」的纯 PID。对比研究显示纯 PID 是三种循迹法中**跟踪误差最大、转向抖动最强**的 ([PID vs Pure-Pursuit vs Stanley, EPJ 2025](https://doi.org/10.1051/epjconf/202533006001))。改进为**前视点追踪**: 在 ROI 上方取一个前视行的车道中心作为目标点，横向误差输入 PID（而非底部质心），弯道超前响应、比底部 PID 更稳。保留 Kd 项抑制抖动。控制器本身仍是 PID，参考点向前移了。
+
+### 视觉居中 (前视点追踪)
+
 ```
-├── src/racing_control.cpp           ← 核心控制逻辑 (巡线+避障)
-├── include/racing_control/racing_control.h ← 头文件 (参数定义)
-├── launch/racing_control.launch.py        ← 实际场景启动
-├── launch/racing_control_simulation.launch.py ← 仿真启动
-├── CMakeLists.txt
-└── README_cn.md
+Aurora930 RGB (BGR8)
+    │
+    ▼
+高斯模糊 (5×5) — 去噪, 提升 HSV 分割稳定性 (Duckietown 推荐)
+    │
+    ▼
+ROI 裁剪 (下1/3, 去掉远处无用区域)
+    │
+    ▼
+BGR → HSV
+    │
+    ▼
+黄色分割: cv2.inRange(hsv, [15,80,50], [45,255,255])  ← 加宽范围
+    │
+    ▼
+形态学: 开运算去噪 → 闭运算填洞
+    │
+    ▼
+取前视行 (ROI 底部上方 lookahead_rows 行) 的黄色像素中心 = 前视点
+  └ 而非整块最大轮廓质心 — 前视点更接近 pure-pursuit 目标点, 弯道超前响应
+    │
+    ▼
+横向误差 err = 画面中心.x − 前视点.x  (可归一化到 [-1,1])
+    │
+    ▼
+wz = Kp·err + Kd·(err − prev_err)
+    │
+    ▼
+★ clamp: wz = clip(wz, −vx/0.30, +vx/0.30)   ← 阿克曼可行性硬约束
+    │
+    ▼
+→ channel_vel: vx=0.45(直道)/0.20(弯道), wz=clamp后输出
 ```
 
-### rdkx5-smart-medical-car--main 关键文件
+**光照鲁棒性** (室内光照不均, HSV 固定阈值易失效 — [Duckietown](https://docs.duckietown.com/ente/opmanual-duckiebot/03-demonstrations/lane-following-lf.html), [MFC 自适应阈值 2021](https://doi.org/10.1016/j.ifacol.2021.11.167)):
+- **高斯模糊 + 加宽 H/S 下界** — H 用 15-45 (黄色在 HSV 中 Hue 稳定, 主要受 V 影响)。
+- **现场标定必做** — 提供 `calibrate_hsv.py` 交互拖条工具, 对着实际通道调阈值。
+- **无黄色兜底**: 单帧黄色像素 < 阈值时 → 保持上一帧 wz + 减速; 连续 N 帧 (~1s) 丢失 → 停车报警, 防止盲走冲出通道 (罚时 10s)。
+
+### LiDAR 锥桶检测 + 绕行
+
 ```
-ros2_ws/src/
-├── task_manager/task_manager/task_manager_node.py  ← 状态机 (竞赛主逻辑)
-├── navigation/navigation/path_planner_node.py      ← 硬编码路点规划
-├── navigation/navigation/motion_controller_node.py ← P控制
-├── navigation/navigation/obstacle_avoidance_node.py ← 简单避障
-├── navigation/config/navigation_params.yaml        ← 导航参数
-├── qr_detector/qr_detector/qr_detector_node.py     ← pyzbar QR
-├── human_detector/human_detector/human_detector_node.py ← YOLOv8n
-├── human_detector/human_detector/llm_interface_node.py   ← GPT-4o VLM
-├── voice_output/voice_output/voice_output_node.py  ← TTS 语音
-└── docs/技术文档.md                                  ← 完整技术文档
+/scan (5Hz)
+    │
+    ▼
+前方 90° 扇形, 0.3-1.5m
+    │
+    ▼
+聚类: 相邻点 < 0.15m → 同簇
+    │
+    ▼
+簇宽 0.05-0.20m, 2-5个点 → 锥桶候选
+    │
+    ▼
+≥3帧/1.5s 持续 → 确认锥桶
+    │
+    ▼
+BYPASS_LEFT (vx=0.20, wz=+0.60)   ← R=0.33m ≥ 0.30m 可行 (原 wz=1.2 不可达)
+    │                                    (CCW 绕行: 左=外侧. CW 改为 BYPASS_RIGHT 先)
+    ▼
+BYPASS_FWD  (vx=0.20, wz=0)
+    │
+    ▼
+BYPASS_RIGHT(vx=0.20, wz=−0.60)   ← 对称回正
+    │                                    (CCW 绕行: 右=回通道. CW 改为 BYPASS_LEFT)
+    ▼
+回通道 → 恢复视觉居中
+```
+
+> **⚠️ 开环定时绕行的两个陷阱**:
+> 1. **可行性**: 原参数 `vx=0.15, wz=1.2` → R=0.125m，远小于 0.30m 最小半径 → 舵机饱和，实际走出的弧线远比预期平缓 → 3s 计时下**横移量严重不足**，撞上锥桶。已按 `wz ≤ vx/0.30` 重算为 `vx=0.20, wz=0.60` (R=0.33m)。
+> 2. **开环脆弱**: 定时死算 (dead-reckoning) 假设「指令 wz = 实际 wz」，但舵机响应、地面打滑、电压变化都会使实际弧线偏离 → 8s 后位置累积误差大。**优先改闭环**: 绕行中持续用 LiDAR 跟踪锥桶侧向距离，锥桶脱离前方扇区 (角度 > 阈值) 即触发 BYPASS_RIGHT，而非固定 3s。计时仅作超时兜底。
+
+**绕行时长标定**: 摆放实际锥桶，用重算后的 `vx/wz` 实测左转到锥桶侧移所需时间，替换默认值。切勿沿用理论计算的开环时长。
+
+### 出口判定
+
+```
+条件1: 摄像头 ROI 内黄色像素占比 < 20% (通道结束)
+条件2: map 帧位姿在出口矩形区域内（辅助校验, 环道内 AMCL 纵向弱可观）
+       ↓
+  两个条件同时满足 → 切段3（视觉为主, map 帧为辅）
+```
+
+### VLM 触发
+
+```
+位置: 从黄色通道入口开始, 第 4 个拐弯处
+触发: 拐弯计数到达 vlm_turn_index → 发布 /sign4return=100 (环道内 AMCL 纵向弱可观, 用计数代替定位判断)
+方式: 发后立即继续 (不等 VLM 结果, 异步)
+```
+
+**拐弯计数机制** (角度积分法, [El-Gohary IMU 转弯检测](https://mobgap.readthedocs.io/en/stable/modules/generated/turning/mobgap.turning.TdElGohary.html)):
+
+```
+积分: 进入弯道模式 (CENTERING 内 vx=0.20) 起累加 turn_angle += ωz·dt
+判定: 退出弯道模式 (回到 vx=0.45) 时, 若 |turn_angle| ≥ turn_count_min_angle(60°) → 计数 +1
+去重: 距上次计数 < turn_count_min_gap_s(3.0s) 的候选合并 (防同一弯抖动重复计数)
+门控: BYPASS 状态期间冻结计数 (双保险)
+```
+
+> **★ 为什么不能只数 ωz 越阈值**: `bypass_wz(0.60) > turn_wz_threshold(0.50)` — 锥桶绕行的 ωz 也超弯道阈值。但绕行是 **左弧(+)→右弧(−) 的 S 形, 净转角≈0°**, 且每段远小于 60° → 角度积分法自动过滤, 不会误计为拐弯。若简单数阈值越界, 一次绕行会被误计 1-2 个弯 → VLM 提前触发 → 错位拍照漏图生文 (罚时 20s)。
+
+---
+
+## 段间切换
+
+```
+段1  → 段2a: QR 检测 → cancel Nav2 → backup → Nav2 NavigateToPose(入口)
+段2a → 段2b: 到达入口 → /channel_lock=true (屏蔽 Nav2) → /channel_enable=1|2 (启动+方向)
+段2b → 段3:  出口判定 → /channel_enable=0 → /channel_lock=false (放行 Nav2) → Nav2 NavigateToPose(P)
+段3  → DONE: 到达 P 点 → 停车
+```
+
+**切换机制**: 所有速度经 **twist_mux** 仲裁 (见 M14)，无节点直接发 `/cmd_vel`。段2b: master 发 `/channel_lock=true` 屏蔽 Nav2 (`nav_vel`) + `/channel_enable=1|2` (方向+启动) 令 channel_controller 发 `channel_vel`。段3: 反向 (enable=0→unlock)。不修改 lifecycle。
+
+> **✅ /cmd_vel 竞争已解**: 原设计让 master 直接发 `/cmd_vel` 覆盖 Nav2 会产生总线竞争。改为 twist_mux 优先级 (channel_vel 50 > nav_vel 10) + Bool lock 双保险；切换空档由 twist_mux `timeout` 自动补 0 速。保活参见 memory `cmd_vel_mux_keepalive`。
+
+---
+
+## 已知风险与缓解
+
+| # | 风险 | 严重度 | 缓解 | 来源 |
+|---|------|--------|------|------|
+| 1 | 环道拐弯中心线半径 < 0.30m → 阿克曼纯转向无解 | 🔴 阻断 | Phase 1 前手推实测各拐弯半径；不足则降速+提前入弯 | 运动学 |
+| 2 | wz 指令超 `vx/0.30` → 舵机饱和, 实际弧线偏离 | 🔴 高 | 所有 wz 输出统一 clamp；绕行参数已重算 | [#412](https://github.com/ros-controls/ros_controllers/issues/412) |
+| 3 | HSV 固定阈值受室内光照不均影响 → 分割失败 | 🟠 中 | 高斯模糊+加宽阈值+现场标定+丢失兜底停车 | [Duckietown](https://docs.duckietown.com/ente/opmanual-duckiebot/03-demonstrations/lane-following-lf.html) |
+| 4 | 开环定时绕行累积误差 → 撞锥桶/偏出通道 | 🟠 中 | 改 LiDAR 闭环触发, 计时仅兜底 | robotics 通识 |
+| 5 | 纯 PID 循迹抖动大、弯道跟踪差 | 🟡 低 | 改前视点追踪 (pure-pursuit 思路) + Kd 抑抖 | [EPJ 2025](https://doi.org/10.1051/epjconf/202533006001) |
+| 6 | AMCL 在环道内纵向弱可观 → 出口/VLM 判定漂移 | 🟠 中 | 出口用「视觉黄色<20%」为主, AMCL 为辅; VLM 拐弯计数为主 | memory `map_physical_vs_virtual` |
+| 7 | 段2b 与 Nav2 抢 `/cmd_vel` | ✅ 已解 | twist_mux 优先级+lock 仲裁 (M14), 无节点直发 /cmd_vel | [twist_mux](https://docs.ros.org/en/rolling/p/twist_mux/) |
+| 8 | 相机/雷达 QoS 不匹配 → 订阅静默收不到数据 | 🟠 中 | 传感器话题统一用 SensorDataQoS (BEST_EFFORT) | [Nav2 AMCL 源码](https://github.com/ros-planning/navigation2/blob/main/nav2_amcl/src/amcl_node.cpp) |
+| 9 | channel_controller 用 /odom 做区域判定 → 里程漂移误判出口/VLM | 🟠 中 | 改 TF map→base_footprint (AMCL 修正), 回退 /amcl_pose | REP-105 / Nav2 TF 文档 |
+
+---
+
+## 节点与接口设计
+
+> 段2b 引入 **2 个自写节点** (`channel_controller` 控制 + `calibrate_hsv` 标定工具) + **1 个现成包** (`twist_mux` 仲裁)，修改 **1 个现有节点** (`competition_master_stage2`)，其余全部复用。接口设计按 README.md 的 M 模块格式。
+>
+> **接口设计三原则** (本次 EXA 加固): (1) 段切换用**信号握手** (enable/lock/state) 而非直发 /cmd_vel 抢占; (2) 全局区域判定用 **map 帧 TF** 而非漂移的 /odom; (3) 传感器话题统一 **SensorDataQoS**，控制/信号话题 **Reliable**，跨启动信号 **TRANSIENT_LOCAL**。
+
+### 新增节点
+
+#### M12: channel_controller.py (段2b 视觉环道控制)
+
+| 项目 | 值 |
+|------|-----|
+| **包** | `origincar_bringup` |
+| **节点** | `channel_controller` (Python) |
+| **执行模型** | **图像回调驱动** (每帧 RGB 触发一次控制, ~30Hz)；scan/pose/imu 缓存最新值 |
+| **生命周期** | 常驻 (t+5s 启动)，收到 `/channel_enable=1|2` 存方向→接管控制，`=0` 回 IDLE |
+
+**输入**:
+
+| Topic | 类型 | QoS | 用途 |
+|-------|------|-----|------|
+| `/aurora/rgb/image_raw` | Image (BGR8) | **SensorData** (BEST_EFFORT) | HSV 黄色分割 → 前视点追踪 |
+| `/scan` | LaserScan | **SensorData** (BEST_EFFORT) | 前方锥桶聚类检测 (缓存最新帧) |
+| `/imu/data/bmi088_madgwick` | Imu | SensorData | ωz 弯道判定 (缓存最新帧) |
+| `/channel_enable` | **Int32** | **Reliable, TRANSIENT_LOCAL** | ★ master→本节点: `0=disable`, `1=CW`, `2=CCW` (方向+接管合一, 解决 /qr_event 不可达) |
+| **TF** `map→base_footprint` | tf2 | — | ★ 机器人 map 帧位姿 (出口/VLM 区域判定, 取代 /odom) |
+
+> **位姿来源**: 出口/VLM 判定是**全局区域**判断，必须用 map 帧。`/odom` 是 odom 帧且随里程漂移 → 用 tf2 查 `map→base_footprint` (AMCL 实时修正)；TF 查不到时回退 `/amcl_pose` (latched)。**不订阅 /odom 做区域判定**。
+
+**输出**:
+
+| Topic | 类型 | QoS | 用途 |
+|-------|------|-----|------|
+| `channel_vel` | Twist | Reliable | ★ 速度指令 (wz 已 clamp) → twist_mux. **全局话题, launch 中 remap 到 `/channel_vel`** |
+| `/channel_state` | String | Reliable, TRANSIENT_LOCAL | ★ 本节点→master: 状态 + 出口事件 (CENTERING/BYPASS_*/EXIT) |
+| `/sign4return` | Int32 | Reliable | VLM 触发 (第4拐弯, 值=100, 须匹配 VLM 节点订阅) |
+| `/channel_debug_mask` | Image | SensorData | 调试: HSV 分割二值图 (10Hz 抽帧) |
+| `/channel_lateral_error` | Float32 | Reliable | 调试: 归一化横向误差 (rqt_plot 调 PID) |
+
+**参数**: 见下方参数表 (视觉车道 / LiDAR锥桶 / 绕行 / 出口 / VLM 五组)
+
+**状态机**:
+
+```
+IDLE ──(/channel_enable=1|2, 存方向)──→ CENTERING
+                                         │
+CENTERING (前视点追踪, 发 channel_vel)
+    │
+    ├── 锥桶确认 (≥3帧/1.5s) → BYPASS_LEFT → BYPASS_FWD → BYPASS_RIGHT → CENTERING
+    │                          (绕行侧=环道外侧: CW→右绕, CCW→左绕, 远离中心禁区; LiDAR闭环触发, 计时兜底)
+    │
+    ├── 拐弯计数(角度积分, 见 VLM 触发)到达 vlm_turn_index → 发 /sign4return=100 (异步)
+    │
+    └── 出口判定 (黄色<20% AND map 帧在出口区域) → 发 /channel_state=EXIT → IDLE
+                                                    (master 收 EXIT 后切段3, 发 /channel_enable=0)
+```
+
+**控制输出约束**:
+
+```
+err = (画面中心.x − 前视点.x) / (画面宽/2)     # 归一化到 [-1,1]
+wz_raw = Kp·err + Kd·(err − prev_err)
+wz = clip(wz_raw, −vx/min_turn_radius, +vx/min_turn_radius)   ← 阿克曼可行性硬约束
+publish channel_vel = (vx, 0, wz)              # twist_mux 转发到 /cmd_vel
+```
+
+#### M13: calibrate_hsv.py (HSV 标定工具)
+
+| 项目 | 值 |
+|------|-----|
+| **包** | `origincar_bringup` (tools/) |
+| **节点** | `calibrate_hsv` (Python, 独立运行) |
+| **职责** | 离线交互式 HSV 阈值标定 |
+
+**输入**: 静态图像文件 (对着黄色通道截图) 或实时 `/aurora/rgb/image_raw`
+**输出**: 终端打印 `hsv_lower / hsv_upper` 推荐值 (可复制到 channel_controller 参数)
+**UI**: OpenCV trackbar 拖条实时调 H/S/V 上下界 + 二值图预览
+
+#### M14: twist_mux (cmd_vel 仲裁, 现成包)
+
+| 项目 | 值 |
+|------|-----|
+| **包** | `twist_mux` (apt 安装, 无需自写) |
+| **节点** | `twist_mux` |
+| **职责** | 按优先级仲裁多个速度源 → 输出唯一 `/cmd_vel` 给 STM32 |
+
+> 消除段2b 与 Nav2 抢 `/cmd_vel` 的竞态 ([twist_mux 官方](https://docs.ros.org/en/rolling/p/twist_mux/))。Nav2 的输出重定向到 `nav_vel`，channel_controller 发 `channel_vel`，twist_mux 汇聚后发 `/cmd_vel`。高优先级源有数据时压制低优先级；源静默 `timeout` 后自动回退。
+
+**配置** (`config/twist_mux.yaml`):
+
+| 输入源 | topic | 优先级 | timeout | 段 |
+|--------|-------|--------|---------|-----|
+| Nav2 | `nav_vel` | 10 | 0.5s | 段1/2a/3 |
+| 视觉环道 | `channel_vel` | 50 | 0.5s | 段2b |
+| 急停 (可选) | `estop_vel` | 100 | — | 全段 |
+
+**锁 (lock)**: master 发 `/channel_lock` (Bool) — 段2b 期间 `true` → 强制屏蔽 `nav_vel` 残留指令，双保险 (优先级 + 锁)。
+
+> **改动代价**: Nav2 输出话题从 `/cmd_vel` 改为 `nav_vel` (controller_server `cmd_vel` remap, 1 行 launch)；STM32 驱动订阅不变 (仍收 `/cmd_vel`，现在由 twist_mux 发)。
+
+---
+
+### 修改节点
+
+#### M10': competition_master_stage2.py (修改)
+
+| 方法 | 改动 | 说明 |
+|------|------|------|
+| 状态机 | `NAV_TO_ENTRY` → `DONE` 之间插入 `CHANNEL` 状态 | 段2b 入口 → 出口 |
+| `_enter_channel_control()` | 🆕 新增 | 到达入口: cancel Nav2 导航 → `/channel_lock=true` (屏蔽 nav_vel) → `/channel_enable=1(CW) or 2(CCW)` (启动+方向) |
+| `_exit_channel_control()` | 🆕 新增 | 收到 EXIT: `/channel_enable=0` → `/channel_lock=false` (放行 Nav2) → Nav2 NavigateToPose(P) → `RETURN_P` |
+| `/cmd_vel` 发布 | **删除** | master 不再直接发 `/cmd_vel`；速度全部经 twist_mux。段切换用 enable/lock 信号, 无 cmd_vel 竞争 |
+
+**新增输出** (master → 其他节点):
+
+| Topic | 类型 | QoS | 用途 |
+|-------|------|-----|------|
+| `/channel_enable` | Int32 | Reliable, TRANSIENT_LOCAL | 令 channel_controller 接管: `0=disable`, `1=CW`, `2=CCW` |
+| `/channel_lock` | Bool | Reliable, TRANSIENT_LOCAL | 令 twist_mux 屏蔽/放行 nav_vel |
+
+**新增输入**:
+
+| Topic | 类型 | QoS | 用途 |
+|-------|------|-----|------|
+| `/channel_state` | String | Reliable, TRANSIENT_LOCAL | 监听 channel_controller; 收到 `EXIT` → 触发切段3 |
+
+> **握手时序** (无 /cmd_vel 竞争的关键): 进段2b 先 lock 屏蔽 Nav2 → 再 enable 接管；出段2b 先 disable → 再 unlock → 再发 Nav2 目标。twist_mux 在两次切换的空档用 `timeout` 自动输出 0 速，无指令真空。
+
+> **已知副作用**: disable 后 channel_vel 约 33ms 停止（下帧回调不发），mux `timeout=0.5s` 内输出 0 → 段切换有 <0.5s 减速。对 0.45m/s 低速运动影响可忽略（<0.1m 滑行）。
+
+**修改的状态机**:
+
+```
+INIT → NAV_TO_QR → BACKING_UP → NAV_TO_ENTRY
+                                       │
+                          ┌────────────┘
+                          ▼
+                      CHANNEL (新)  ── enable+lock ──→ channel_controller 接管
+                          │
+                          ▼ (收到 /channel_state=EXIT)
+                      RETURN_P → DONE
 ```
 
 ---
 
-> **下一步**: 将高优先级参数变更在 RDK X5 上测试, 每次只改 1-2 个参数, 用 `plot_trajectory.py` 对比效果.
-> **相关**: [[project_racing_vision_ai_paths]], [[project_ackermann_nav2_constraints]], [[project_best_baseline]]
->
-> ---
->
-> ## 6. EXA MCP 广泛搜索 — 最新研究与实践
->
-> > 8 个搜索主题, 40+ 搜索结果, 11 篇深度提取.
-> > 完整报告: [ros2_ackermann_racing_latest_techniques.md](ros2_ackermann_racing_latest_techniques.md)
->
-> ### 6.1 RPP Cusp Bug 深度剖析
->
-> Humble RPP 有两个 cusp 相关 bug:
->
-> **#4757 (缺 cusp 检测)**: RPP `path_handler.cpp` 在 Humble 中无 `enforce_path_inversion` 逻辑 (MPPI 有). REEDS_SHEPP cusp 处 RPP 跳过路径段.
->
-> **#5098 (固定曲率前视过冲 cusp)**: ★ 此 bug 不适用 Humble — `use_fixed_curvature_lookahead` 是 Iron+ 功能, Humble RPP 根本不支持. 仅在 Iron/Jazzy 中 `use_fixed_curvature_lookahead: true` 时触发.
->
-> **修复 (PR #5134, 2行代码, Jazzy 已合入)**:
-> ```cpp
-> double dist_to_cusp = findVelocitySignChange(transformed_plan);
-> if (dist_to_cusp < curv_lookahead_dist) {
->     curv_lookahead_dist = dist_to_cusp;  // 钳位到 cusp!
-> }
-> ```
->
-> **Humble 缓解方案 (无需改源码)**:
-> | 方案 | 做法 | 代价 |
-> |------|------|------|
-> | D | `reverse_penalty: 5.0+` | 强阻换向, 减少 cusp 生成 |
-> | B | 手动打 patch (2行) | 需重新编译 Nav2 |
-> | C | 切换 DUBIN 替代 REEDS_SHEPP | 失去倒车能力 |
-> | A | 用 MPPI 替代 RPP | MPPI 已有 `enforce_path_inversion` |
->
-> **推荐**: 方案 D (已在用 `change_penalty=0.20`) + 进一步提高 `reverse_penalty` 到 5.0.
->
-> ### 6.2 PP vs MPC — Sim-to-Real 关键发现
->
-> Stellenbosch 大学 F1TENTH 物理实验 (2024-2026):
->
-> | 指标 | PP | MPC | MPCC |
-> |------|:---:|:---:|:---:|
-> | 仿真圈速 | 最慢 | 中 | 最快 (-3s) |
-> | **物理圈速** | **最好** 🏆 | 中 | **失败** |
-> | 物理控制频率 | **8.77 Hz** | 5 Hz | 3.07 Hz |
-> | 计算时间 | ~0.1ms | ~50ms | ~200ms |
-> | 定位噪声鲁棒性 | 中 | 好 | 差 |
->
-> **核心发现**: PP 在物理测试中胜过 MPC! 原因:
-> - AMCL 粒子滤波噪声 → MPC 对错误位置做优化 → 灾难性振荡
-> - 100ms 延迟 @ 1m/s = 0.1m 位置误差 → MPC 优化错误状态
-> - PP 简单 = 高频率 = **更准确的真实世界控制**
->
-> **对 RDK X5 的启示**: 不要在 A55 上跑 MPC (OSQP 求解器 <5Hz). PP/RPP 的频率优势比模型预测能力更重要.
->
-> ### 6.3 SmacPlannerHybrid 窄通道基准
->
-> GitHub #4808 基准 (BriceRenaudeau):
->
-> | 优化前 | 优化后 | 路径长度 | 说明 |
-> |--------|--------|----------|------|
-> | 0.61s | **0.15s (4×)** | 124m | 窄通道 |
-> | 0.63s | **0.16s (4×)** | 143m | 窄通道 |
-> | 4.51s | 1.58s | 19m | 需 360 bins |
->
-> **关键配置**: `angle_quantization_bins: 64-72`, `allow_primitive_interpolation: true`, `retrospective_penalty: 0.015`, `cost_penalty: 1.3-3.5`.
->
-> **重要警告**: `angle_quantization_bins=360` 是常见错误 — 在大地图上增加搜索分支因子却未改善路径质量. 72 是 sweet spot.
->
-> ### 6.4 Keepout + Inflation 交互陷阱
->
-> Nav2 文档确认: **Costmap Filter 不经过 inflation layer!** 这意味着:
-> - SE2 footprint 检查可能看不到 keepout 边缘
-> - Smac Hybrid 可行规划器的中心点碰撞检查能看到, 但 footprint 边缘可能穿透
->
-> **修复**:
-> ```yaml
-> filters: ["keepout_filter", "keepout_inflation"]
-> keepout_inflation:
->   plugin: "nav2_costmap_2d::InflationLayer"
->   inflation_radius: 0.3
->   cost_scaling_factor: 5.0
-> ```
->
-> ### 6.5 OpenMP Costmap 加速
->
-> 2000×2000 栅格 (4M cells) 基准:
-> - 无 OpenMP: 48.9 ms
-> - 有 OpenMP (16核): **9.11 ms (5.4×)**
->
-> RDK X5 的 4×A55 可以从 OpenMP 受益. 编译:
-> ```bash
-> colcon build --packages-select nav2_costmap_2d --cmake-args -DENABLE_OPENMP=ON
-> ```
->
-> ### 6.6 PPO 自适应 PP 调参 (前沿)
->
-> ICPS-LAB-WVU (IEEE RA-L 2026): PPO 联合在线调节 `L_d` (前视距离) + `g` (转向增益).
-> - 状态: 速度 + 3 曲率采样点 (近/中/远)
-> - 输出: `[L_d, g]` 控制对
-> - 结果: 持续优于固定 PP、速度自适应 PP、运动学 MPC
-> - 代码: https://github.com/ICPS-LAB-WVU/Learning-to-Tune-Pure-Pursuit-in-Autonomous-Racing-With-PPO
->
-> **实用启示**: PPO 在线训练太重, 但曲率分段 L_d/g 查表法可以手动实现 — 弯道短前视+大增益, 直道长前视+小增益.
->
-> ### 6.7 整合建议: 完整参数基线修订
->
-> 综合 ackermann_car-main + EXA 搜索 + Smac Planner 论文:
->
-> ```yaml
-> # === SmacPlannerHybrid ===
-> GridBased:
->   minimum_turning_radius: 0.30                 # 我们实测值 (不变)
->   angle_quantization_bins: 64                   # ↑ 40→64 (5.6°/bin, 更平滑)
->   analytic_expansion_max_length: 3.0            # ↑ 1.5→3.0 (>5×min_r)
->   reverse_penalty: 5.0                          # ↑ 4.0→5.0 (强阻换向, 防cusp)
->   non_straight_penalty: 1.30                    # ↓ 1.85→1.30 (接近官方推荐)
->   cost_penalty: 3.5                             # ↓ 6.33→3.5 (减少不必要绕行)
->   retrospective_penalty: 0.015                  # ★ 新增: 防规划绕圈
->   allow_primitive_interpolation: true            # ★ 新增: 减少窄道 zigzag
->   cost_travel_multiplier: 2.0                   # ★ 新增: 速度vs安全权衡
->
-> # === RPP Controller ===
-> FollowPath:
->   controller_frequency: 20.0                    # ↑ 10→20Hz (每周期2.5cm vs 5cm)
->   speed_lim_angular: true                       # ★ 新增: 弯道限角速度
->   approach_velocity_scaling_dist: 0.6           # ★ 新增: 进场减速
->   max_angular_vel: 1.2                          # ★ 新增: 角速度上限
->
-> # === Keepout ===
-> global_costmap:
->   filters: ["keepout_filter", "keepout_inflation"]   # ★ keepout 独立 inflation
->   keepout_inflation:
->     plugin: "nav2_costmap_2d::InflationLayer"
->     inflation_radius: 0.3
->     cost_scaling_factor: 5.0
-> ```
->
-> ### 6.8 不要采纳的 EXA 建议
->
-> | 建议 | 原因 |
-> |------|------|
-> | MPC (OSQP 求解器) | A55 上 ~5Hz, 不如 20Hz RPP |
-> | MPPI 替代 RPP | 需 cross-compile C++, Humble MPPI 成熟度低 |
-> | `change_penalty: 0.0` (官方推荐) | 我们的 0.20 已验证抑制 cusp 有效 |
-> | `use_cost_regulated_linear_velocity_scaling: false` | 窄道场景需要 cost 感知减速 |
->
-> ### 6.9 Graceful Controller 曲率公式 (完整)
->
-> Nav2 Graceful Controller 实现 Park (2016) "Smooth Control Law":
->
-> ```cpp
-> // 核心曲率-速度映射
-> double v = v_linear_max_ / (1.0 + beta_ * std::pow(fabs(curvature), lambda_));
-> // 目标接近减速
-> v = std::min(v_linear_max_ * (ego_coords.r / slowdown_radius_), v);
-> // 角速度
-> double w = curvature * v;
-> ```
->
-> | 参数 | 默认值 | 说明 |
-> |------|--------|------|
-> | `beta` | 0.4 | 曲率速度下降因子: 越大弯道越慢 |
-> | `lambda` | 2.0 | 曲率锐度: ≥1, 越大弯道响应越陡 |
-> | `k_phi` | 0.4 | phi 变化率 / r 变化率. 0=纯路点跟踪 |
-> | `k_delta` | 3.0 | 航向误差反馈增益 (快子系统收敛) |
-> | `slowdown_radius` | 0.5 | 目标接近减速半径 |
-> | `motion_target_dist` | 1.0 | 目标点前视 (~1.0m) |
->
-> **对比我们的 speed_profile_node**: `v(κ) = v_max/(1+β·|κ|^λ)` 同公式! β=0.25, λ=1.20. 我们更激进 (弯道更快). Graceful Controller 的 Lyapunov 曲率计算比我们的 Menger 3 点法更数学严谨.
->
-> ### 6.10 Ackermann 恢复 BT 完整 XML (参考模板)
->
-> ```xml
-> <RecoveryNode number_of_retries="6">
->   <PipelineSequence>
->     <RateController hz="1.0">
->       <RecoveryNode number_of_retries="1">
->         <ComputePathToPose goal="{goal}" path="{path}"/>
->         <ClearEntireCostmap service_name="global_costmap/clear_entirely_global_costmap"/>
->       </RecoveryNode>
->     </RateController>
->     <RecoveryNode number_of_retries="1">
->       <FollowPath path="{path}"/>
->       <ClearEntireCostmap service_name="local_costmap/clear_entirely_local_costmap"/>
->     </RecoveryNode>
->   </PipelineSequence>
->   <ReactiveFallback>
->     <GoalUpdated/>
->     <RoundRobin>
->       <Sequence>
->         <ClearEntireCostmap service_name="local_costmap/clear_entirely_local_costmap"/>
->         <ClearEntireCostmap service_name="global_costmap/clear_entirely_global_costmap"/>
->       </Sequence>
->       <!-- ★ 替代 Spin: 多级后退 (阿克曼不可原地旋转) -->
->       <BackUp backup_dist="0.30" backup_speed="0.10"/>
->       <Wait wait_duration="3"/>
->       <BackUp backup_dist="0.50" backup_speed="0.15"/>
->     </RoundRobin>
->   </ReactiveFallback>
-> </RecoveryNode>
-> ```
->
-> ### 6.11 Inflation vs 通道宽度公式
->
-> 对于通道宽度 W, 机器人外接圆半径 R:
-> - **最小可行**: `inflation_radius < (W/2 - R)` — 否则机器人看不到可通过间隙
-> - **最优**: `inflation_radius` 形成梯度在通道中间汇合
-> - **Origincar (R≈0.35m) 在 1.0m 通道**: `inflation_radius <= 0.15m` 才能通过, 但理想 0.5-0.8m
-> - **我们 0.5m 环道 + inflation 0.55m**: 通道被完全填充 (这正是 §17 中记录的已知问题!)
->
-> **Nav2 维护者原话**:
-> > "Set your inflation radius to be at MINIMUM half of the robot's largest cross-section." — Steve Macenski
-> > "The true value of the inflation layer is creating a consistent potential field around the entire map." — Nav2 Tuning Guide
->
-> ---
->
-> > **来源**: 本章节整合自 EXA MCP 广泛搜索 (8 topics × 40+ results) + Smac Planner 论文 (Macenski 2024) + Nav2 官方文档 + F1TENTH 社区. 原始 EXA 报告已合并, 无独立文件.
+### 复用节点 (不改动)
+
+| 节点 | 段 | 用途 |
+|------|-----|------|
+| `origincar_base_node` (M1) | 全段 | STM32 驱动, 收 `/cmd_vel` (唯一发布者: twist_mux) |
+| `lslidar_driver_node` (M2) | 全段 | `/scan` → channel_controller (锥桶) + AMCL (定位) |
+| Aurora930 (M3) | 全段 | `/aurora/rgb/image_raw` → channel_controller (车道) + QR (段1) |
+| Madgwick ×2 (M4) | 全段 | IMU 姿态 → EKF; BMI088 ωz → channel_controller 弯道判定 |
+| EKF (M5) | 全段 | 发布 `odom→base_footprint` TF (channel_controller 经 map→base_footprint 用) |
+| AMCL (M6) | 全段 | map→odom TF (channel_controller 区域判定用), `/amcl_pose` 回退源 |
+| QR decoder (M7) | 段1 | 二维码解码; 方向由 master 中转至 channel_controller (经 /channel_enable Int32) |
+| Nav2 全栈 (M8) | 段1/2a/3 | 大厅规划+控制, 输出改发 `nav_vel`; 段2b 期间被 lock 屏蔽 |
+| Keepout (M9) | 段1/2a/3 | 禁区, 段2b 不参与 (环道无 keepout) |
+| `stage2_bringup.launch.py` | 全段 | 启动时序新增 channel_controller + twist_mux |
+
+### 启动时序 (stage2_bringup)
+
+```
+t=0s:  base_minimal (STM32 + LiDAR + IMU + EKF) + camera_all (Aurora930 + QR)
+t=0s:  twist_mux                                   ← 🆕 汇聚 nav_vel/channel_vel → /cmd_vel
+t=1s:  nav2_minimal (keepout + Nav2, 输出 nav_vel)  ← 段1/2a/3 用
+t=4s:  competition_master_stage2                   ← 状态机
+t=5s:  channel_controller                          ← 🆕 段2b 用 (常驻 IDLE, 等 enable)
+t=8s:  RViz2
+```
+
+> **twist_mux 必须最先起**: 它是 `/cmd_vel` 的唯一发布者，须先于 Nav2/channel_controller 就绪，否则早期指令丢失。
+> **channel_controller 提前启动**: 常驻 IDLE 不发 `channel_vel`，收到 master `/channel_enable=1|2` 才接管。提前启动避免段切换时的节点发现延迟。
+
+---
+
+### 全段数据流
+
+`/cmd_vel` 的唯一发布者是 **twist_mux**；Nav2 与 channel_controller 各发自己的输入话题，由优先级+lock 仲裁：
+
+```
+                Nav2 ──nav_vel (prio 10)──┐
+                                          ├──→ twist_mux ──/cmd_vel──→ STM32
+   channel_controller ──channel_vel (prio 50)─┘        ▲
+                                                       │
+                          master ──/channel_lock (Bool)┘   (段2b=true, 屏蔽 nav_vel)
+
+
+段1+2a (Nav2 大厅)                     段2b (视觉环道)
+═══════════════                       ════════════
+Aurora930 ─RGB─→ QR解码 ─→ master      Aurora930 ─RGB─→ channel_controller ─channel_vel─→ mux
+N10 ─/scan─→ AMCL ─→ Nav2 ─nav_vel→mux N10 ─/scan─→ ├ AMCL (map→odom TF)
+master ─/costmap_ctrl→ keepout                      └ channel_controller (锥桶聚类)
+                                       TF map→base_footprint ─→ channel_controller (区域判定)
+   master ─enable+lock→ channel_controller / twist_mux
+   master ◄─/channel_state (EXIT)─ channel_controller
+```
+
+| 段 | 控制源 | 速度话题 | `/cmd_vel` 来自 | 感知 | 避障 |
+|----|--------|---------|----------------|------|------|
+| 段1 (P→QR) | Nav2 | `nav_vel` | twist_mux | LiDAR + 深度点云 + keepout | costmap 全局 |
+| 段2a (QR→入口) | Nav2 | `nav_vel` | twist_mux | 同上 | costmap 全局 |
+| **段2b (环道)** | **channel_controller** | **`channel_vel`** | **twist_mux (lock 屏蔽 Nav2)** | **RGB(车道) + LiDAR(锥桶)** | **绕行状态机** |
+| 段3 (出口→P) | Nav2 | `nav_vel` | twist_mux | LiDAR + 深度点云 + keepout | costmap 全局 |
+
+---
+
+## 实现计划
+
+### Phase 1: channel_controller.py
+
+| 功能 | 依赖 | 行数估 |
+|------|------|--------|
+| 高斯模糊 + HSV 黄色分割 + ROI + 丢失兜底 | OpenCV | ~60 |
+| 前视点提取 + 追踪控制 + wz clamp | 无 | ~50 |
+| LiDAR 锥桶聚类 | sensor_msgs/LaserScan | ~40 |
+| 绕行状态机 (LiDAR 闭环 + 计时兜底) | 无 | ~70 |
+| 出口判定 (视觉主 + map 帧辅) | 无 | ~30 |
+| channel_vel 发布 (30Hz 回调驱动, twist_mux timeout 兜底) | 无 | ~25 |
+| 调试话题 (debug_mask, error, state, wz) | 无 | ~40 |
+| **合计** | | **~315** |
+
+### Phase 2: 集成
+
+- **twist_mux 接入** (M14): 新增 `config/twist_mux.yaml`；Nav2 controller_server `cmd_vel` remap 到 `nav_vel`；stage2_bringup 最先启动 twist_mux
+- competition_master_stage2 增加 `_enter_channel_control()` / `_exit_channel_control()` + `/channel_enable` `/channel_lock` 发布 + `/channel_state` 订阅
+- stage2_bringup 启动 channel_controller (t+5s, 常驻 IDLE)
+- 深度相机帧率调到 30fps
+- **验证握手**: 手动发 `/channel_enable=1` (CW) 确认 channel_vel 压过 nav_vel; `=0` 确认 Nav2 恢复
+
+### Phase 3: VLM + 段3
+
+- VLM 在 channel_controller 中触发（第4拐弯）
+- 段3 出口→P 用 Nav2 NavigateToPose
+- 端到端联调
+
+---
+
+## 参数表
+
+### 视觉车道
+
+| 参数 | 默认值 | 说明 |
+|------|--------|------|
+| `hsv_lower` | [15, 80, 50] | 黄色下界（加宽, 需现场标定） |
+| `hsv_upper` | [45, 255, 255] | 黄色上界 |
+| `gaussian_ksize` | 5 | 高斯模糊核（去噪, 提升分割稳定性） |
+| `roi_v_ratio` | 0.33 | ROI 高度比例（下1/3） |
+| `Kp` | 0.008 | 比例增益（作用于归一化横向误差） |
+| `Kd` | 0.004 | 微分增益（抑制转向抖动） |
+| `lookahead_rows` | 10 | 前视行数（从 ROI 底部向上数, 越大越超前但越抖） |
+| `min_turn_radius` | 0.30 | ★ 阿克曼最小转弯半径, 用于 wz clamp |
+| `turn_wz_threshold` | 0.50 | ★ \|IMU ωz\| 超此值进入弯道模式 (对应 R≈0.90m, 比直道更急的弯) |
+| `turn_wz_hysteresis` | 0.15 | 滞后: ωz 需降至 `threshold − hysteresis` 以下才退出弯道模式 |
+| `turn_confirm_frames` | 5 | 连续 N 帧满足条件才切换 (防 ωz 噪声误触发, ~0.17s@30Hz) |
+| `yellow_lost_frames` | 30 | 连续丢失黄色帧数阈值 → 停车报警（~1s@30fps） |
+
+> **弯道判定**: 不从 HSV 分割结果判弯（前视点横向偏移受光照/遮挡影响大），用 IMU ωz 直接测量车体转动——车已经在转弯了，IMU 不会骗人。判定逻辑: `|ωz| > turn_wz_threshold` 持续 `turn_confirm_frames` → TURNING(vx=0.20)；`|ωz| < turn_wz_threshold − turn_wz_hysteresis` 持续同等帧数 → CENTERING(vx=0.45)。
+
+### LiDAR 锥桶
+
+| 参数 | 默认值 | 说明 |
+|------|--------|------|
+| `cone_fov_deg` | 90 | 检测扇形角度 |
+| `cone_range_min` | 0.3 | 最近检测距离 (m) |
+| `cone_range_max` | 1.5 | 最远检测距离 (m) |
+| `cone_cluster_tol` | 0.15 | 聚类容差 (m) |
+| `cone_width_min` | 0.05 | 最小簇宽 (m) |
+| `cone_width_max` | 0.20 | 最大簇宽 (m) |
+| `cone_confirm_frames` | 3 | 确认帧数 |
+| `cone_confirm_window` | 1.5 | 确认时间窗 (s) |
+
+### 绕行
+
+| 参数 | 默认值 | 说明 |
+|------|--------|------|
+| `bypass_speed` | 0.20 | 绕行速度 (m/s)，原 0.15 提高以满足可行 wz |
+| `bypass_wz` | 0.60 | 绕行转向 (rad/s)，R=0.33m ≥ 0.30m 可行（原 1.2 不可达） |
+| `bypass_left_dur` | 待实测 | 左转时长 (s)，实测标定，勿用开环理论值 |
+| `bypass_fwd_dur` | 待实测 | 直行时长 (s) |
+| `bypass_right_dur` | 待实测 | 右转时长 (s) |
+| `bypass_clear_angle` | 60 | ★ 闭环触发: 锥桶偏离前方扇区角度 (°) → 转 BYPASS_RIGHT |
+| `bypass_timeout` | 8.0 | 绕行超时兜底 (s) → 停车 |
+
+### 出口
+
+| 参数 | 默认值 | 说明 |
+|------|--------|------|
+| `exit_yellow_ratio` | 0.20 | ROI 黄色占比阈值 |
+| `exit_region_x_min/max` | 待标定 | 出口 map 帧矩形 |
+| `exit_region_y_min/max` | 待标定 | 出口 map 帧矩形 |
+
+### VLM
+
+| 参数 | 默认值 | 说明 |
+|------|--------|------|
+| `vlm_turn_index` | 4 | 从入口起第几个拐弯 (方向由 /channel_enable 1=CW / 2=CCW 决定计数序) |
+| `vlm_sign_id` | 100 | 发 /sign4return 的值 |
+| `turn_count_min_angle` | 60 | ★ 计数阈值: TURNING 累积转角 ≥ 此值(°)才计 1 个弯 (滤除绕行 S 形净转角≈0) |
+| `turn_count_min_gap_s` | 3.0 | 两次计数最小间隔 (s), 防同一弯抖动重复计数 |
+
+### twist_mux (config/twist_mux.yaml)
+
+| 参数 | 默认值 | 说明 |
+|------|--------|------|
+| `nav_vel` priority | 10 | Nav2 输出优先级 (段1/2a/3) |
+| `channel_vel` priority | 50 | 视觉环道优先级 (段2b, 高于 Nav2) |
+| `timeout` | 0.5 | 源静默超时 → 输出 0 速 (s) |
+| `/channel_lock` priority | 100 | Bool 锁, master 段2b 置 true 屏蔽 nav_vel |
+
+---
+
+## 待标定项
+
+| 项 | 方法 | 工具 |
+|----|------|------|
+| HSV 阈值 | 对着黄色通道截图, 手动调 | `calibrate_hsv.py`（待写） |
+| 出口区域 | 跑一圈, 记录出口 map 帧坐标 | plot_trajectory.py |
+| VLM 拐弯点 | 跑一圈, 确认拐弯计数在第4个拐弯触发 /sign4return | plot_trajectory.py + /channel_state 日志 |
+| PID 增益 | 实际跑, 观察振荡/响应 | rqt_plot /lateral_error |
+| 绕行轨迹参数 | 摆锥桶, 实测 vx=0.20/wz=0.60 下时长 | 手动调 |
+| 深度相机帧率 | 改 Aurora930 配置 | 厂商 SDK |
+| **★ 环道拐弯半径** | **手推一圈, 确认各拐弯中心线 R ≥ 0.30m** | plot_trajectory.py |
+
+---
+
+## 参考文献 (EXA MCP, 2026-07-11)
+
+**架构对标** (见「EXA MCP 架构验证」章):
+- F1TENTH 统一基准 · Formula Student Driverless · Autoware 三层架构 · Modular vs E2E 综述
+
+**实现加固** (本次新增):
+| 来源 | 用途 |
+|------|------|
+| [ros_controllers #412 — angular velocity vs steering angle](https://github.com/ros-controls/ros_controllers/issues/412) | 阿克曼 `R = vx/wz` 约束依据 |
+| [Nav2 Twist for Ackermann (Macenski)](https://robotics.stackexchange.com/questions/103741/nav2-controllers-and-twist-commands-for-ackermann-robots) | `angular.z` 是车体角速度, 需 shim 反解转角 |
+| [PID vs Pure-Pursuit vs Stanley (EPJ Web Conf 2025)](https://doi.org/10.1051/epjconf/202533006001) | 纯 PID 循迹误差最大 → 改前视点追踪 |
+| [Duckietown Lane Following](https://docs.duckietown.com/ente/opmanual-duckiebot/03-demonstrations/lane-following-lf.html) | 高斯模糊 + 黄色 HSV [15,80,50]-[45,255,255] + 需标定 |
+| [Real-Time Adaptive HSV Threshold (IFAC 2021)](https://doi.org/10.1016/j.ifacol.2021.11.167) | 光照变化下固定阈值失效, 自适应阈值 |
+| [twist_mux 官方文档](https://docs.ros.org/en/rolling/p/twist_mux/) | cmd_vel 多源仲裁, 优先级+lock 机制, yaml 配置 |
+| [El-Gohary IMU 转弯检测 (mobgap)](https://mobgap.readthedocs.io/en/stable/modules/generated/turning/mobgap.turning.TdElGohary.html) | 拐弯计数: ωz 积分转角 + 最小转角过滤 + 合并去重, 滤除绕行误计 |
